@@ -85,7 +85,7 @@
 <p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
 <h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
 <h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#x6f;&#103;&#98;&#97;&#x30;&#48;&#x36;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;">&#x70;&#x6f;&#103;&#98;&#97;&#x30;&#48;&#x36;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#111;&#103;&#98;&#97;&#x30;&#48;&#x36;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;">&#112;&#111;&#103;&#98;&#97;&#x30;&#48;&#x36;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#99;&#x6f;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
 <p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
 <h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
 <h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
@@ -130,19 +130,6 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>容器服务启动失败</title>
-    <url>/posts/5746187b.html</url>
-    <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
-<p>for mongodb无法为服务mongodb创建容器：冲突。容器名称“&#x2F;mongodb”已被容器“193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”使用。您必须删除（或重命名）该容器才能重用该名称。<br>错误：启动项目时遇到错误。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">显示所有容器</span><br><span class="line">docker rm -f 193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d</span><br><span class="line">删除占用容器 id</span><br><span class="line">docker-compose up -d</span><br><span class="line">重新启动容器</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>docker报错</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>js文件能找到什么</title>
     <url>/posts/397418bf.html</url>
     <content><![CDATA[<h1 id="js文件可以找到"><a href="#js文件可以找到" class="headerlink" title="js文件可以找到?"></a>js文件可以找到?</h1><p>会增加攻击面的信息（URL，域名等）</p>
@@ -161,21 +148,16 @@
       </tags>
   </entry>
   <entry>
-    <title>portswigger jwt authentication bypass</title>
-    <url>/posts/cf3c54f2.html</url>
-    <content><![CDATA[<h1 id="什么是JWT"><a href="#什么是JWT" class="headerlink" title="什么是JWT"></a>什么是JWT</h1><p>JWT(json web token)是用于系统之间发送加密签名的JSON数据的标准化格式，作为身份认证、会话处理和访问控制机制的一部分。<br>与传统的会话令牌不同，服务器所需要的数据存储在jwt本身的客户端。</p>
-<h1 id="JWT格式"><a href="#JWT格式" class="headerlink" title="JWT格式"></a>JWT格式</h1><p>JWT由三部分组成，头部，载荷，签名，每个部分通过.链接<br>header.payload.signature</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">eyJraWQiOiI5MTM2ZGRiMy1jYjBhLTRhMTktYTA3ZS1lYWRmNWE0NGM4YjUiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTY0ODAzNzE2NCwibmFtZSI6IkNhcmxvcyBNb250b3lhIiwic3ViIjoiY2FybG9zIiwicm9sZSI6ImJsb2dfYXV0aG9yIiwiZW1haWwiOiJjYXJsb3NAY2FybG9zLW1vbnRveWEubmV0IiwiaWF0IjoxNTE2MjM5MDIyfQ.SYZBPIBg2CRjXAJ8vCER0LA_ENjII1JakvNQoP-Hw6GG1zfl4JyngsZReIfqRvIAEi5L4HV0q7_9qGhQZvy9ZdxEJbwTxRs_6Lb-fZTDpW6lKYNdMyjw45_alSCZ1fypsMWz_2mTpQzil0lOtps5Ei_z7mM7M8gCwe_AGpI53JxduQOaB5HkT5gVrv9cKu9CsW5MS6ZbqYXpGyOG5ehoxqm8DL5tFYaW3lB50ELxi0KsuTKEbD0t5BCl0aCR2MBJWAbN-xeLwEenaqBiwPVvKixYleeDQiBEIylFdNNIMviKRgXiYuAvMziVPbwSgkZVHeEdF5MQP1Oe2Spac-6IfA</span><br></pre></td></tr></table></figure>
-<p>JWT的头部和载荷部分是base64url编码的json对象，头部包含令牌本身的元数据，载荷包含用户的声明，例如上述部分解码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;iss&quot;: &quot;portswigger&quot;,</span><br><span class="line">    &quot;exp&quot;: 1648037164,</span><br><span class="line">    &quot;name&quot;: &quot;Carlos Montoya&quot;,</span><br><span class="line">    &quot;sub&quot;: &quot;carlos&quot;,</span><br><span class="line">    &quot;role&quot;: &quot;blog_author&quot;,</span><br><span class="line">    &quot;email&quot;: &quot;carlos@carlos-montoya.net&quot;,</span><br><span class="line">    &quot;iat&quot;: 1516239022</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>正如上面部分的编码，任何有权访问jwt令牌的人都可以解码读取或修改这部分数据，因此基于jwt机制的安全性严重依赖于第三部分的加密签名。</p>
-<h1 id="jwt签名"><a href="#jwt签名" class="headerlink" title="jwt签名"></a>jwt签名</h1><p>发出jwt令牌的服务器通过header和payload进行生成签名，某些情况下还会加密哈希，无论哪种方式都会涉及密钥，这种机制为服务器提供了一种验证令牌数据是否有被篡改。即：<br>签名通过header和payload产生，若前两部分遭到修改则导致签名不匹配<br>若不知道密钥，则无法为header和payload生成正确的签名。</p>
-<h1 id="jwt-jws-jwe"><a href="#jwt-jws-jwe" class="headerlink" title="jwt&#x2F;jws&#x2F;jwe"></a>jwt&#x2F;jws&#x2F;jwe</h1>]]></content>
+    <title>容器服务启动失败</title>
+    <url>/posts/5746187b.html</url>
+    <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
+<p>for mongodb无法为服务mongodb创建容器：冲突。容器名称“&#x2F;mongodb”已被容器“193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”使用。您必须删除（或重命名）该容器才能重用该名称。<br>错误：启动项目时遇到错误。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">显示所有容器</span><br><span class="line">docker rm -f 193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d</span><br><span class="line">删除占用容器 id</span><br><span class="line">docker-compose up -d</span><br><span class="line">重新启动容器</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Web安全</category>
+        <category>报错</category>
       </categories>
       <tags>
-        <tag>JWT Vulnerabilitiy</tag>
+        <tag>docker报错</tag>
       </tags>
   </entry>
   <entry>
@@ -208,25 +190,22 @@
       </tags>
   </entry>
   <entry>
-    <title>lesuo</title>
-    <url>/posts/4fea4d13.html</url>
-    <content><![CDATA[<h2 id="第3篇：勒索病毒"><a href="#第3篇：勒索病毒" class="headerlink" title="第3篇：勒索病毒"></a>第3篇：勒索病毒</h2><h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>​	勒索病毒，是一种新型电脑病毒，主要以邮件、程序木马、网页挂马的形式进行传播。该病毒性质恶劣、危害极大，一旦感染将给用户带来无法估量的损失。这种病毒利用各种加密算法对文件进行加密，被感染者一般无法解密，必须拿到解密的私钥才有可能破解。自WannaCry勒索病毒在全球爆发之后，各种变种及新型勒索病毒层出不穷。</p>
-<h3 id="0x01-应急场景"><a href="#0x01-应急场景" class="headerlink" title="0x01 应急场景"></a>0x01 应急场景</h3><p>​	某天早上，网站管理员打开OA系统，首页访问异常，显示乱码：</p>
-<p><img src="/img/lesuo/win-7-1.png"></p>
-<h3 id="0x02-事件分析"><a href="#0x02-事件分析" class="headerlink" title="0x02 事件分析"></a>0x02 事件分析</h3><p>​	登录网站服务器进行排查，在站点目录下发现所有的脚本文件及附件都被加密为.sage结尾的文件，每个文件夹下都有一个!HELP_SOS.hta文件，打包了部分样本：</p>
-<p><img src="/img/lesuo/win-7-2.png"></p>
-<p>打开!HELP_SOS.hta文件，显示如下： </p>
-<p><img src="/img/lesuo/win-7-3.png"></p>
-<p>到这里，基本可以确认是服务器中了勒索病毒，上传样本到360勒索病毒网站（<a href="http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。">http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。</a></p>
-<p><img src="/img/lesuo/win-7-4.png"></p>
-<p>绝大多数勒索病毒，是无法解密的，一旦被加密，即使支付也不一定能够获得解密密钥。在平时运维中应积极做好备份工作，数据库与源码分离（类似OA系统附件资源也很重要，也要备份）。 </p>
-<p>遇到了，别急，试一试勒索病毒解密工具：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">“拒绝勒索软件”网站</span><br><span class="line">https://www.nomoreransom.org/zh/index.html</span><br><span class="line">360安全卫士勒索病毒专题</span><br><span class="line">http://lesuobingdu.360.cn</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x04-防范措施"><a href="#0x04-防范措施" class="headerlink" title="0x04 防范措施"></a>0x04 防范措施</h3><p>​	一旦中了勒索病毒，文件会被锁死，没有办法正常访问了，这时候，会给你带来极大的困恼。为了防范这样的事情出现，我们电脑上要先做好一些措施：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、安装杀毒软件，保持监控开启，定期全盘扫描</span><br><span class="line">2、及时更新 Windows安全补丁，开启防火墙临时关闭端口，如445、135、137、138、139、3389等端口</span><br><span class="line">3、及时更新web漏洞补丁，升级web组件</span><br><span class="line">4、备份。重要的资料一定要备份，谨防资料丢失</span><br><span class="line">5、强化网络安全意识，陌生链接不点击，陌生文件不要下载，陌生邮件不要打开</span><br></pre></td></tr></table></figure>
-
-]]></content>
+    <title>portswigger jwt authentication bypass</title>
+    <url>/posts/cf3c54f2.html</url>
+    <content><![CDATA[<h1 id="什么是JWT"><a href="#什么是JWT" class="headerlink" title="什么是JWT"></a>什么是JWT</h1><p>JWT(json web token)是用于系统之间发送加密签名的JSON数据的标准化格式，作为身份认证、会话处理和访问控制机制的一部分。<br>与传统的会话令牌不同，服务器所需要的数据存储在jwt本身的客户端。</p>
+<h1 id="JWT格式"><a href="#JWT格式" class="headerlink" title="JWT格式"></a>JWT格式</h1><p>JWT由三部分组成，头部，载荷，签名，每个部分通过.链接<br>header.payload.signature</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">eyJraWQiOiI5MTM2ZGRiMy1jYjBhLTRhMTktYTA3ZS1lYWRmNWE0NGM4YjUiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTY0ODAzNzE2NCwibmFtZSI6IkNhcmxvcyBNb250b3lhIiwic3ViIjoiY2FybG9zIiwicm9sZSI6ImJsb2dfYXV0aG9yIiwiZW1haWwiOiJjYXJsb3NAY2FybG9zLW1vbnRveWEubmV0IiwiaWF0IjoxNTE2MjM5MDIyfQ.SYZBPIBg2CRjXAJ8vCER0LA_ENjII1JakvNQoP-Hw6GG1zfl4JyngsZReIfqRvIAEi5L4HV0q7_9qGhQZvy9ZdxEJbwTxRs_6Lb-fZTDpW6lKYNdMyjw45_alSCZ1fypsMWz_2mTpQzil0lOtps5Ei_z7mM7M8gCwe_AGpI53JxduQOaB5HkT5gVrv9cKu9CsW5MS6ZbqYXpGyOG5ehoxqm8DL5tFYaW3lB50ELxi0KsuTKEbD0t5BCl0aCR2MBJWAbN-xeLwEenaqBiwPVvKixYleeDQiBEIylFdNNIMviKRgXiYuAvMziVPbwSgkZVHeEdF5MQP1Oe2Spac-6IfA</span><br></pre></td></tr></table></figure>
+<p>JWT的头部和载荷部分是base64url编码的json对象，头部包含令牌本身的元数据，载荷包含用户的声明，例如上述部分解码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;iss&quot;: &quot;portswigger&quot;,</span><br><span class="line">    &quot;exp&quot;: 1648037164,</span><br><span class="line">    &quot;name&quot;: &quot;Carlos Montoya&quot;,</span><br><span class="line">    &quot;sub&quot;: &quot;carlos&quot;,</span><br><span class="line">    &quot;role&quot;: &quot;blog_author&quot;,</span><br><span class="line">    &quot;email&quot;: &quot;carlos@carlos-montoya.net&quot;,</span><br><span class="line">    &quot;iat&quot;: 1516239022</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正如上面部分的编码，任何有权访问jwt令牌的人都可以解码读取或修改这部分数据，因此基于jwt机制的安全性严重依赖于第三部分的加密签名。</p>
+<h1 id="jwt签名"><a href="#jwt签名" class="headerlink" title="jwt签名"></a>jwt签名</h1><p>发出jwt令牌的服务器通过header和payload进行生成签名，某些情况下还会加密哈希，无论哪种方式都会涉及密钥，这种机制为服务器提供了一种验证令牌数据是否有被篡改。即：<br>签名通过header和payload产生，若前两部分遭到修改则导致签名不匹配<br>若不知道密钥，则无法为header和payload生成正确的签名。</p>
+<h1 id="jwt-jws-jwe"><a href="#jwt-jws-jwe" class="headerlink" title="jwt&#x2F;jws&#x2F;jwe"></a>jwt&#x2F;jws&#x2F;jwe</h1>]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
+      </tags>
   </entry>
   <entry>
     <title>mongodb-nosql注入</title>
@@ -397,6 +376,69 @@
       <tags>
         <tag>nosql-inject</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>lesuo</title>
+    <url>/posts/4fea4d13.html</url>
+    <content><![CDATA[<h2 id="第3篇：勒索病毒"><a href="#第3篇：勒索病毒" class="headerlink" title="第3篇：勒索病毒"></a>第3篇：勒索病毒</h2><h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>​	勒索病毒，是一种新型电脑病毒，主要以邮件、程序木马、网页挂马的形式进行传播。该病毒性质恶劣、危害极大，一旦感染将给用户带来无法估量的损失。这种病毒利用各种加密算法对文件进行加密，被感染者一般无法解密，必须拿到解密的私钥才有可能破解。自WannaCry勒索病毒在全球爆发之后，各种变种及新型勒索病毒层出不穷。</p>
+<h3 id="0x01-应急场景"><a href="#0x01-应急场景" class="headerlink" title="0x01 应急场景"></a>0x01 应急场景</h3><p>​	某天早上，网站管理员打开OA系统，首页访问异常，显示乱码：</p>
+<p><img src="/img/lesuo/win-7-1.png"></p>
+<h3 id="0x02-事件分析"><a href="#0x02-事件分析" class="headerlink" title="0x02 事件分析"></a>0x02 事件分析</h3><p>​	登录网站服务器进行排查，在站点目录下发现所有的脚本文件及附件都被加密为.sage结尾的文件，每个文件夹下都有一个!HELP_SOS.hta文件，打包了部分样本：</p>
+<p><img src="/img/lesuo/win-7-2.png"></p>
+<p>打开!HELP_SOS.hta文件，显示如下： </p>
+<p><img src="/img/lesuo/win-7-3.png"></p>
+<p>到这里，基本可以确认是服务器中了勒索病毒，上传样本到360勒索病毒网站（<a href="http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。">http://lesuobingdu.360.cn）进行分析：确认web服务器中了sage勒索病毒，目前暂时无法解密。</a></p>
+<p><img src="/img/lesuo/win-7-4.png"></p>
+<p>绝大多数勒索病毒，是无法解密的，一旦被加密，即使支付也不一定能够获得解密密钥。在平时运维中应积极做好备份工作，数据库与源码分离（类似OA系统附件资源也很重要，也要备份）。 </p>
+<p>遇到了，别急，试一试勒索病毒解密工具：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">“拒绝勒索软件”网站</span><br><span class="line">https://www.nomoreransom.org/zh/index.html</span><br><span class="line">360安全卫士勒索病毒专题</span><br><span class="line">http://lesuobingdu.360.cn</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x04-防范措施"><a href="#0x04-防范措施" class="headerlink" title="0x04 防范措施"></a>0x04 防范措施</h3><p>​	一旦中了勒索病毒，文件会被锁死，没有办法正常访问了，这时候，会给你带来极大的困恼。为了防范这样的事情出现，我们电脑上要先做好一些措施：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、安装杀毒软件，保持监控开启，定期全盘扫描</span><br><span class="line">2、及时更新 Windows安全补丁，开启防火墙临时关闭端口，如445、135、137、138、139、3389等端口</span><br><span class="line">3、及时更新web漏洞补丁，升级web组件</span><br><span class="line">4、备份。重要的资料一定要备份，谨防资料丢失</span><br><span class="line">5、强化网络安全意识，陌生链接不点击，陌生文件不要下载，陌生邮件不要打开</span><br></pre></td></tr></table></figure>
+
+<h1 id="自救指南"><a href="#自救指南" class="headerlink" title="自救指南"></a>自救指南</h1><h2 id="勒索病毒自救指南"><a href="#勒索病毒自救指南" class="headerlink" title="勒索病毒自救指南"></a>勒索病毒自救指南</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>经常会有一些小伙伴问：中了勒索病毒，该怎么办，可以解密吗？</p>
+<p>第一次遇到勒索病毒是在早几年的时候，客户因网站访问异常，进而远程协助进行排查。登录服务器，在站点目录下发现所有的脚本文件及附件后缀名被篡改，每个文件夹下都有一个文件打开后显示勒索提示信息，这便是勒索病毒的特征。</p>
+<p>出于职业习惯，我打包了部分加密文件样本和勒索病毒提示信息用于留档，就在今天，我又重新上传了样本，至今依然无法解密。</p>
+<p>作为一个安全工程师，而非一个专业的病毒分析师，我们可以借助各大安全公司的能力，寻找勒索病毒的解密工具。</p>
+<p>本文整理了一份勒索病毒自救指南，通过勒索病毒索引引擎查找勒索病毒相关信息，再通过各个安全公司提供的免费勒索软件解密工具解密。当然，能否解密全凭运气，so，平时还是勤打补丁多备份。</p>
+<p><strong>一、勒索病毒搜索引擎</strong></p>
+<p>在勒索病毒搜索引擎输入病毒名、勒索邮箱、被加密后文件的后缀名，或直接上传被加密文件、勒索提示信息，即可可快速查找到病毒详情和解密工具。</p>
+<p><img src="/img/lesuo/20200406-1.png"></p>
+<p>这些网站的解密能力还在持续更新中，是值得收藏的几个勒索病毒工具型网站。</p>
+<p>【360】 勒索病毒搜索引擎，支持检索超过800种常见勒索病毒</p>
+<p>官网：<a href="http://lesuobingdu.360.cn/">http://lesuobingdu.360.cn</a></p>
+<p>【腾讯】 勒索病毒搜索引擎，支持检索超过 300 种常见勒索病毒</p>
+<p>官网：<a href="https://guanjia.qq.com/pr/ls">https://guanjia.qq.com/pr/ls</a></p>
+<p>【启明】VenusEye勒索病毒搜索引擎，超300种勒索病毒家族</p>
+<p>官网：<a href="https://lesuo.venuseye.com.cn/">https://lesuo.venuseye.com.cn</a></p>
+<p>【奇安信】勒索病毒搜索引擎</p>
+<p>官网：<a href="https://lesuobingdu.qianxin.com/">https://lesuobingdu.qianxin.com</a></p>
+<p>【深信服】勒索病毒搜索引擎</p>
+<p>官网：<a href="https://edr.sangfor.com.cn/#/information/ransom_search">https://edr.sangfor.com.cn/#/information/ransom_search</a></p>
+<hr>
+<p><strong>二、勒索软件解密工具集</strong></p>
+<p>很多安全公司都提供了免费的勒索病毒解密工具下载，收集和整理相关下载地址，可以帮助我们了解和获取最新的勒索病毒解密工具。</p>
+<p>【腾讯哈勃】勒索软件专杀工具</p>
+<p>官网：<a href="https://habo.qq.com/tool">https://habo.qq.com/tool</a></p>
+<p>【金山毒霸】勒索病毒免疫工具</p>
+<p>官网：<a href="http://www.duba.net/dbt/wannacry.html">http://www.duba.net/dbt/wannacry.html</a></p>
+<p>【火绒】安全工具下载</p>
+<p>官网：<a href="http://bbs.huorong.cn/forum-55-1.html">http://bbs.huorong.cn/forum-55-1.html</a></p>
+<p>【瑞星】解密工具下载</p>
+<p>官网：<a href="http://it.rising.com.cn/fanglesuo/index.html">http://it.rising.com.cn/fanglesuo/index.html</a></p>
+<p>【nomoreransom】勒索软件解密工具集</p>
+<p>官网：<a href="https://www.nomoreransom.org/zh/index.html">https://www.nomoreransom.org/zh/index.html</a></p>
+<p>【MalwareHunterTeam】勒索软件解密工具集</p>
+<p>官网：<a href="https://id-ransomware.malwarehunterteam.com/">https://id-ransomware.malwarehunterteam.com</a></p>
+<p>【卡巴斯基】免费勒索解密器</p>
+<p>官网：<a href="https://noransom.kaspersky.com/">https://noransom.kaspersky.com</a></p>
+<p>【Avast】免费勒索软件解密工具</p>
+<p>官网：<a href="https://www.avast.com/zh-cn/ransomware-decryption-tools">https://www.avast.com/zh-cn/ransomware-decryption-tools</a></p>
+<p>【Emsisoft】免费勒索软件解密工具</p>
+<p>官网：<a href="https://www.emsisoft.com/ransomware-decryption-tools/free-download">https://www.emsisoft.com/ransomware-decryption-tools/free-download</a></p>
+<p>【GitHub 项目】勒索病毒解密工具收集汇总</p>
+<p>官网：<a href="https://github.com/jiansiting/Decryption-Tools">https://github.com/jiansiting/Decryption-Tools</a></p>
+]]></content>
   </entry>
   <entry>
     <title>npm更新报错</title>
@@ -753,140 +795,43 @@
       </tags>
   </entry>
   <entry>
-    <title>应急响应知识记录</title>
-    <url>/posts/dbfe99cc.html</url>
-    <content><![CDATA[<p>仅作简单应急响应流程</p>
-<h1 id="确认事件类型"><a href="#确认事件类型" class="headerlink" title="确认事件类型"></a>确认事件类型</h1><h2 id="恶意程序"><a href="#恶意程序" class="headerlink" title="恶意程序"></a>恶意程序</h2><p>计算机病毒、特洛伊木马 、勒索软件、蠕虫病毒、僵尸网络程序、挖矿程序等</p>
-<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><p>拒绝服务攻击、漏洞攻击、网络钓鱼、后门攻击、网络扫描窃听等</p>
-<h2 id="Web攻击"><a href="#Web攻击" class="headerlink" title="Web攻击"></a>Web攻击</h2><p>WebShell、网页挂马、网页篡改、网页暗链、sql注入等</p>
-<h1 id="windows-排查"><a href="#windows-排查" class="headerlink" title="windows 排查"></a>windows 排查</h1><h2 id="账号排查"><a href="#账号排查" class="headerlink" title="账号排查"></a>账号排查</h2><p>查看服务器是否有弱口令，远程管理端口（rdp，ssh，redis，ftp等）是否对公网开放</p>
-<h2 id="隐藏账户排查"><a href="#隐藏账户排查" class="headerlink" title="隐藏账户排查"></a>隐藏账户排查</h2><p>注册表 local_machine，sam，domains，account，users。<br>names记录用户名称<br>若sam无法打开则赋予注册表管理员权限并需要重新启动注册表</p>
-<h2 id="日志排查"><a href="#日志排查" class="headerlink" title="日志排查"></a>日志排查</h2><h3 id="IIS日志排查"><a href="#IIS日志排查" class="headerlink" title="IIS日志排查"></a>IIS日志排查</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">c:\\windows\system32\winevt\logs\</span><br></pre></td></tr></table></figure>
-<p>eventvwr.msc，windows日志，应用程序日志&#x2F;安全日志&#x2F;系统日志。<br>应用程序日志记录应用程序运行过程中的事件和错误信息<br>安全日志4624登录成功，4625登录失败<br>系统日志记录操作系统组件产生的事件，主要包括驱动程序、系统组件和应用软件的崩溃以及数据丢失错误等<br>工具: Log Parser</p>
-<h3 id="web中间件日志排查"><a href="#web中间件日志排查" class="headerlink" title="web中间件日志排查"></a>web中间件日志排查</h3><p>根据中间件查找对应日志<br>apache</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows: Apache安装目录/logslaccess.logerror.logL</span><br><span class="line">Linux:/usr/local/apache/logs/access logerror log</span><br></pre></td></tr></table></figure>
-<p>tomcat</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tomcat安装目录/log/access.log</span><br></pre></td></tr></table></figure>
-<p>nginx</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nginx安装目录/mginx/access.log</span><br></pre></td></tr></table></figure>
-<p>weblogic</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">系统日志: Jboss安装目录/server/default/log下</span><br><span class="line">系统启动日志: boot.log</span><br><span class="line">系统当天日志: server.log</span><br><span class="line">历史日志: server..log.日期</span><br><span class="line">记录jboss访问日志: access_log</span><br></pre></td></tr></table></figure>
-<p>工具: EmEditor</p>
-<h2 id="异常端口进程排查"><a href="#异常端口进程排查" class="headerlink" title="异常端口进程排查"></a>异常端口进程排查</h2><h3 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -ano 查看可疑 ESTABLISHED 连接状态的PID</span><br><span class="line">tasklist | findstr PID 根据可疑进程PID查找进程</span><br></pre></td></tr></table></figure>
-<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>msinfo 查看进程详细信息，进程路径&#x2F;PID&#x2F;创建日期&#x2F;启动时间<br>通过进程查看工具查找可疑子进程<br>没有签名验证信息的进程<br>没有描述信息的进程<br>进程的属主<br>进程的路径是否合法<br>CPU 或内存资源占用长时间过高的进程<br>查杀工具：D盾<br>进程查看工具：process explorer</p>
-<h2 id="启动项-计划任务-服务"><a href="#启动项-计划任务-服务" class="headerlink" title="启动项&#x2F;计划任务&#x2F;服务"></a>启动项&#x2F;计划任务&#x2F;服务</h2><h3 id="启动项"><a href="#启动项" class="headerlink" title="启动项"></a>启动项</h3><p>查看【启动】文件夹<br>msconfig查看启动<br>注册表开机启动项</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br></pre></td></tr></table></figure>
-<h3 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">at win10已弃用</span><br><span class="line">schtasks</span><br></pre></td></tr></table></figure>
-<h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p>service.msc检查是否存在可疑自启动服务</p>
-<h1 id="linux-排查"><a href="#linux-排查" class="headerlink" title="linux 排查"></a>linux 排查</h1><h2 id="账户排查"><a href="#账户排查" class="headerlink" title="账户排查"></a>账户排查</h2><p>who     查看当前登录用户（tty 本地登陆  pts 远程登录）<br>w       查看系统信息，某一时刻用户的行为<br>uptime  查看登陆多久、多少用户，负载状态</p>
-<h3 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h3><p>etc&#x2F;passwd</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">etc/passwd</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">account:password:UID:GID:GECOS:directory:shell</span><br><span class="line">用户名：密码：用户ID：组ID：用户说明：家目录：登陆后的 shell</span><br></pre></td></tr></table></figure>
-<h3 id="密码信息"><a href="#密码信息" class="headerlink" title="密码信息"></a>密码信息</h3><p>etc&#x2F;shadow</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root:$6$oGs1PqhL2p3ZetrE$X7o7bzoouHQVSEmSgsYN5UD4.kMHx6qgbTqwNVC5oOAouXvcjQSt.Ft7ql1WpkopY0UV9ajBwUt1DpYxTCVvI/:16809:0:99999:7:::</span><br><span class="line">用户名：加密密码：密码最后一次修改日期：两次密码的修改时间间隔：密码有效期：密码修改到期到的警告天数：密码过期之后的宽限天数：账号失效时间：保留</span><br></pre></td></tr></table></figure>
-<h2 id="历史命令"><a href="#历史命令" class="headerlink" title="历史命令"></a>历史命令</h2><p>history 命令或 .bash_history 文件查看<br>进入用户目录下导出历史命令<br>cat .bash_history &gt;&gt; history.txt</p>
-<h2 id="异常端口-进程"><a href="#异常端口-进程" class="headerlink" title="异常端口&#x2F;进程"></a>异常端口&#x2F;进程</h2><h3 id="端口-1"><a href="#端口-1" class="headerlink" title="端口"></a>端口</h3><p>查看异常网络连接的PID<br>netstat -antlp</p>
-<h3 id="进程-1"><a href="#进程-1" class="headerlink" title="进程"></a>进程</h3><p>对应进程文件路径<br>ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe<br>分析进程<br>ps aux | grep PID</p>
-<h2 id="开机启动项-定时任务"><a href="#开机启动项-定时任务" class="headerlink" title="开机启动项&#x2F;定时任务"></a>开机启动项&#x2F;定时任务</h2><h3 id="启动项-1"><a href="#启动项-1" class="headerlink" title="启动项"></a>启动项</h3><p>开启启动等级rc*.d<br>默认级别为rc3.d<br>可疑脚本<br>&#x2F;etc&#x2F;init.d<br>软链接<br>&#x2F;etc&#x2F;rc.d&#x2F;rc*.d</p>
-<table>
-<thead>
-<tr>
-<th align="center">运行级别</th>
-<th align="center">含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="center">关机</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="center">单用户模式，可以想象为windows的安全模式，主要用于系统修复</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="center">不完全的命令行模式，不含NFS服务</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="center">完全的命令行模式，就是标准字符界面</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="center">系统保留</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="center">图形模式</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="center">重启动</td>
-</tr>
-</tbody></table>
-<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crontab -l   列出某个用户cron服务的详细内容</span><br><span class="line">Tips：默认编写的crontab文件会保存在 (/var/spool/cron/用户名 例如: /var/spool/cron/rootcrontab -r</span><br><span class="line">删除每个用户cront任务(谨慎：删除所有的计划任务)</span><br><span class="line">crontab -e   使用编辑器编辑当前的crontab文件 </span><br></pre></td></tr></table></figure>
-<h2 id="恶意脚本排查"><a href="#恶意脚本排查" class="headerlink" title="恶意脚本排查"></a>恶意脚本排查</h2><p>more &#x2F;etc&#x2F;cron.d&#x2F;* 查看目录下所有文件<br>&#x2F;var&#x2F;spool&#x2F;cron&#x2F;*<br>&#x2F;etc&#x2F;crontab<br>&#x2F;etc&#x2F;cron.d&#x2F;*<br>&#x2F;etc&#x2F;cron.daily&#x2F;*<br>&#x2F;etc&#x2F;cron.hourly&#x2F;*<br>&#x2F;etc&#x2F;cron.monthly&#x2F;*<br>&#x2F;etc&#x2F;cron.weekly&#x2F;<br>&#x2F;etc&#x2F;anacrontab<br>&#x2F;var&#x2F;spool&#x2F;anacron&#x2F;*</p>
-<h2 id="异常文件"><a href="#异常文件" class="headerlink" title="异常文件"></a>异常文件</h2><p>1、查看敏感目录，注意隐藏文件夹，以“..”为名的文件夹具有隐藏属性，可使用ls -l查看<br>2、查找webshell同一时间范围内创建的文件<br>find &#x2F;opt -iname “*” -atime 1 -type f 找出 &#x2F;opt 下一天前访问过的文件</p>
-<h2 id="日志检查"><a href="#日志检查" class="headerlink" title="日志检查"></a>日志检查</h2><table>
-<thead>
-<tr>
-<th align="center">日志文件</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;cron</td>
-<td align="center">记录了系统定时任务相关的日志</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;cups</td>
-<td align="center">记录打印信息的日志</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;dmesg</td>
-<td align="center">记录了系统在开机时内核自检的信息，也可以使用dmesg命令直接查看内核自检信息</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;mailog</td>
-<td align="center">记录邮件信息</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;message</td>
-<td align="center">记录系统重要信息的日志。这个日志文件中会记录Linux系统的绝大多数重要信息，如果系统出现问题时，首先要检查的就应该是这个日志文件</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;btmp</td>
-<td align="center">记录错误登录日志，这个文件是二进制文件，不能直接vi查看，而要使用lastb命令查看</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;lastlog</td>
-<td align="center">记录系统中所有用户最后一次登录时间的日志，这个文件是二进制文件，不能直接vi，而要使用lastlog命令查看</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;wtmp</td>
-<td align="center">永久记录所有用户的登录、注销信息，同时记录系统的启动、重启、关机事件。同样这个文件也是一个二进制文件，不能直接vi，而需要使用last命令来查看</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;utmp</td>
-<td align="center">记录当前已经登录的用户信息，这个文件会随着用户的登录和注销不断变化，只记录当前登录用户的信息。同样这个文件不能直接vi，而要使用w,who,users等命令来查询</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;secure</td>
-<td align="center">记录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换用户，sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中</td>
-</tr>
-</tbody></table>
-<p>爆破主机的root帐号的IP数量：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password for root&quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
-<p>定位爆破的IP：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|grep -E -o &quot;(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)&quot;|uniq -c</span><br></pre></td></tr></table></figure>
-<p>爆破用户名的字典</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|perl -e &#x27;while($_=&lt;&gt;)&#123; /for(.*?) from/; print &quot;$1\n&quot;;&#125;&#x27;|uniq -c|sort -nr</span><br><span class="line">2、登录成功的IP 	</span><br><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
-<p>登录成功的日期、用户名、IP：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $1,$2,$3,$9,$11&#125;&#x27;</span><br></pre></td></tr></table></figure>]]></content>
+    <title>内网隧道搭建</title>
+    <url>/posts/d57d5540.html</url>
+    <content><![CDATA[<h1 id="网络连通性测试"><a href="#网络连通性测试" class="headerlink" title="网络连通性测试"></a>网络连通性测试</h1><h2 id="icmp探测"><a href="#icmp探测" class="headerlink" title="icmp探测"></a>icmp探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ping 114.114.114.114 -n 1	#Windows</span><br><span class="line">ping 114.114.114.114 -c 1	#Linux</span><br></pre></td></tr></table></figure>
+<h2 id="http探测"><a href="#http探测" class="headerlink" title="http探测"></a>http探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com</span><br></pre></td></tr></table></figure>
+<h2 id="dns探测"><a href="#dns探测" class="headerlink" title="dns探测"></a>dns探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
+<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>服务器可出网<br>反向代理可穿透防火墙<br>cobaltstrike socks代理<br>nps工具</p>
+<h1 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h1><h2 id="windows-netsh-端口转发-双网卡"><a href="#windows-netsh-端口转发-双网卡" class="headerlink" title="windows netsh 端口转发 双网卡"></a>windows netsh 端口转发 双网卡</h2><p>netsh仅支持tcp协议，适用于双网卡服务器<br>启动转发</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看已有规则</span><br><span class="line">netsh interface portproxy show all</span><br><span class="line">添加转发规则 访问外网ip1234端口即访问内网ip端口3389</span><br><span class="line">netsh interface portproxy set v4tov4 listenaddress=外网IP listenport=1234 connectaddress=内网IP connectport=3389 </span><br></pre></td></tr></table></figure>
+<p>取消转发</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">删除转发规则</span><br><span class="line">netsh interface portproxy delete v4tov4 listenport=1234</span><br><span class="line"></span><br><span class="line"># xp需安装ipv4</span><br><span class="line">netsh interface ipv6 install</span><br></pre></td></tr></table></figure>
+<h2 id="linux-iptables-转发-高权限"><a href="#linux-iptables-转发-高权限" class="headerlink" title="linux iptables 转发 高权限"></a>linux iptables 转发 高权限</h2><p>编辑配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开启IP转发</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">	net.ipv4.ip_forward = 1</span><br></pre></td></tr></table></figure>
+<p>关闭服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
+<p>配置规则</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#需要访问的内网地址：10.1.1.11（Windows）</span><br><span class="line">#内网边界web服务器：192.168.100.100（Linux）</span><br><span class="line">iptables -t nat -A PREROUTING --dst 192.168.100.100 -p tcp --dport 3389 -j DNAT--to-destination 10.1.1.11:3389</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING --dst 10.1.1.11 -p tcp --dport 3389 -j SNAT --to-source 192.168.100.100</span><br></pre></td></tr></table></figure>
+<p>保存并重启服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables save &amp;&amp; service iptables start</span><br></pre></td></tr></table></figure>
+<h2 id="neo-regeorg端口复用"><a href="#neo-regeorg端口复用" class="headerlink" title="neo-regeorg端口复用"></a>neo-regeorg端口复用</h2><p>下载</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/L-codes/Neo-reGeorg</span><br></pre></td></tr></table></figure>
+<h1 id="linux-ssh隧道-高权限"><a href="#linux-ssh隧道-高权限" class="headerlink" title="linux ssh隧道 高权限"></a>linux ssh隧道 高权限</h1><h2 id="本地转发-正向"><a href="#本地转发-正向" class="headerlink" title="本地转发 正向"></a>本地转发 正向</h2><p>vps执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -L &lt;VPS监听端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@目标外网Web服务器，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -L 8080:10.1.1.3:3389 root@100.100.1.100</span><br><span class="line"></span><br><span class="line">#VPS上查看8090端口是否已经连接</span><br><span class="line">netstat -tulnp | grep &quot;8090&quot;</span><br><span class="line"></span><br><span class="line">#连接目标内网服务器的远程桌面</span><br><span class="line">VPS-IP:8090</span><br></pre></td></tr></table></figure>
+<h2 id="远程转发-反向"><a href="#远程转发-反向" class="headerlink" title="远程转发 反向"></a>远程转发 反向</h2><p>web服务器执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -R &lt;VPS的端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@VPS-IP，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -R 8090:10.1.1.3:3389 root@192.168.0.1</span><br></pre></td></tr></table></figure>
+<h1 id="icmp加密隧道"><a href="#icmp加密隧道" class="headerlink" title="icmp加密隧道"></a>icmp加密隧道</h1><p>icmp可出网</p>
+<p>linux: icmptunnel<br>服务端安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel/</span><br><span class="line">make</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1	#禁用自带的ICMP，两端都要</span><br><span class="line">./icmptunnel -s 							#服务端以root用户监听</span><br><span class="line">(ctrl-z)									</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.1 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
+<p>客户端连接</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./icmptunnel &lt;server-IP&gt;</span><br><span class="line">(ctrl-z)</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.2 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
+<p>测试ssh连接</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh root@10.0.0.1</span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
-        <category>应急响应</category>
+        <category>Intranet安全</category>
       </categories>
       <tags>
-        <tag>应急响应流程</tag>
+        <tag>内网穿透</tag>
       </tags>
   </entry>
   <entry>
@@ -1033,6 +978,143 @@
       </categories>
       <tags>
         <tag>Packet Capture</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>应急响应知识记录</title>
+    <url>/posts/dbfe99cc.html</url>
+    <content><![CDATA[<p>仅作简单应急响应流程</p>
+<h1 id="确认事件类型"><a href="#确认事件类型" class="headerlink" title="确认事件类型"></a>确认事件类型</h1><h2 id="恶意程序"><a href="#恶意程序" class="headerlink" title="恶意程序"></a>恶意程序</h2><p>计算机病毒、特洛伊木马 、勒索软件、蠕虫病毒、僵尸网络程序、挖矿程序等</p>
+<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><p>拒绝服务攻击、漏洞攻击、网络钓鱼、后门攻击、网络扫描窃听等</p>
+<h2 id="Web攻击"><a href="#Web攻击" class="headerlink" title="Web攻击"></a>Web攻击</h2><p>WebShell、网页挂马、网页篡改、网页暗链、sql注入等</p>
+<h1 id="windows-排查"><a href="#windows-排查" class="headerlink" title="windows 排查"></a>windows 排查</h1><h2 id="账号排查"><a href="#账号排查" class="headerlink" title="账号排查"></a>账号排查</h2><p>查看服务器是否有弱口令，远程管理端口（rdp，ssh，redis，ftp等）是否对公网开放</p>
+<h2 id="隐藏账户排查"><a href="#隐藏账户排查" class="headerlink" title="隐藏账户排查"></a>隐藏账户排查</h2><p>注册表 local_machine，sam，domains，account，users。<br>names记录用户名称<br>若sam无法打开则赋予注册表管理员权限并需要重新启动注册表</p>
+<h2 id="日志排查"><a href="#日志排查" class="headerlink" title="日志排查"></a>日志排查</h2><h3 id="IIS日志排查"><a href="#IIS日志排查" class="headerlink" title="IIS日志排查"></a>IIS日志排查</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">c:\\windows\system32\winevt\logs\</span><br></pre></td></tr></table></figure>
+<p>eventvwr.msc，windows日志，应用程序日志&#x2F;安全日志&#x2F;系统日志。<br>应用程序日志记录应用程序运行过程中的事件和错误信息<br>安全日志4624登录成功，4625登录失败<br>系统日志记录操作系统组件产生的事件，主要包括驱动程序、系统组件和应用软件的崩溃以及数据丢失错误等<br>工具: Log Parser</p>
+<h3 id="web中间件日志排查"><a href="#web中间件日志排查" class="headerlink" title="web中间件日志排查"></a>web中间件日志排查</h3><p>根据中间件查找对应日志<br>apache</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows: Apache安装目录/logslaccess.logerror.logL</span><br><span class="line">Linux:/usr/local/apache/logs/access logerror log</span><br></pre></td></tr></table></figure>
+<p>tomcat</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tomcat安装目录/log/access.log</span><br></pre></td></tr></table></figure>
+<p>nginx</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nginx安装目录/mginx/access.log</span><br></pre></td></tr></table></figure>
+<p>weblogic</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">系统日志: Jboss安装目录/server/default/log下</span><br><span class="line">系统启动日志: boot.log</span><br><span class="line">系统当天日志: server.log</span><br><span class="line">历史日志: server..log.日期</span><br><span class="line">记录jboss访问日志: access_log</span><br></pre></td></tr></table></figure>
+<p>工具: EmEditor</p>
+<h2 id="异常端口进程排查"><a href="#异常端口进程排查" class="headerlink" title="异常端口进程排查"></a>异常端口进程排查</h2><h3 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -ano 查看可疑 ESTABLISHED 连接状态的PID</span><br><span class="line">tasklist | findstr PID 根据可疑进程PID查找进程</span><br></pre></td></tr></table></figure>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>msinfo 查看进程详细信息，进程路径&#x2F;PID&#x2F;创建日期&#x2F;启动时间<br>通过进程查看工具查找可疑子进程<br>没有签名验证信息的进程<br>没有描述信息的进程<br>进程的属主<br>进程的路径是否合法<br>CPU 或内存资源占用长时间过高的进程<br>查杀工具：D盾<br>进程查看工具：process explorer</p>
+<h2 id="启动项-计划任务-服务"><a href="#启动项-计划任务-服务" class="headerlink" title="启动项&#x2F;计划任务&#x2F;服务"></a>启动项&#x2F;计划任务&#x2F;服务</h2><h3 id="启动项"><a href="#启动项" class="headerlink" title="启动项"></a>启动项</h3><p>查看【启动】文件夹<br>msconfig查看启动<br>注册表开机启动项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br></pre></td></tr></table></figure>
+<h3 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">at win10已弃用</span><br><span class="line">schtasks</span><br></pre></td></tr></table></figure>
+<h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p>service.msc检查是否存在可疑自启动服务</p>
+<h1 id="linux-排查"><a href="#linux-排查" class="headerlink" title="linux 排查"></a>linux 排查</h1><h2 id="账户排查"><a href="#账户排查" class="headerlink" title="账户排查"></a>账户排查</h2><p>who     查看当前登录用户（tty 本地登陆  pts 远程登录）<br>w       查看系统信息，某一时刻用户的行为<br>uptime  查看登陆多久、多少用户，负载状态</p>
+<h3 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h3><p>etc&#x2F;passwd</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">etc/passwd</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">account:password:UID:GID:GECOS:directory:shell</span><br><span class="line">用户名：密码：用户ID：组ID：用户说明：家目录：登陆后的 shell</span><br></pre></td></tr></table></figure>
+<h3 id="密码信息"><a href="#密码信息" class="headerlink" title="密码信息"></a>密码信息</h3><p>etc&#x2F;shadow</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root:$6$oGs1PqhL2p3ZetrE$X7o7bzoouHQVSEmSgsYN5UD4.kMHx6qgbTqwNVC5oOAouXvcjQSt.Ft7ql1WpkopY0UV9ajBwUt1DpYxTCVvI/:16809:0:99999:7:::</span><br><span class="line">用户名：加密密码：密码最后一次修改日期：两次密码的修改时间间隔：密码有效期：密码修改到期到的警告天数：密码过期之后的宽限天数：账号失效时间：保留</span><br></pre></td></tr></table></figure>
+<h2 id="历史命令"><a href="#历史命令" class="headerlink" title="历史命令"></a>历史命令</h2><p>history 命令或 .bash_history 文件查看<br>进入用户目录下导出历史命令<br>cat .bash_history &gt;&gt; history.txt</p>
+<h2 id="异常端口-进程"><a href="#异常端口-进程" class="headerlink" title="异常端口&#x2F;进程"></a>异常端口&#x2F;进程</h2><h3 id="端口-1"><a href="#端口-1" class="headerlink" title="端口"></a>端口</h3><p>查看异常网络连接的PID<br>netstat -antlp</p>
+<h3 id="进程-1"><a href="#进程-1" class="headerlink" title="进程"></a>进程</h3><p>对应进程文件路径<br>ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe<br>分析进程<br>ps aux | grep PID</p>
+<h2 id="开机启动项-定时任务"><a href="#开机启动项-定时任务" class="headerlink" title="开机启动项&#x2F;定时任务"></a>开机启动项&#x2F;定时任务</h2><h3 id="启动项-1"><a href="#启动项-1" class="headerlink" title="启动项"></a>启动项</h3><p>开启启动等级rc*.d<br>默认级别为rc3.d<br>可疑脚本<br>&#x2F;etc&#x2F;init.d<br>软链接<br>&#x2F;etc&#x2F;rc.d&#x2F;rc*.d</p>
+<table>
+<thead>
+<tr>
+<th align="center">运行级别</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">关机</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">单用户模式，可以想象为windows的安全模式，主要用于系统修复</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">不完全的命令行模式，不含NFS服务</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">完全的命令行模式，就是标准字符界面</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">系统保留</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">图形模式</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">重启动</td>
+</tr>
+</tbody></table>
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crontab -l   列出某个用户cron服务的详细内容</span><br><span class="line">Tips：默认编写的crontab文件会保存在 (/var/spool/cron/用户名 例如: /var/spool/cron/rootcrontab -r</span><br><span class="line">删除每个用户cront任务(谨慎：删除所有的计划任务)</span><br><span class="line">crontab -e   使用编辑器编辑当前的crontab文件 </span><br></pre></td></tr></table></figure>
+<h2 id="恶意脚本排查"><a href="#恶意脚本排查" class="headerlink" title="恶意脚本排查"></a>恶意脚本排查</h2><p>more &#x2F;etc&#x2F;cron.d&#x2F;* 查看目录下所有文件<br>&#x2F;var&#x2F;spool&#x2F;cron&#x2F;*<br>&#x2F;etc&#x2F;crontab<br>&#x2F;etc&#x2F;cron.d&#x2F;*<br>&#x2F;etc&#x2F;cron.daily&#x2F;*<br>&#x2F;etc&#x2F;cron.hourly&#x2F;*<br>&#x2F;etc&#x2F;cron.monthly&#x2F;*<br>&#x2F;etc&#x2F;cron.weekly&#x2F;<br>&#x2F;etc&#x2F;anacrontab<br>&#x2F;var&#x2F;spool&#x2F;anacron&#x2F;*</p>
+<h2 id="异常文件"><a href="#异常文件" class="headerlink" title="异常文件"></a>异常文件</h2><p>1、查看敏感目录，注意隐藏文件夹，以“..”为名的文件夹具有隐藏属性，可使用ls -l查看<br>2、查找webshell同一时间范围内创建的文件<br>find &#x2F;opt -iname “*” -atime 1 -type f 找出 &#x2F;opt 下一天前访问过的文件</p>
+<h2 id="日志检查"><a href="#日志检查" class="headerlink" title="日志检查"></a>日志检查</h2><table>
+<thead>
+<tr>
+<th align="center">日志文件</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;cron</td>
+<td align="center">记录了系统定时任务相关的日志</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;cups</td>
+<td align="center">记录打印信息的日志</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;dmesg</td>
+<td align="center">记录了系统在开机时内核自检的信息，也可以使用dmesg命令直接查看内核自检信息</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;mailog</td>
+<td align="center">记录邮件信息</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;message</td>
+<td align="center">记录系统重要信息的日志。这个日志文件中会记录Linux系统的绝大多数重要信息，如果系统出现问题时，首先要检查的就应该是这个日志文件</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;btmp</td>
+<td align="center">记录错误登录日志，这个文件是二进制文件，不能直接vi查看，而要使用lastb命令查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;lastlog</td>
+<td align="center">记录系统中所有用户最后一次登录时间的日志，这个文件是二进制文件，不能直接vi，而要使用lastlog命令查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;wtmp</td>
+<td align="center">永久记录所有用户的登录、注销信息，同时记录系统的启动、重启、关机事件。同样这个文件也是一个二进制文件，不能直接vi，而需要使用last命令来查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;utmp</td>
+<td align="center">记录当前已经登录的用户信息，这个文件会随着用户的登录和注销不断变化，只记录当前登录用户的信息。同样这个文件不能直接vi，而要使用w,who,users等命令来查询</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;secure</td>
+<td align="center">记录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换用户，sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中</td>
+</tr>
+</tbody></table>
+<p>爆破主机的root帐号的IP数量：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password for root&quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
+<p>定位爆破的IP：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|grep -E -o &quot;(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)&quot;|uniq -c</span><br></pre></td></tr></table></figure>
+<p>爆破用户名的字典</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|perl -e &#x27;while($_=&lt;&gt;)&#123; /for(.*?) from/; print &quot;$1\n&quot;;&#125;&#x27;|uniq -c|sort -nr</span><br><span class="line">2、登录成功的IP 	</span><br><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
+<p>登录成功的日期、用户名、IP：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $1,$2,$3,$9,$11&#125;&#x27;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>应急响应</category>
+      </categories>
+      <tags>
+        <tag>应急响应流程</tag>
       </tags>
   </entry>
   <entry>
@@ -1369,46 +1451,6 @@ w:Rock-y did-nt like that</div>
       </tags>
   </entry>
   <entry>
-    <title>内网隧道搭建</title>
-    <url>/posts/d57d5540.html</url>
-    <content><![CDATA[<h1 id="网络连通性测试"><a href="#网络连通性测试" class="headerlink" title="网络连通性测试"></a>网络连通性测试</h1><h2 id="icmp探测"><a href="#icmp探测" class="headerlink" title="icmp探测"></a>icmp探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ping 114.114.114.114 -n 1	#Windows</span><br><span class="line">ping 114.114.114.114 -c 1	#Linux</span><br></pre></td></tr></table></figure>
-<h2 id="http探测"><a href="#http探测" class="headerlink" title="http探测"></a>http探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com</span><br></pre></td></tr></table></figure>
-<h2 id="dns探测"><a href="#dns探测" class="headerlink" title="dns探测"></a>dns探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
-<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>服务器可出网<br>反向代理可穿透防火墙<br>cobaltstrike socks代理<br>nps工具</p>
-<h1 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h1><h2 id="windows-netsh-端口转发-双网卡"><a href="#windows-netsh-端口转发-双网卡" class="headerlink" title="windows netsh 端口转发 双网卡"></a>windows netsh 端口转发 双网卡</h2><p>netsh仅支持tcp协议，适用于双网卡服务器<br>启动转发</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看已有规则</span><br><span class="line">netsh interface portproxy show all</span><br><span class="line">添加转发规则 访问外网ip1234端口即访问内网ip端口3389</span><br><span class="line">netsh interface portproxy set v4tov4 listenaddress=外网IP listenport=1234 connectaddress=内网IP connectport=3389 </span><br></pre></td></tr></table></figure>
-<p>取消转发</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">删除转发规则</span><br><span class="line">netsh interface portproxy delete v4tov4 listenport=1234</span><br><span class="line"></span><br><span class="line"># xp需安装ipv4</span><br><span class="line">netsh interface ipv6 install</span><br></pre></td></tr></table></figure>
-<h2 id="linux-iptables-转发-高权限"><a href="#linux-iptables-转发-高权限" class="headerlink" title="linux iptables 转发 高权限"></a>linux iptables 转发 高权限</h2><p>编辑配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开启IP转发</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">	net.ipv4.ip_forward = 1</span><br></pre></td></tr></table></figure>
-<p>关闭服务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
-<p>配置规则</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#需要访问的内网地址：10.1.1.11（Windows）</span><br><span class="line">#内网边界web服务器：192.168.100.100（Linux）</span><br><span class="line">iptables -t nat -A PREROUTING --dst 192.168.100.100 -p tcp --dport 3389 -j DNAT--to-destination 10.1.1.11:3389</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING --dst 10.1.1.11 -p tcp --dport 3389 -j SNAT --to-source 192.168.100.100</span><br></pre></td></tr></table></figure>
-<p>保存并重启服务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables save &amp;&amp; service iptables start</span><br></pre></td></tr></table></figure>
-<h2 id="neo-regeorg端口复用"><a href="#neo-regeorg端口复用" class="headerlink" title="neo-regeorg端口复用"></a>neo-regeorg端口复用</h2><p>下载</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/L-codes/Neo-reGeorg</span><br></pre></td></tr></table></figure>
-<h1 id="linux-ssh隧道-高权限"><a href="#linux-ssh隧道-高权限" class="headerlink" title="linux ssh隧道 高权限"></a>linux ssh隧道 高权限</h1><h2 id="本地转发-正向"><a href="#本地转发-正向" class="headerlink" title="本地转发 正向"></a>本地转发 正向</h2><p>vps执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -L &lt;VPS监听端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@目标外网Web服务器，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -L 8080:10.1.1.3:3389 root@100.100.1.100</span><br><span class="line"></span><br><span class="line">#VPS上查看8090端口是否已经连接</span><br><span class="line">netstat -tulnp | grep &quot;8090&quot;</span><br><span class="line"></span><br><span class="line">#连接目标内网服务器的远程桌面</span><br><span class="line">VPS-IP:8090</span><br></pre></td></tr></table></figure>
-<h2 id="远程转发-反向"><a href="#远程转发-反向" class="headerlink" title="远程转发 反向"></a>远程转发 反向</h2><p>web服务器执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -R &lt;VPS的端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@VPS-IP，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -R 8090:10.1.1.3:3389 root@192.168.0.1</span><br></pre></td></tr></table></figure>
-<h1 id="icmp加密隧道"><a href="#icmp加密隧道" class="headerlink" title="icmp加密隧道"></a>icmp加密隧道</h1><p>icmp可出网</p>
-<p>linux: icmptunnel<br>服务端安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel/</span><br><span class="line">make</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1	#禁用自带的ICMP，两端都要</span><br><span class="line">./icmptunnel -s 							#服务端以root用户监听</span><br><span class="line">(ctrl-z)									</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.1 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
-<p>客户端连接</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./icmptunnel &lt;server-IP&gt;</span><br><span class="line">(ctrl-z)</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.2 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
-<p>测试ssh连接</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh root@10.0.0.1</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Intranet安全</category>
-      </categories>
-      <tags>
-        <tag>内网穿透</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>浏览器加载流程</title>
     <url>/posts/1c025fc.html</url>
     <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
@@ -1460,6 +1502,26 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>溯源</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解析漏洞知识记录</title>
+    <url>/posts/64ae55e3.html</url>
+    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
+<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
+<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
+<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
+<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
+<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
+<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
+<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
+<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
+<p>将所有名字里含shell的文件识别为php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>让.jpg后缀名文件以php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>解析漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -1541,26 +1603,6 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>邮件服务器搭建</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解析漏洞知识记录</title>
-    <url>/posts/64ae55e3.html</url>
-    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
-<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
-<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
-<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
-<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
-<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
-<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
-<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
-<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
-<p>将所有名字里含shell的文件识别为php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
-<p>让.jpg后缀名文件以php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>解析漏洞</tag>
       </tags>
   </entry>
 </search>
