@@ -13,79 +13,6 @@
       </tags>
   </entry>
   <entry>
-    <title>linux下doker搭建crapi靶场渗透练习</title>
-    <url>/posts/ad05d80f.html</url>
-    <content><![CDATA[<h1 id="api测试小技巧"><a href="#api测试小技巧" class="headerlink" title="api测试小技巧"></a>api测试小技巧</h1><p>靶场内多个思路可从该文章内参考<br>摘: <a href="https://github.com/inonshk/31-days-of-API-Security-Tips">https://github.com/inonshk/31-days-of-API-Security-Tips</a><br>中文: <a href="https://cloud.tencent.com/developer/article/1805577">https://cloud.tencent.com/developer/article/1805577</a></p>
-<h1 id="docker-compose搭建crapi"><a href="#docker-compose搭建crapi" class="headerlink" title="docker-compose搭建crapi"></a>docker-compose搭建crapi</h1><p>crapi项目: <a href="https://github.com/OWASP/crAPI">https://github.com/OWASP/crAPI</a><br>前提：拥有docker及docker-compose组件</p>
-<h1 id="linux环境部署"><a href="#linux环境部署" class="headerlink" title="linux环境部署"></a>linux环境部署</h1><p>由于本次靶场练习环境为虚拟机linux使用docker容器部署crapi，使用windows通过IP+port访问web环境，需对下载yml文件进行修改:<br>(若命令下载yml文件失败可主机下载后粘贴到linux下)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">编辑文件</span><br><span class="line">vim docker-compose.yml</span><br><span class="line"></span><br><span class="line">替换IP</span><br><span class="line">:1,250 s/127.0.0.1/192.168.80.129(your-ip)/g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">1,250 s/192.168.80.129/192.168.2.8/g</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>若替换成功，则容器访问web的ip映射为:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali/workspace/crapi/crAPI-1.1.5]</span><br><span class="line">└─# docker ps                               </span><br><span class="line">CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS                      PORTS                                                       NAMES</span><br><span class="line">34d024bd3e3c   crapi/crapi-web:latest         &quot;/bin/sh -c /etc/ngi…&quot;   48 minutes ago   Up 48 minutes (healthy)     192.168.80.129:8888-&gt;80/tcp, 192.168.80.129:8443-&gt;443/tcp   crapi-web</span><br></pre></td></tr></table></figure>
-
-<p>最新稳定版本:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">docker-compose pull</span><br><span class="line"></span><br><span class="line">docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
-<p>最新开发版本:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/develop/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose pull</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
-<h1 id="web站点结构梳理"><a href="#web站点结构梳理" class="headerlink" title="web站点结构梳理"></a>web站点结构梳理</h1><p>通过设置bp代理，手工浏览网页，target会自动记录站点信息<br><img src="/img/crapi/targetscan.png"></p>
-<h1 id="api结构"><a href="#api结构" class="headerlink" title="api结构"></a>api结构</h1><p>根据对web站点的结构梳理，存在以下api:</p>
-<h2 id="community交流板块"><a href="#community交流板块" class="headerlink" title="community交流板块"></a>community交流板块</h2><h3 id="community界面"><a href="#community界面" class="headerlink" title="community界面"></a>community界面</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">community单个帖子</span><br><span class="line">/community/api/v2/community/posts/5y2b9gX7gFHhYeJxQ4STXN</span><br><span class="line"></span><br><span class="line">community板块下所有帖子</span><br><span class="line">/community/api/v2/community/posts/recent?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
-<h3 id="coupon优惠券验证"><a href="#coupon优惠券验证" class="headerlink" title="coupon优惠券验证"></a>coupon优惠券验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">优惠券验证(响应请求方法失败)</span><br><span class="line">/community/api/v2/coupon/validate-coupon</span><br></pre></td></tr></table></figure>
-<h2 id="identify身份认证功能"><a href="#identify身份认证功能" class="headerlink" title="identify身份认证功能"></a>identify身份认证功能</h2><h3 id="auth登录、注册、忘记密码"><a href="#auth登录、注册、忘记密码" class="headerlink" title="auth登录、注册、忘记密码"></a>auth登录、注册、忘记密码</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">forget-password忘记密码功能</span><br><span class="line">/identity/api/auth/forget-password</span><br><span class="line"></span><br><span class="line">login登录功能</span><br><span class="line">/identity/api/auth/login</span><br><span class="line"></span><br><span class="line">signup注册功能</span><br><span class="line">/identity/api/auth/signup</span><br></pre></td></tr></table></figure>
-<h3 id="v3-otp验证"><a href="#v3-otp验证" class="headerlink" title="v3-otp验证"></a>v3-otp验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">otp验证功能</span><br><span class="line">/identity/api/auth/v3/check-otp</span><br></pre></td></tr></table></figure>
-<h2 id="v2用户与车辆接口"><a href="#v2用户与车辆接口" class="headerlink" title="v2用户与车辆接口"></a>v2用户与车辆接口</h2><h3 id="user"><a href="#user" class="headerlink" title="user"></a>user</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人用户修改邮箱功能</span><br><span class="line">/identity/api/v2/user/change-email</span><br><span class="line"></span><br><span class="line">个人用户仪表板界面</span><br><span class="line">/identity/api/v2/user/dashboard</span><br><span class="line"></span><br><span class="line">个人头像上传功能</span><br><span class="line">/identity/api/v2/user/pictures</span><br><span class="line"></span><br><span class="line">个人用户密码重置功能</span><br><span class="line">/identity/api/v2/user/reset-password</span><br><span class="line"></span><br><span class="line">个人邮箱重置校验功能</span><br><span class="line">/identity/api/v2/user/verify-email-token</span><br><span class="line"></span><br><span class="line">个人视频上传功能</span><br><span class="line">/identity/api/v2/user/videos</span><br><span class="line"></span><br><span class="line">个人视频名称修改</span><br><span class="line">/identity/api/v2/user/videos/52</span><br><span class="line"></span><br><span class="line">个人视频更换</span><br><span class="line">/identity/api/v2/user/videos/convert_video</span><br></pre></td></tr></table></figure>
-<h3 id="vehicle"><a href="#vehicle" class="headerlink" title="vehicle"></a>vehicle</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人车辆添加功能</span><br><span class="line">/identity/api/v2/vehicle/add_vehicle</span><br><span class="line"></span><br><span class="line">车辆经纬度位置</span><br><span class="line">/identity/api/v2/vehicle/f597527e-a9d9-4c04-a6c6-5a6a82f1905e/location</span><br><span class="line"></span><br><span class="line">购买车辆验证码发送邮箱</span><br><span class="line">/identity/api/v2/vehicle/resend_email</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="workshop"><a href="#workshop" class="headerlink" title="workshop"></a>workshop</h2><h3 id="mechanic"><a href="#mechanic" class="headerlink" title="mechanic"></a>mechanic</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/mechanic/mechanic_report?report_id=11</span><br></pre></td></tr></table></figure>
-<h3 id="merchant"><a href="#merchant" class="headerlink" title="merchant"></a>merchant</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/merchant/contact_mechanic</span><br></pre></td></tr></table></figure>
-<h3 id="shop"><a href="#shop" class="headerlink" title="shop"></a>shop</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">订单购买</span><br><span class="line">/workshop/api/shop/orders</span><br><span class="line"></span><br><span class="line">总订单序号</span><br><span class="line">/workshop/api/shop/orders/16</span><br><span class="line"></span><br><span class="line">个人订单页</span><br><span class="line">/workshop/api/shop/orders/all?limit=30&amp;offset=0</span><br><span class="line"></span><br><span class="line">订单取消</span><br><span class="line">/workshop/api/shop/orders/return_order</span><br><span class="line"></span><br><span class="line">产品页</span><br><span class="line">/workshop/api/shop/products?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
-
-<h1 id="失效的对象级别授权"><a href="#失效的对象级别授权" class="headerlink" title="失效的对象级别授权"></a>失效的对象级别授权</h1><p>Broken Object Level Authorization，它可以使API 端点不必要地公开很多数据属性，超过了该端点发挥其功能所需的数量，进而导致忽视最低权限原则<br>此漏洞会在无意中为攻击者提供过多的数据，然后攻击者会利用这些数据找到更多漏洞或 挖掘敏感数据</p>
-<h2 id="1-其他用户车辆信息"><a href="#1-其他用户车辆信息" class="headerlink" title="1.其他用户车辆信息"></a>1.其他用户车辆信息</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br>页面显示内容仅有头像、title、上传人名、内容、上传时间<br><img src="/img/crapi/bolaweb.png"><br>抓包显示包含额外的信息如email、vehicle id<br><img src="/img/crapi/bolabp.png"><br>存在接口识别vehicle id定位车辆经纬度的功能<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;vehicle&#x2F;your-vehicle_id&#x2F;location<br>页面功能点位置<br><img src="/img/crapi/locationweb.png"><br>通过修改vehicle id为其他用户的值，可查看其他用户的车辆详细信息<br><img src="/img/crapi/locationbp.png"></p>
-<h2 id="2-其他用户的问题报告"><a href="#2-其他用户的问题报告" class="headerlink" title="2.其他用户的问题报告"></a>2.其他用户的问题报告</h2><p>页面功能点位置，需填写联系的机械师，及报告内容<br><img src="/img/crapi/reportweb.png"><br>可发现vin、报告接收接口及发送次数，拦截该请求并抓返回包<br><img src="/img/crapi/reportbp.png"><br>可发现返回包发现新的接口及报告序号<br><img src="/img/crapi/reportback.png"><br>直接访问其他报告确实authentication，出现缺失JWT认证<br>:<a href="http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1">http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1</a><br><img src="/img/crapi/otherreporterror.png"></p>
-<p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
-<h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
-<h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#x6f;&#x67;&#98;&#97;&#48;&#48;&#54;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#112;&#x6f;&#x67;&#98;&#97;&#48;&#48;&#54;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
-<p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
-<h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
-<h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
-<h2 id="5-视频内部属性api接口"><a href="#5-视频内部属性api接口" class="headerlink" title="5.视频内部属性api接口"></a>5.视频内部属性api接口</h2><p>已知关于视频的api接口<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;id值(抓包内的id)<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;convert_video<br>(其内包含 conversion_params”:”-v codec h264 似乎可以管道符命令注入，不过网上资料过少，待以后补充)<br><img src="/img/crapi/uploadvideobp.png"><br>md文档提示可利用泄露的视频api接口利用其他漏洞，尝试越权访问，修改第二个接口上传PUT改为GET并爆破id值失败，无法爆破其他人的视频数据，返回值与当前authentication绑定</p>
-<h1 id="资源缺乏和速率限制"><a href="#资源缺乏和速率限制" class="headerlink" title="资源缺乏和速率限制"></a>资源缺乏和速率限制</h1><p>Lack of Resources &amp; Rate Limiting<br>速率限制是计算机系统中使用的一种技术，用于控制允许请求或操作的速率。它通常用于防止滥用、保护资源和维护系统稳定性。<br>速率限制可以应用于各种环境中，例如API速率限制、登录尝试，甚至可以用于防御DDoS攻击。</p>
-<h2 id="6-使用-“contact-mechanic”-功能完成第7层DoS"><a href="#6-使用-“contact-mechanic”-功能完成第7层DoS" class="headerlink" title="6.使用 “contact mechanic” 功能完成第7层DoS"></a>6.使用 “contact mechanic” 功能完成第7层DoS</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">发现一个limit / page参数?(例如:/api/news?limit=100)它可能容易受到7层DoS的攻击。尝试发送一个长值(例如:limit=999999999)，看看会发生什么</span><br></pre></td></tr></table></figure>
-<p>在接口处 &#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic 发现 repeat_request_if_failed 和 number_of_repeats<br><img src="/img/crapi/repeatsbp.png"><br>repeat_request_if_failed值改为true，如果发送失败则再次发送，number_of_repeats值增加，再次发送<br>显示: 服务不可用。似乎是您造成了第7层DoS<br><img src="/img/crapi/ddos.png"></p>
-<p>除此之外在商品显示界面的limit值修改增加也出现了server error不知道算不算ddos<br><img src="/img/crapi/ddoserror.png"></p>
-<h1 id="失效的功能级别授权"><a href="#失效的功能级别授权" class="headerlink" title="失效的功能级别授权"></a>失效的功能级别授权</h1><p>Broken Function Level Authorization<br>功能级别授权中断(BFLA)是一种安全漏洞，当应用程序或系统没有在功能或功能级别正确实施访问控制时会发生。它允许用户执行他们不应该有权限使用的操作或访问功能。</p>
-<h2 id="7-删除其他用户视频"><a href="#7-删除其他用户视频" class="headerlink" title="7.删除其他用户视频"></a>7.删除其他用户视频</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">1.利用REST的可预测特性来查找管理API endpoints!比如你看到一个api叫做GET /api/v1/users/&lt;id&gt;，我们可以试着修改请求方法POST/DELETE来create/delete users.</span><br><span class="line">2.</span><br></pre></td></tr></table></figure>
-<p>测试三个video接口，修改http请求为delete，发现接口&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;修改后提示非admin用户，猜测将user修改为admin<br><img src="/img/crapi/deletevideobp1.png"><br>删除成功(若页面显示仍存在视频，可以清空缓存或换浏览器访问)<br><img src="/img/crapi/deletevideobp2.png"><br>目前只删除了个人用户的视频，分析接口后跟随一个数值，猜测该值为所有视频的id值，将包放入intruder模块为id添加payload爆破，删除成功<br><img src="/img/crapi/deleteothervideobp.png"></p>
-<h1 id="批量分配-大量赋值"><a href="#批量分配-大量赋值" class="headerlink" title="批量分配&#x2F;大量赋值"></a>批量分配&#x2F;大量赋值</h1><p>Mass Assignment<br>大规模赋值是一种安全漏洞，当攻击者可以操纵输入数据来修改对象的属性时，就会出现这种漏洞，这通常会导致系统中发生未经授权的更改。<br>当开发人员没有正确地验证和清理用户输入或未能限制对象中哪些属性可以修改时，就会发生这种情况。</p>
-<h2 id="8-免费获得物品"><a href="#8-免费获得物品" class="headerlink" title="8.免费获得物品"></a>8.免费获得物品</h2><p>初始Available Balance为100.选择购买一件商品，值减少为90，若退货成功则值回到100<br>查看所有商品页面的接口，找到status状态存在两种状态，delivered、return pending。交付完毕和等待退货，猜测还有个退货成功的状态<br><img src="/img/crapi/orderstatus.png"><br>点击一个已购买的商品详情，修改请求为PUT，添加参数status值为return尝试将商品状态改为退货状态，显示status值只有’delivered’,’return pending’ or ‘returned’<br><img src="/img/crapi/orderreturnedbp1.png"><br>重新添加参数值为returned，退款成功<br>(货拿到了钱退回来了美滋滋~)<br><img src="/img/crapi/orderreturnedbp2.png"></p>
-<h2 id="9-余额增加"><a href="#9-余额增加" class="headerlink" title="9.余额增加"></a>9.余额增加</h2><p>余额增加的洞目前找到了两种，一种类似上述的免费获得物品，通过修改购买数量再修改status值获得退款余额，就不水了，另一种是通过修改购买接口的数量为负数:<br><img src="/img/crapi/moneyaddbp.png"></p>
-<h2 id="10-更新视频内部属性"><a href="#10-更新视频内部属性" class="headerlink" title="10.更新视频内部属性"></a>10.更新视频内部属性</h2><p>在之前视频属性内部api接口挑战中存在conversation_params参数，值为 -v codec h264，翻找资料似乎为FFmpeg的命令格式：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-v codec h264：这是用于指定视频编码的选项。</span><br><span class="line">-v 是视频编码的缩写（等价于 -c:v），用于表明后续设置应用于视频流。</span><br><span class="line">codec 表示要指定的编解码器。</span><br><span class="line">h264 是视频编码的格式，这种编码常用于网络流媒体和视频压缩，具有良好的压缩效率和兼容性。</span><br><span class="line">涉及的技术和知识</span><br><span class="line">视频编码和解码：H.264 是一种视频压缩标准，广泛应用于视频流媒体、视频存储和传输中。了解 H.264 编码格式、编码效率、视频质量和带宽需求等，是视频处理领域的基础知识。</span><br><span class="line">FFmpeg 命令行工具：FFmpeg 提供了丰富的命令选项，可用于各种视频和音频格式的转换与处理。了解 FFmpeg 命令的基础格式（如输入文件、输出文件、编码选项等）可以帮助进行视频处理的自动化。</span><br><span class="line">视频格式与容器：在视频编码的过程中，不仅涉及编码格式，还涉及容器（如 MP4、MKV 等）。不同的容器对视频流和音频流的兼容性也各不相同。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在linux内ffmpeg命令(转换视频编码为 H.264)格式</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 2.mp4</span><br><span class="line"></span><br><span class="line">尝试构造命令执行可成功</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 || whoami || 3.mp4</span><br><span class="line">...省略一堆内容...</span><br><span class="line">At least one output file must be specified</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
-<p>暂时不做深度利用了，单纯修改视频内部属性:(最近爆了一个ffmpeg堆溢出洞有兴趣的可以取康康CVE-2024-7272)<br><img src="/img/crapi/changevideo.png"></p>
-<h1 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h1><h2 id="11-crapi发送http至baidu-com并成功返回http响应"><a href="#11-crapi发送http至baidu-com并成功返回http响应" class="headerlink" title="11.crapi发送http至baidu.com并成功返回http响应"></a>11.crapi发送http至baidu.com并成功返回http响应</h2><p>ssrf常出现在向其他服务器请求获取数据的位置，crapi靶场在发送问题报告的接口&#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic<br>mechanic_api参数存在向url地址请求数据，修改为给<a href="https://www.baidu.com/">https://www.baidu.com</a><br><img src="/img/crapi/ssrf.png"></p>
-<h1 id="nosql注入"><a href="#nosql注入" class="headerlink" title="nosql注入"></a>nosql注入</h1><h2 id="12-免费获得优惠券而不知道优惠券代码"><a href="#12-免费获得优惠券而不知道优惠券代码" class="headerlink" title="12.免费获得优惠券而不知道优惠券代码"></a>12.免费获得优惠券而不知道优惠券代码</h2><p>题目提示为nosql注入，优惠券相关接口:<br>&#x2F;community&#x2F;api&#x2F;v2&#x2F;coupon&#x2F;validate-coupon<br>猜测数据库构造的语句:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#x27;优惠券值&#x27;&#125;)</span><br></pre></td></tr></table></figure>
-<p>对该查询语句的绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;coupon_code&quot;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;</span><br></pre></td></tr></table></figure>
-<p>写入后查询语句为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;)</span><br></pre></td></tr></table></figure>
-<p>相当于SQL注入的:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM coupon WHERE coupon_code &lt;&gt; &#x27;1&#x27;;</span><br></pre></td></tr></table></figure>
-<p><img src="/img/crapi/nosqlinject.png"></p>
-<h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><h2 id="13-找到一种方法来兑换您已经通过修改数据库领取的优惠券"><a href="#13-找到一种方法来兑换您已经通过修改数据库领取的优惠券" class="headerlink" title="13.找到一种方法来兑换您已经通过修改数据库领取的优惠券"></a>13.找到一种方法来兑换您已经通过修改数据库领取的优惠券</h2><p><img src="/img/crapi/applycode.png"><br>题目提示sql注入，对coupon_code输入其他值显示不存在<br><img src="/img/crapi/sqlinjecterror.png"><br>sql注入成功(但显示这张券已被使用，似乎兑换券只有一张？？)<br><img src="/img/crapi/sqlinject.png"></p>
-<h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><h2 id="14-不为用户执行身份验证的api接口"><a href="#14-不为用户执行身份验证的api接口" class="headerlink" title="14.不为用户执行身份验证的api接口"></a>14.不为用户执行身份验证的api接口</h2><p>不需要cookies或authentication即可访问的页面<br><img src="/img/crapi/unauthentic.png"></p>
-<h1 id="JWT漏洞"><a href="#JWT漏洞" class="headerlink" title="JWT漏洞"></a>JWT漏洞</h1><h2 id="15-jwt令牌绕过"><a href="#15-jwt令牌绕过" class="headerlink" title="15.jwt令牌绕过"></a>15.jwt令牌绕过</h2><p>将jwt验证alg值改为none<br><img src="/img/crapi/jwt1.png"><br>将authentication的signature删除<br><img src="/img/crapi/jwt2.png"></p>
-<h1 id="注"><a href="#注" class="headerlink" title="注:"></a>注:</h1><p>使用clash&amp;switchomega+google+burpsuite时。<br>虚拟机linux使用docker部署crapi，本机google通过ip+端口访问crapi-web。<br>出现：<br>switch需使用全局proxy，即配置的clash端口7890代理<br>然后对特定的ip+端口设置为burp代理</p>
-<p>这才能实现crapi车辆定位功能<br>无论是bp使用上游代理还是switch只配置clash的proxy都无法实现车辆定位功能页面的访问</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>API安全</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>anaconda使用</title>
     <url>/posts/a5f86784.html</url>
     <content><![CDATA[<h1 id="创建新的环境"><a href="#创建新的环境" class="headerlink" title="创建新的环境"></a>创建新的环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create --name myenv</span><br></pre></td></tr></table></figure>
@@ -127,6 +54,79 @@
       </tags>
   </entry>
   <entry>
+    <title>linux下doker搭建crapi靶场渗透练习</title>
+    <url>/posts/ad05d80f.html</url>
+    <content><![CDATA[<h1 id="api测试小技巧"><a href="#api测试小技巧" class="headerlink" title="api测试小技巧"></a>api测试小技巧</h1><p>靶场内多个思路可从该文章内参考<br>摘: <a href="https://github.com/inonshk/31-days-of-API-Security-Tips">https://github.com/inonshk/31-days-of-API-Security-Tips</a><br>中文: <a href="https://cloud.tencent.com/developer/article/1805577">https://cloud.tencent.com/developer/article/1805577</a></p>
+<h1 id="docker-compose搭建crapi"><a href="#docker-compose搭建crapi" class="headerlink" title="docker-compose搭建crapi"></a>docker-compose搭建crapi</h1><p>crapi项目: <a href="https://github.com/OWASP/crAPI">https://github.com/OWASP/crAPI</a><br>前提：拥有docker及docker-compose组件</p>
+<h1 id="linux环境部署"><a href="#linux环境部署" class="headerlink" title="linux环境部署"></a>linux环境部署</h1><p>由于本次靶场练习环境为虚拟机linux使用docker容器部署crapi，使用windows通过IP+port访问web环境，需对下载yml文件进行修改:<br>(若命令下载yml文件失败可主机下载后粘贴到linux下)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">编辑文件</span><br><span class="line">vim docker-compose.yml</span><br><span class="line"></span><br><span class="line">替换IP</span><br><span class="line">:1,250 s/127.0.0.1/192.168.80.129(your-ip)/g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">1,250 s/192.168.80.129/192.168.2.8/g</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>若替换成功，则容器访问web的ip映射为:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali/workspace/crapi/crAPI-1.1.5]</span><br><span class="line">└─# docker ps                               </span><br><span class="line">CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS                      PORTS                                                       NAMES</span><br><span class="line">34d024bd3e3c   crapi/crapi-web:latest         &quot;/bin/sh -c /etc/ngi…&quot;   48 minutes ago   Up 48 minutes (healthy)     192.168.80.129:8888-&gt;80/tcp, 192.168.80.129:8443-&gt;443/tcp   crapi-web</span><br></pre></td></tr></table></figure>
+
+<p>最新稳定版本:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">docker-compose pull</span><br><span class="line"></span><br><span class="line">docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
+<p>最新开发版本:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/develop/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose pull</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
+<h1 id="web站点结构梳理"><a href="#web站点结构梳理" class="headerlink" title="web站点结构梳理"></a>web站点结构梳理</h1><p>通过设置bp代理，手工浏览网页，target会自动记录站点信息<br><img src="/img/crapi/targetscan.png"></p>
+<h1 id="api结构"><a href="#api结构" class="headerlink" title="api结构"></a>api结构</h1><p>根据对web站点的结构梳理，存在以下api:</p>
+<h2 id="community交流板块"><a href="#community交流板块" class="headerlink" title="community交流板块"></a>community交流板块</h2><h3 id="community界面"><a href="#community界面" class="headerlink" title="community界面"></a>community界面</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">community单个帖子</span><br><span class="line">/community/api/v2/community/posts/5y2b9gX7gFHhYeJxQ4STXN</span><br><span class="line"></span><br><span class="line">community板块下所有帖子</span><br><span class="line">/community/api/v2/community/posts/recent?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
+<h3 id="coupon优惠券验证"><a href="#coupon优惠券验证" class="headerlink" title="coupon优惠券验证"></a>coupon优惠券验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">优惠券验证(响应请求方法失败)</span><br><span class="line">/community/api/v2/coupon/validate-coupon</span><br></pre></td></tr></table></figure>
+<h2 id="identify身份认证功能"><a href="#identify身份认证功能" class="headerlink" title="identify身份认证功能"></a>identify身份认证功能</h2><h3 id="auth登录、注册、忘记密码"><a href="#auth登录、注册、忘记密码" class="headerlink" title="auth登录、注册、忘记密码"></a>auth登录、注册、忘记密码</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">forget-password忘记密码功能</span><br><span class="line">/identity/api/auth/forget-password</span><br><span class="line"></span><br><span class="line">login登录功能</span><br><span class="line">/identity/api/auth/login</span><br><span class="line"></span><br><span class="line">signup注册功能</span><br><span class="line">/identity/api/auth/signup</span><br></pre></td></tr></table></figure>
+<h3 id="v3-otp验证"><a href="#v3-otp验证" class="headerlink" title="v3-otp验证"></a>v3-otp验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">otp验证功能</span><br><span class="line">/identity/api/auth/v3/check-otp</span><br></pre></td></tr></table></figure>
+<h2 id="v2用户与车辆接口"><a href="#v2用户与车辆接口" class="headerlink" title="v2用户与车辆接口"></a>v2用户与车辆接口</h2><h3 id="user"><a href="#user" class="headerlink" title="user"></a>user</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人用户修改邮箱功能</span><br><span class="line">/identity/api/v2/user/change-email</span><br><span class="line"></span><br><span class="line">个人用户仪表板界面</span><br><span class="line">/identity/api/v2/user/dashboard</span><br><span class="line"></span><br><span class="line">个人头像上传功能</span><br><span class="line">/identity/api/v2/user/pictures</span><br><span class="line"></span><br><span class="line">个人用户密码重置功能</span><br><span class="line">/identity/api/v2/user/reset-password</span><br><span class="line"></span><br><span class="line">个人邮箱重置校验功能</span><br><span class="line">/identity/api/v2/user/verify-email-token</span><br><span class="line"></span><br><span class="line">个人视频上传功能</span><br><span class="line">/identity/api/v2/user/videos</span><br><span class="line"></span><br><span class="line">个人视频名称修改</span><br><span class="line">/identity/api/v2/user/videos/52</span><br><span class="line"></span><br><span class="line">个人视频更换</span><br><span class="line">/identity/api/v2/user/videos/convert_video</span><br></pre></td></tr></table></figure>
+<h3 id="vehicle"><a href="#vehicle" class="headerlink" title="vehicle"></a>vehicle</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人车辆添加功能</span><br><span class="line">/identity/api/v2/vehicle/add_vehicle</span><br><span class="line"></span><br><span class="line">车辆经纬度位置</span><br><span class="line">/identity/api/v2/vehicle/f597527e-a9d9-4c04-a6c6-5a6a82f1905e/location</span><br><span class="line"></span><br><span class="line">购买车辆验证码发送邮箱</span><br><span class="line">/identity/api/v2/vehicle/resend_email</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="workshop"><a href="#workshop" class="headerlink" title="workshop"></a>workshop</h2><h3 id="mechanic"><a href="#mechanic" class="headerlink" title="mechanic"></a>mechanic</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/mechanic/mechanic_report?report_id=11</span><br></pre></td></tr></table></figure>
+<h3 id="merchant"><a href="#merchant" class="headerlink" title="merchant"></a>merchant</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/merchant/contact_mechanic</span><br></pre></td></tr></table></figure>
+<h3 id="shop"><a href="#shop" class="headerlink" title="shop"></a>shop</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">订单购买</span><br><span class="line">/workshop/api/shop/orders</span><br><span class="line"></span><br><span class="line">总订单序号</span><br><span class="line">/workshop/api/shop/orders/16</span><br><span class="line"></span><br><span class="line">个人订单页</span><br><span class="line">/workshop/api/shop/orders/all?limit=30&amp;offset=0</span><br><span class="line"></span><br><span class="line">订单取消</span><br><span class="line">/workshop/api/shop/orders/return_order</span><br><span class="line"></span><br><span class="line">产品页</span><br><span class="line">/workshop/api/shop/products?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
+
+<h1 id="失效的对象级别授权"><a href="#失效的对象级别授权" class="headerlink" title="失效的对象级别授权"></a>失效的对象级别授权</h1><p>Broken Object Level Authorization，它可以使API 端点不必要地公开很多数据属性，超过了该端点发挥其功能所需的数量，进而导致忽视最低权限原则<br>此漏洞会在无意中为攻击者提供过多的数据，然后攻击者会利用这些数据找到更多漏洞或 挖掘敏感数据</p>
+<h2 id="1-其他用户车辆信息"><a href="#1-其他用户车辆信息" class="headerlink" title="1.其他用户车辆信息"></a>1.其他用户车辆信息</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br>页面显示内容仅有头像、title、上传人名、内容、上传时间<br><img src="/img/crapi/bolaweb.png"><br>抓包显示包含额外的信息如email、vehicle id<br><img src="/img/crapi/bolabp.png"><br>存在接口识别vehicle id定位车辆经纬度的功能<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;vehicle&#x2F;your-vehicle_id&#x2F;location<br>页面功能点位置<br><img src="/img/crapi/locationweb.png"><br>通过修改vehicle id为其他用户的值，可查看其他用户的车辆详细信息<br><img src="/img/crapi/locationbp.png"></p>
+<h2 id="2-其他用户的问题报告"><a href="#2-其他用户的问题报告" class="headerlink" title="2.其他用户的问题报告"></a>2.其他用户的问题报告</h2><p>页面功能点位置，需填写联系的机械师，及报告内容<br><img src="/img/crapi/reportweb.png"><br>可发现vin、报告接收接口及发送次数，拦截该请求并抓返回包<br><img src="/img/crapi/reportbp.png"><br>可发现返回包发现新的接口及报告序号<br><img src="/img/crapi/reportback.png"><br>直接访问其他报告确实authentication，出现缺失JWT认证<br>:<a href="http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1">http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1</a><br><img src="/img/crapi/otherreporterror.png"></p>
+<p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
+<h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
+<h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#x6f;&#x67;&#98;&#97;&#48;&#x30;&#x36;&#x40;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#109;">&#112;&#x6f;&#x67;&#98;&#97;&#48;&#x30;&#x36;&#x40;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#109;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
+<h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
+<h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
+<h2 id="5-视频内部属性api接口"><a href="#5-视频内部属性api接口" class="headerlink" title="5.视频内部属性api接口"></a>5.视频内部属性api接口</h2><p>已知关于视频的api接口<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;id值(抓包内的id)<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;convert_video<br>(其内包含 conversion_params”:”-v codec h264 似乎可以管道符命令注入，不过网上资料过少，待以后补充)<br><img src="/img/crapi/uploadvideobp.png"><br>md文档提示可利用泄露的视频api接口利用其他漏洞，尝试越权访问，修改第二个接口上传PUT改为GET并爆破id值失败，无法爆破其他人的视频数据，返回值与当前authentication绑定</p>
+<h1 id="资源缺乏和速率限制"><a href="#资源缺乏和速率限制" class="headerlink" title="资源缺乏和速率限制"></a>资源缺乏和速率限制</h1><p>Lack of Resources &amp; Rate Limiting<br>速率限制是计算机系统中使用的一种技术，用于控制允许请求或操作的速率。它通常用于防止滥用、保护资源和维护系统稳定性。<br>速率限制可以应用于各种环境中，例如API速率限制、登录尝试，甚至可以用于防御DDoS攻击。</p>
+<h2 id="6-使用-“contact-mechanic”-功能完成第7层DoS"><a href="#6-使用-“contact-mechanic”-功能完成第7层DoS" class="headerlink" title="6.使用 “contact mechanic” 功能完成第7层DoS"></a>6.使用 “contact mechanic” 功能完成第7层DoS</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">发现一个limit / page参数?(例如:/api/news?limit=100)它可能容易受到7层DoS的攻击。尝试发送一个长值(例如:limit=999999999)，看看会发生什么</span><br></pre></td></tr></table></figure>
+<p>在接口处 &#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic 发现 repeat_request_if_failed 和 number_of_repeats<br><img src="/img/crapi/repeatsbp.png"><br>repeat_request_if_failed值改为true，如果发送失败则再次发送，number_of_repeats值增加，再次发送<br>显示: 服务不可用。似乎是您造成了第7层DoS<br><img src="/img/crapi/ddos.png"></p>
+<p>除此之外在商品显示界面的limit值修改增加也出现了server error不知道算不算ddos<br><img src="/img/crapi/ddoserror.png"></p>
+<h1 id="失效的功能级别授权"><a href="#失效的功能级别授权" class="headerlink" title="失效的功能级别授权"></a>失效的功能级别授权</h1><p>Broken Function Level Authorization<br>功能级别授权中断(BFLA)是一种安全漏洞，当应用程序或系统没有在功能或功能级别正确实施访问控制时会发生。它允许用户执行他们不应该有权限使用的操作或访问功能。</p>
+<h2 id="7-删除其他用户视频"><a href="#7-删除其他用户视频" class="headerlink" title="7.删除其他用户视频"></a>7.删除其他用户视频</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">1.利用REST的可预测特性来查找管理API endpoints!比如你看到一个api叫做GET /api/v1/users/&lt;id&gt;，我们可以试着修改请求方法POST/DELETE来create/delete users.</span><br><span class="line">2.</span><br></pre></td></tr></table></figure>
+<p>测试三个video接口，修改http请求为delete，发现接口&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;修改后提示非admin用户，猜测将user修改为admin<br><img src="/img/crapi/deletevideobp1.png"><br>删除成功(若页面显示仍存在视频，可以清空缓存或换浏览器访问)<br><img src="/img/crapi/deletevideobp2.png"><br>目前只删除了个人用户的视频，分析接口后跟随一个数值，猜测该值为所有视频的id值，将包放入intruder模块为id添加payload爆破，删除成功<br><img src="/img/crapi/deleteothervideobp.png"></p>
+<h1 id="批量分配-大量赋值"><a href="#批量分配-大量赋值" class="headerlink" title="批量分配&#x2F;大量赋值"></a>批量分配&#x2F;大量赋值</h1><p>Mass Assignment<br>大规模赋值是一种安全漏洞，当攻击者可以操纵输入数据来修改对象的属性时，就会出现这种漏洞，这通常会导致系统中发生未经授权的更改。<br>当开发人员没有正确地验证和清理用户输入或未能限制对象中哪些属性可以修改时，就会发生这种情况。</p>
+<h2 id="8-免费获得物品"><a href="#8-免费获得物品" class="headerlink" title="8.免费获得物品"></a>8.免费获得物品</h2><p>初始Available Balance为100.选择购买一件商品，值减少为90，若退货成功则值回到100<br>查看所有商品页面的接口，找到status状态存在两种状态，delivered、return pending。交付完毕和等待退货，猜测还有个退货成功的状态<br><img src="/img/crapi/orderstatus.png"><br>点击一个已购买的商品详情，修改请求为PUT，添加参数status值为return尝试将商品状态改为退货状态，显示status值只有’delivered’,’return pending’ or ‘returned’<br><img src="/img/crapi/orderreturnedbp1.png"><br>重新添加参数值为returned，退款成功<br>(货拿到了钱退回来了美滋滋~)<br><img src="/img/crapi/orderreturnedbp2.png"></p>
+<h2 id="9-余额增加"><a href="#9-余额增加" class="headerlink" title="9.余额增加"></a>9.余额增加</h2><p>余额增加的洞目前找到了两种，一种类似上述的免费获得物品，通过修改购买数量再修改status值获得退款余额，就不水了，另一种是通过修改购买接口的数量为负数:<br><img src="/img/crapi/moneyaddbp.png"></p>
+<h2 id="10-更新视频内部属性"><a href="#10-更新视频内部属性" class="headerlink" title="10.更新视频内部属性"></a>10.更新视频内部属性</h2><p>在之前视频属性内部api接口挑战中存在conversation_params参数，值为 -v codec h264，翻找资料似乎为FFmpeg的命令格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-v codec h264：这是用于指定视频编码的选项。</span><br><span class="line">-v 是视频编码的缩写（等价于 -c:v），用于表明后续设置应用于视频流。</span><br><span class="line">codec 表示要指定的编解码器。</span><br><span class="line">h264 是视频编码的格式，这种编码常用于网络流媒体和视频压缩，具有良好的压缩效率和兼容性。</span><br><span class="line">涉及的技术和知识</span><br><span class="line">视频编码和解码：H.264 是一种视频压缩标准，广泛应用于视频流媒体、视频存储和传输中。了解 H.264 编码格式、编码效率、视频质量和带宽需求等，是视频处理领域的基础知识。</span><br><span class="line">FFmpeg 命令行工具：FFmpeg 提供了丰富的命令选项，可用于各种视频和音频格式的转换与处理。了解 FFmpeg 命令的基础格式（如输入文件、输出文件、编码选项等）可以帮助进行视频处理的自动化。</span><br><span class="line">视频格式与容器：在视频编码的过程中，不仅涉及编码格式，还涉及容器（如 MP4、MKV 等）。不同的容器对视频流和音频流的兼容性也各不相同。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在linux内ffmpeg命令(转换视频编码为 H.264)格式</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 2.mp4</span><br><span class="line"></span><br><span class="line">尝试构造命令执行可成功</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 || whoami || 3.mp4</span><br><span class="line">...省略一堆内容...</span><br><span class="line">At least one output file must be specified</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+<p>暂时不做深度利用了，单纯修改视频内部属性:(最近爆了一个ffmpeg堆溢出洞有兴趣的可以取康康CVE-2024-7272)<br><img src="/img/crapi/changevideo.png"></p>
+<h1 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h1><h2 id="11-crapi发送http至baidu-com并成功返回http响应"><a href="#11-crapi发送http至baidu-com并成功返回http响应" class="headerlink" title="11.crapi发送http至baidu.com并成功返回http响应"></a>11.crapi发送http至baidu.com并成功返回http响应</h2><p>ssrf常出现在向其他服务器请求获取数据的位置，crapi靶场在发送问题报告的接口&#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic<br>mechanic_api参数存在向url地址请求数据，修改为给<a href="https://www.baidu.com/">https://www.baidu.com</a><br><img src="/img/crapi/ssrf.png"></p>
+<h1 id="nosql注入"><a href="#nosql注入" class="headerlink" title="nosql注入"></a>nosql注入</h1><h2 id="12-免费获得优惠券而不知道优惠券代码"><a href="#12-免费获得优惠券而不知道优惠券代码" class="headerlink" title="12.免费获得优惠券而不知道优惠券代码"></a>12.免费获得优惠券而不知道优惠券代码</h2><p>题目提示为nosql注入，优惠券相关接口:<br>&#x2F;community&#x2F;api&#x2F;v2&#x2F;coupon&#x2F;validate-coupon<br>猜测数据库构造的语句:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#x27;优惠券值&#x27;&#125;)</span><br></pre></td></tr></table></figure>
+<p>对该查询语句的绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;coupon_code&quot;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;</span><br></pre></td></tr></table></figure>
+<p>写入后查询语句为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;)</span><br></pre></td></tr></table></figure>
+<p>相当于SQL注入的:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM coupon WHERE coupon_code &lt;&gt; &#x27;1&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img src="/img/crapi/nosqlinject.png"></p>
+<h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><h2 id="13-找到一种方法来兑换您已经通过修改数据库领取的优惠券"><a href="#13-找到一种方法来兑换您已经通过修改数据库领取的优惠券" class="headerlink" title="13.找到一种方法来兑换您已经通过修改数据库领取的优惠券"></a>13.找到一种方法来兑换您已经通过修改数据库领取的优惠券</h2><p><img src="/img/crapi/applycode.png"><br>题目提示sql注入，对coupon_code输入其他值显示不存在<br><img src="/img/crapi/sqlinjecterror.png"><br>sql注入成功(但显示这张券已被使用，似乎兑换券只有一张？？)<br><img src="/img/crapi/sqlinject.png"></p>
+<h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><h2 id="14-不为用户执行身份验证的api接口"><a href="#14-不为用户执行身份验证的api接口" class="headerlink" title="14.不为用户执行身份验证的api接口"></a>14.不为用户执行身份验证的api接口</h2><p>不需要cookies或authentication即可访问的页面<br><img src="/img/crapi/unauthentic.png"></p>
+<h1 id="JWT漏洞"><a href="#JWT漏洞" class="headerlink" title="JWT漏洞"></a>JWT漏洞</h1><h2 id="15-jwt令牌绕过"><a href="#15-jwt令牌绕过" class="headerlink" title="15.jwt令牌绕过"></a>15.jwt令牌绕过</h2><p>将jwt验证alg值改为none<br><img src="/img/crapi/jwt1.png"><br>将authentication的signature删除<br><img src="/img/crapi/jwt2.png"></p>
+<h1 id="注"><a href="#注" class="headerlink" title="注:"></a>注:</h1><p>使用clash&amp;switchomega+google+burpsuite时。<br>虚拟机linux使用docker部署crapi，本机google通过ip+端口访问crapi-web。<br>出现：<br>switch需使用全局proxy，即配置的clash端口7890代理<br>然后对特定的ip+端口设置为burp代理</p>
+<p>这才能实现crapi车辆定位功能<br>无论是bp使用上游代理还是switch只配置clash的proxy都无法实现车辆定位功能页面的访问</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>API安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>容器服务启动失败</title>
     <url>/posts/5746187b.html</url>
     <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
@@ -137,6 +137,35 @@
       </categories>
       <tags>
         <tag>docker报错</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本站hexo魔改</title>
+    <url>/posts/ab21860c.html</url>
+    <content><![CDATA[<h1 id="自定义文件"><a href="#自定义文件" class="headerlink" title="自定义文件"></a>自定义文件</h1><p>网上大部分魔改是通过修改主题文件，虽然快速直接，但是遇到主题更新会重置，因此博客通过添加自定义css和js文件实现的魔改即使主题更新也会保留。<br>创建的文件位置:<br>博客根目录下的source文件夹(不是themes下的source)创建js和css。<br><img src="/img/modify/touchjscss.png"></p>
+<h2 id="引入文件位置"><a href="#引入文件位置" class="headerlink" title="引入文件位置"></a>引入文件位置</h2><p><a href="https://blog.leonus.cn/2022/custom.html">https://blog.leonus.cn/2022/custom.html</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">inject:</span></span><br><span class="line">  <span class="attr">head:</span></span><br><span class="line">  <span class="comment"># 自定义css</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/loading.css?1&quot;&gt;</span></span><br><span class="line">      <span class="comment"># 静态文件后加个 ?任意内容 可以在每次更新后用户自动重新请求</span></span><br><span class="line">      <span class="comment"># 例如添加 ?1 ,在修改此文件后改成 ?2 ,用户访问你的网站时,不会使用本地的缓存,而是请求新的内容。没修改的话就不用动。</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/transparency.css&quot;&gt;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/social_iconfont.css&quot;&gt;</span></span><br><span class="line">    <span class="comment"># - &lt;link rel=&quot;stylesheet&quot; href=&quot;/xxx.css&quot;&gt;</span></span><br><span class="line">  <span class="attr">bottom:</span></span><br><span class="line">  <span class="comment"># 自定义js</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;script</span> <span class="string">async</span> <span class="string">src=&quot;/js/title_change.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#引入多个文件就直接复制一行更改文件名即可</span></span><br><span class="line">    <span class="comment"># - &lt;script src=&quot;/js/文件名&quot;&gt;&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="加载动画"><a href="#加载动画" class="headerlink" title="加载动画"></a>加载动画</h1><h2 id="loading动画步骤"><a href="#loading动画步骤" class="headerlink" title="loading动画步骤"></a>loading动画步骤</h2><p>满屏与 pace 同时启用<br><a href="https://blog.anheyu.com/posts/52d8.html">https://blog.anheyu.com/posts/52d8.html</a><br>修改加载动画。(script(async)使用异步加载防止加载其他页面时阻塞该脚本的加载;settimeout设置定时器防止过长的动画加载时间)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/fullpage-loading.pug</span><br></pre></td></tr></table></figure>
+<p>根据配置选项theme.preloader.source的值来选择加载动画的不同实现</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/index.pug</span><br></pre></td></tr></table></figure>
+<p>定义了一个名为 .pace 的加载动画样式实现页面加载时的进度条效果，若启用此css需将配置文件_config.butterfly.yml的pace_css_url值留空</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/progress_bar.css</span><br></pre></td></tr></table></figure>
+<p>定义加载动画样式，其中颜色代码–anzhiyu-card-bg等需自行替换为自己的色值</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/source/css/_layout/loading.styl</span><br></pre></td></tr></table></figure>
+<p>新增文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/loading.css</span><br></pre></td></tr></table></figure>
+<p>修改主题配置文件_config.butterfly.yml的preloader项</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Loading Animation</span></span><br><span class="line"><span class="attr">preloader:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># source</span></span><br><span class="line">  <span class="comment"># 1. fullpage-loading</span></span><br><span class="line">  <span class="comment"># 2. pace (progress bar)</span></span><br><span class="line">  <span class="comment"># 3. all</span></span><br><span class="line">  <span class="attr">source:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># pace theme (see https://codebyzach.github.io/pace/)</span></span><br><span class="line">  <span class="attr">pace_css_url:</span> <span class="string">/css/progress_bar.css</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="comment"># 自定义头像</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h1><p><a href="https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/">https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/</a></p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo魔改</tag>
       </tags>
   </entry>
   <entry>
@@ -192,59 +221,12 @@
       </tags>
   </entry>
   <entry>
-    <title>js文件能找到什么</title>
-    <url>/posts/397418bf.html</url>
-    <content><![CDATA[<h1 id="js文件可以找到"><a href="#js文件可以找到" class="headerlink" title="js文件可以找到?"></a>js文件可以找到?</h1><p>会增加攻击面的信息（URL，域名等）</p>
-<p>敏感信息（密码，API密钥，bucket等）</p>
-<p>代码中的潜在危险函数操作（eval，dangerallySetInnerHTML等）</p>
-<p>具有已知漏洞的组件（过时的框架等）</p>
-<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><p>识别并收集应用程序中的JavaScript文件</p>
-<p>使收集的JavaScript代码可读（取消最小化&#x2F;反混淆）</p>
-<p>识别可能导致安全问题的信息（找敏感词）</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>JS逆向</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>本站hexo魔改</title>
-    <url>/posts/ab21860c.html</url>
-    <content><![CDATA[<h1 id="自定义文件"><a href="#自定义文件" class="headerlink" title="自定义文件"></a>自定义文件</h1><p>网上大部分魔改是通过修改主题文件，虽然快速直接，但是遇到主题更新会重置，因此博客通过添加自定义css和js文件实现的魔改即使主题更新也会保留。<br>创建的文件位置:<br>博客根目录下的source文件夹(不是themes下的source)创建js和css。<br><img src="/img/modify/touchjscss.png"></p>
-<h2 id="引入文件位置"><a href="#引入文件位置" class="headerlink" title="引入文件位置"></a>引入文件位置</h2><p><a href="https://blog.leonus.cn/2022/custom.html">https://blog.leonus.cn/2022/custom.html</a></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">inject:</span></span><br><span class="line">  <span class="attr">head:</span></span><br><span class="line">  <span class="comment"># 自定义css</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/loading.css?1&quot;&gt;</span></span><br><span class="line">      <span class="comment"># 静态文件后加个 ?任意内容 可以在每次更新后用户自动重新请求</span></span><br><span class="line">      <span class="comment"># 例如添加 ?1 ,在修改此文件后改成 ?2 ,用户访问你的网站时,不会使用本地的缓存,而是请求新的内容。没修改的话就不用动。</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/transparency.css&quot;&gt;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/social_iconfont.css&quot;&gt;</span></span><br><span class="line">    <span class="comment"># - &lt;link rel=&quot;stylesheet&quot; href=&quot;/xxx.css&quot;&gt;</span></span><br><span class="line">  <span class="attr">bottom:</span></span><br><span class="line">  <span class="comment"># 自定义js</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;script</span> <span class="string">async</span> <span class="string">src=&quot;/js/title_change.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#引入多个文件就直接复制一行更改文件名即可</span></span><br><span class="line">    <span class="comment"># - &lt;script src=&quot;/js/文件名&quot;&gt;&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="加载动画"><a href="#加载动画" class="headerlink" title="加载动画"></a>加载动画</h1><h2 id="loading动画步骤"><a href="#loading动画步骤" class="headerlink" title="loading动画步骤"></a>loading动画步骤</h2><p>满屏与 pace 同时启用<br><a href="https://blog.anheyu.com/posts/52d8.html">https://blog.anheyu.com/posts/52d8.html</a><br>修改加载动画。(script(async)使用异步加载防止加载其他页面时阻塞该脚本的加载;settimeout设置定时器防止过长的动画加载时间)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/fullpage-loading.pug</span><br></pre></td></tr></table></figure>
-<p>根据配置选项theme.preloader.source的值来选择加载动画的不同实现</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/index.pug</span><br></pre></td></tr></table></figure>
-<p>定义了一个名为 .pace 的加载动画样式实现页面加载时的进度条效果，若启用此css需将配置文件_config.butterfly.yml的pace_css_url值留空</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/progress_bar.css</span><br></pre></td></tr></table></figure>
-<p>定义加载动画样式，其中颜色代码–anzhiyu-card-bg等需自行替换为自己的色值</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/source/css/_layout/loading.styl</span><br></pre></td></tr></table></figure>
-<p>新增文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/loading.css</span><br></pre></td></tr></table></figure>
-<p>修改主题配置文件_config.butterfly.yml的preloader项</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Loading Animation</span></span><br><span class="line"><span class="attr">preloader:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># source</span></span><br><span class="line">  <span class="comment"># 1. fullpage-loading</span></span><br><span class="line">  <span class="comment"># 2. pace (progress bar)</span></span><br><span class="line">  <span class="comment"># 3. all</span></span><br><span class="line">  <span class="attr">source:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># pace theme (see https://codebyzach.github.io/pace/)</span></span><br><span class="line">  <span class="attr">pace_css_url:</span> <span class="string">/css/progress_bar.css</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="comment"># 自定义头像</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h1><p><a href="https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/">https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/</a></p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
-      <categories>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo魔改</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Portswigger-JWT-LAB-1</title>
-    <url>/posts/962f5710.html</url>
-    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
+    <title>Portswigger-JWT-LAB-2</title>
+    <url>/posts/a7e55bdc.html</url>
+    <content><![CDATA[<h1 id="通过有缺陷的签名验证绕过JWT身份验证"><a href="#通过有缺陷的签名验证绕过JWT身份验证" class="headerlink" title="通过有缺陷的签名验证绕过JWT身份验证"></a>通过有缺陷的签名验证绕过JWT身份验证</h1><p>服务器被不安全地配置为接受未签名的JWT，即通过修改alg为none并删除签名即可绕过</p>
 <h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
 <h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>思路还是一样，使用jwt令牌修改为admin进入admin界面，但需要对alg值修改为none，并删除签名部分<br><img src="/img/jwt/jwt2/jwt.png"><br>删除用户同理</p>
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -254,12 +236,26 @@
       </tags>
   </entry>
   <entry>
-    <title>Portswigger-JWT-LAB-2</title>
-    <url>/posts/a7e55bdc.html</url>
-    <content><![CDATA[<h1 id="通过有缺陷的签名验证绕过JWT身份验证"><a href="#通过有缺陷的签名验证绕过JWT身份验证" class="headerlink" title="通过有缺陷的签名验证绕过JWT身份验证"></a>通过有缺陷的签名验证绕过JWT身份验证</h1><p>服务器被不安全地配置为接受未签名的JWT，即通过修改alg为none并删除签名即可绕过</p>
+    <title>Portswigger-JWT-LAB-3</title>
+    <url>/posts/d0e26b4a.html</url>
+    <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
 <h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
 <h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>思路还是一样，使用jwt令牌修改为admin进入admin界面，但需要对alg值修改为none，并删除签名部分<br><img src="/img/jwt/jwt2/jwt.png"><br>删除用户同理</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1>]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Portswigger-JWT-LAB-1</title>
+    <url>/posts/962f5710.html</url>
+    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -439,17 +435,35 @@
       </tags>
   </entry>
   <entry>
-    <title>Portswigger-JWT-LAB-3</title>
-    <url>/posts/d0e26b4a.html</url>
-    <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
-<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
-<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1>]]></content>
+    <title>npm更新报错</title>
+    <url>/posts/63beea23.html</url>
+    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
+<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;npm install -g npm</span><br><span class="line">npm ERR! code EBADENGINE</span><br><span class="line">npm ERR! engine Unsupported engine</span><br><span class="line">npm ERR! engine Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Required: &#123;&quot;node&quot;:&quot;^18.17.0 || &gt;=20.5.0&quot;&#125;</span><br><span class="line">npm ERR! notsup Actual:   &#123;&quot;npm&quot;:&quot;8.1.2&quot;,&quot;node&quot;:&quot;v16.13.1&quot;&#125;</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\Daiyamondo\AppData\Local\npm-cache\_logs\2024-10-24T06_31_00_310Z-debug.log</span><br></pre></td></tr></table></figure>
+<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;,npm install --force -g npm</span><br><span class="line">npm WARN using --force Recommended protections disabled.</span><br><span class="line">npm WARN install Forcing global npm install with incompatible version 10.9.0 into node v16.13.1</span><br><span class="line"></span><br><span class="line">added 3 packages in 5s</span><br><span class="line"></span><br><span class="line">3 packages are looking for funding</span><br><span class="line">  run `npm fund` for details</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>npm报错</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js文件能找到什么</title>
+    <url>/posts/397418bf.html</url>
+    <content><![CDATA[<h1 id="js文件可以找到"><a href="#js文件可以找到" class="headerlink" title="js文件可以找到?"></a>js文件可以找到?</h1><p>会增加攻击面的信息（URL，域名等）</p>
+<p>敏感信息（密码，API密钥，bucket等）</p>
+<p>代码中的潜在危险函数操作（eval，dangerallySetInnerHTML等）</p>
+<p>具有已知漏洞的组件（过时的框架等）</p>
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><p>识别并收集应用程序中的JavaScript文件</p>
+<p>使收集的JavaScript代码可读（取消最小化&#x2F;反混淆）</p>
+<p>识别可能导致安全问题的信息（找敏感词）</p>
+]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>JWT Vulnerabilitiy</tag>
+        <tag>JS逆向</tag>
       </tags>
   </entry>
   <entry>
@@ -484,20 +498,6 @@
       </categories>
       <tags>
         <tag>pyenv</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>npm更新报错</title>
-    <url>/posts/63beea23.html</url>
-    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
-<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;npm install -g npm</span><br><span class="line">npm ERR! code EBADENGINE</span><br><span class="line">npm ERR! engine Unsupported engine</span><br><span class="line">npm ERR! engine Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Required: &#123;&quot;node&quot;:&quot;^18.17.0 || &gt;=20.5.0&quot;&#125;</span><br><span class="line">npm ERR! notsup Actual:   &#123;&quot;npm&quot;:&quot;8.1.2&quot;,&quot;node&quot;:&quot;v16.13.1&quot;&#125;</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\Daiyamondo\AppData\Local\npm-cache\_logs\2024-10-24T06_31_00_310Z-debug.log</span><br></pre></td></tr></table></figure>
-<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;,npm install --force -g npm</span><br><span class="line">npm WARN using --force Recommended protections disabled.</span><br><span class="line">npm WARN install Forcing global npm install with incompatible version 10.9.0 into node v16.13.1</span><br><span class="line"></span><br><span class="line">added 3 packages in 5s</span><br><span class="line"></span><br><span class="line">3 packages are looking for funding</span><br><span class="line">  run `npm fund` for details</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>npm报错</tag>
       </tags>
   </entry>
   <entry>
@@ -659,6 +659,18 @@
       </tags>
   </entry>
   <entry>
+    <title>sqli-labs靶场练习</title>
+    <url>/posts/d642dfa0.html</url>
+    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>sql-inject</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>shiro反序列化漏洞(CVE-2016-4437)复现</title>
     <url>/posts/79c4731b.html</url>
     <content><![CDATA[<p>摘:<a href="https://blog.csdn.net/dreamthe/article/details/124390531">https://blog.csdn.net/dreamthe/article/details/124390531</a></p>
@@ -682,18 +694,6 @@
       </categories>
       <tags>
         <tag>shiro反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sqli-labs靶场练习</title>
-    <url>/posts/d642dfa0.html</url>
-    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>sql-inject</tag>
       </tags>
   </entry>
   <entry>
@@ -1220,58 +1220,6 @@
       </tags>
   </entry>
   <entry>
-    <title>fiddler everywhere联动burpsuite抓取模拟器流量包</title>
-    <url>/posts/67df5e74.html</url>
-    <content><![CDATA[<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>fiddler everywhere 5.10<br>burpsuite professional v2024.3.1<br>mumu模拟器12</p>
-<h1 id="fiddler-配置"><a href="#fiddler-配置" class="headerlink" title="fiddler 配置"></a>fiddler 配置</h1><h2 id="开启https抓包"><a href="#开启https抓包" class="headerlink" title="开启https抓包"></a>开启https抓包</h2><p>进入fiddler主页的右上角设置-&gt;HTTPS-&gt;信任CA证书-&gt;勾选捕获https流量和忽略服务器证书错误<br><img src="/img/postimg/simulatorcatche/https.png"></p>
-<h2 id="fiddler-代理端口设置"><a href="#fiddler-代理端口设置" class="headerlink" title="fiddler 代理端口设置"></a>fiddler 代理端口设置</h2><p>设置监听端口8848，启用http&#x2F;2支持；若启用允许远程计算设备连接，其他外设可以通过代理到这台设备以ip+port的方式进行抓包。<br><img src="/img/postimg/simulatorcatche/fiddlerportproxy.png"></p>
-<h2 id="fiddler配置端口转发至burpsuite"><a href="#fiddler配置端口转发至burpsuite" class="headerlink" title="fiddler配置端口转发至burpsuite"></a>fiddler配置端口转发至burpsuite</h2><p>设置-&gt;gateway-&gt;设置burpsuite监听的端口和ip<br><img src="/img/postimg/simulatorcatche/gateway.png"></p>
-<h2 id="（非必须）导出证书至桌面"><a href="#（非必须）导出证书至桌面" class="headerlink" title="（非必须）导出证书至桌面"></a>（非必须）导出证书至桌面</h2><p>此步骤可忽略，若浏览器需要证书可进行该步骤并于浏览器内导入<br>高级设置-&gt;导出证书至桌面<br><img src="/img/postimg/simulatorcatche/exportfiddlerca.png"></p>
-<h1 id="模拟器配置"><a href="#模拟器配置" class="headerlink" title="模拟器配置"></a>模拟器配置</h1><h2 id="查看本机ip"><a href="#查看本机ip" class="headerlink" title="查看本机ip"></a>查看本机ip</h2><p>win+R 输入 cmd后确定，在终端输入 ipconfig<br><img src="/img/postimg/simulatorcatche/ipconfig.png"></p>
-<h2 id="模拟器配置代理-ip-port"><a href="#模拟器配置代理-ip-port" class="headerlink" title="模拟器配置代理 ip + port"></a>模拟器配置代理 ip + port</h2><p>模拟器下拉，长按网络进入网络设置，点击网络，并于右上角配置<br><img src="/img/postimg/simulatorcatche/simulatorproxy.png"></p>
-<h2 id="模拟器下载并安装证书"><a href="#模拟器下载并安装证书" class="headerlink" title="模拟器下载并安装证书"></a>模拟器下载并安装证书</h2><p>模拟器内的浏览器访问ip+port并下载证书<br><img src="/img/postimg/simulatorcatche/downloadca.png"><br>网络设置-&gt;网络偏好设置-&gt;安装证书<br><img src="/img/postimg/simulatorcatche/importca.png"></p>
-<h1 id="burpsuite配置"><a href="#burpsuite配置" class="headerlink" title="burpsuite配置"></a>burpsuite配置</h1><p>打开bp代理设置<br><img src="/img/postimg/simulatorcatche/bpproxy.png"><br>添加监听ip和port<br><img src="/img/postimg/simulatorcatche/bpaddipport.png"></p>
-<h1 id="fiddler开启代理，bp流量监听"><a href="#fiddler开启代理，bp流量监听" class="headerlink" title="fiddler开启代理，bp流量监听"></a>fiddler开启代理，bp流量监听</h1><p>开启fiddler代理，并找到live traffic<br><img src="/img/postimg/simulatorcatche/proxyenable.png"><br>关闭系统代理（system proxy）防止本地流量影响模拟器抓包<br><img src="/img/postimg/simulatorcatche/globalproxy.png"></p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>Packet Capture</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浏览器加载流程</title>
-    <url>/posts/1c025fc.html</url>
-    <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
-<h1 id="用户输入"><a href="#用户输入" class="headerlink" title="用户输入"></a>用户输入</h1><p>用户访问URL: <a href="https://example.com/index/about?query=1">https://example.com/index/about?query=1</a></p>
-<h1 id="浏览器解析"><a href="#浏览器解析" class="headerlink" title="浏览器解析"></a>浏览器解析</h1><p>提取访问URL的协议(https),域名(example.com),路径(&#x2F;index&#x2F;about)和查询参数(query)</p>
-<h1 id="检查缓存"><a href="#检查缓存" class="headerlink" title="检查缓存"></a>检查缓存</h1><p>检查本地缓存是否有该域名的ip地址,如果有则使用缓存的ip地址</p>
-<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h1><h2 id="什么是DNS缓存"><a href="#什么是DNS缓存" class="headerlink" title="什么是DNS缓存"></a>什么是DNS缓存</h2><p>在域名系统 (DNS) 中，缓存是在操作系统、浏览器、设备或网络中临时存储 DNS 记录的过程<br>DNS 记录用于将人类可读的域名(例如,example.com)转换为计算机和设备可以理解的对应 IP 地址，例如 2001:db8:3e8:2a3::b63<br>通过在本地存储 DNS 信息,DNS 缓存使域名能够更快地被转换或”解析”，同时可以减少网络流量</p>
-<h2 id="DNS缓存顺序"><a href="#DNS缓存顺序" class="headerlink" title="DNS缓存顺序"></a>DNS缓存顺序</h2><p>浏览器缓存:浏览器检查缓存是否有该域名ip地址<br>操作系统缓存:如若浏览器没有,浏览器向操作系统查询<br>本地dns服务器:操作系统缓存没有,则向配置的本地dns服务器发送查询请求<br>递归查询:本地 DNS 服务器会递归查询其他 DNS 服务器，直到找到该域名对应的 IP 地址<br>返回结果:DNS 服务器将结果返回给操作系统，再由操作系统返回给浏览器</p>
-<h1 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h1><h2 id="三次握手-TCP连接"><a href="#三次握手-TCP连接" class="headerlink" title="三次握手(TCP连接)"></a>三次握手(TCP连接)</h2><p>SYN:客户端发送至服务端请求连接<br>SYN-ACK:服务端收到回复确认表示同意连接<br>ACK:客户端确认回复并建立连接</p>
-<h2 id="TLS-SSL握手-HTTPS"><a href="#TLS-SSL握手-HTTPS" class="headerlink" title="TLS&#x2F;SSL握手(HTTPS)"></a>TLS&#x2F;SSL握手(HTTPS)</h2><p>客户端问候:客户端发送一个 ClientHello 消息,包含支持的加密算法、TLS 版本等信息<br>服务器问候:服务器回复一个 ServerHello 消息,选择加密算法和 TLS 版本,并发送服务器证书<br>证书验证:客户端验证服务器证书的有效性<br>密钥交换:客户端生成一个随机数,用服务器的公钥加密后发送给服务器，服务器用私钥解密，生成会话密钥<br>完成握手:双方使用会话密钥加密通信,握手完成</p>
-<h1 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h1><h2 id="构建请求"><a href="#构建请求" class="headerlink" title="构建请求"></a>构建请求</h2><p>浏览器构建一个 HTTP 请求，包括请求行(如 GET&#x2F;HTTP&#x2F;1.1)、请求头(如 Host: <a href="http://www.example.com)和可选的请求体/">www.example.com)和可选的请求体</a>(如 POST 请求的数据)</p>
-<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>浏览器通过建立的 TCP 连接将 HTTP 请求发送到服务器</p>
-<h1 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h1><p>接收请求：服务器接收到 HTTP 请求<br>请求解析：服务器解析请求行、请求头和请求体<br>路由处理：服务器根据请求的路径和参数，确定处理请求的逻辑<br>业务逻辑：服务器执行相应的业务逻辑，可能涉及读取文件、查询数据库、调用其他服务等<br>生成响应：服务器生成一个 HTTP 响应，包括状态行(如 HTTP&#x2F;1.1 200 OK)、响应头(如 Content-Type: text&#x2F;html)和响应体(如 HTML 内容)</p>
-<h1 id="浏览器接收响应"><a href="#浏览器接收响应" class="headerlink" title="浏览器接收响应"></a>浏览器接收响应</h1><p>接收响应<br>浏览器接收服务器响应<br>解析响应<br>浏览器解析响应头和响应体</p>
-<h1 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h1><h2 id="解析html"><a href="#解析html" class="headerlink" title="解析html"></a>解析html</h2><p>构建DOM树 解析HTML文档，构建DOM树<br>处理脚本 遇到&lt; script &gt;标签浏览器会暂停解析，执行脚本，脚本可能修改DOM树</p>
-<h2 id="解析css"><a href="#解析css" class="headerlink" title="解析css"></a>解析css</h2><p>构建CSSOM树 解析css文件和内联样式，构建css object model树</p>
-<h2 id="解析javascript"><a href="#解析javascript" class="headerlink" title="解析javascript"></a>解析javascript</h2><p>执行脚本 解析和执行JavaScript代码，可能修改dom树和cssom树</p>
-<h2 id="构建渲染树"><a href="#构建渲染树" class="headerlink" title="构建渲染树"></a>构建渲染树</h2><p>结合dom和cssom</p>
-<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>计算布局 计算每个元素的大小和位置</p>
-<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>绘制元素 浏览器绘制到屏幕上</p>
-<h1 id="处理资源请求"><a href="#处理资源请求" class="headerlink" title="处理资源请求"></a>处理资源请求</h1><p>发现资源：在解析 HTML 的过程中，浏览器会发现需要加载的资源(如图片、CSS 文件、JavaScript 文件等)<br>发送请求：浏览器会并行发送请求，加载这些资源<br>重复解析和渲染：浏览器重复上述的解析和渲染过程，直到所有资源加载完成</p>
-<h1 id="用户交互"><a href="#用户交互" class="headerlink" title="用户交互"></a>用户交互</h1><p>用户操作:页面加载完成后，用户可以与页面进行交互(如点击按钮、输入表单等)<br>事件处理:浏览器会根据用户的操作,触发相应的事件处理程序,更新页面内容</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>网络请求</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hello World</title>
     <url>/posts/4a17b156.html</url>
     <content><![CDATA[<h2 id="文章模板"><a href="#文章模板" class="headerlink" title="文章模板"></a>文章模板</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line"># 必须 页面标题</span><br><span class="line">title: sqli-labs</span><br><span class="line"># 必须 文章永久链接 插件生成</span><br><span class="line">abbrlink: d642dfa0</span><br><span class="line"># 创建时间</span><br><span class="line">date: 2024-09-10 22:41:44</span><br><span class="line"># 更新时间</span><br><span class="line">updated:</span><br><span class="line"># 标签</span><br><span class="line">tags: sql注入</span><br><span class="line"># 文章分类</span><br><span class="line">categories: 靶场练习</span><br><span class="line"># 关键字</span><br><span class="line">keywords:</span><br><span class="line"># 文章描述</span><br><span class="line">description: 第 n+1 次尝试通关sql靶场~</span><br><span class="line"># 文章顶部图设置 优先级 &gt; default_top_img</span><br><span class="line">top_img:</span><br><span class="line"># 显示文章评论模块 我没搞文章评论</span><br><span class="line">comments: false</span><br><span class="line"># 文章缩略图 如果没有设置 top_img，文章页顶部将显示缩略图 false/图片地址/留空</span><br><span class="line">cover: false</span><br><span class="line"># 显示文章 toc 即文章目录</span><br><span class="line">toc:</span><br><span class="line"># 显示文字 toc_number</span><br><span class="line">toc_number:</span><br><span class="line"># 显示toc简洁模式</span><br><span class="line">toc_style_simple: true</span><br><span class="line"># 显示文章版权模块 默认设置 post_copyright enable</span><br><span class="line">copyright:</span><br><span class="line"># 文章版权模块的文章作者</span><br><span class="line">copyright_author:</span><br><span class="line"># 文章版权模块的文章作者链接</span><br><span class="line">copyright_author_href:</span><br><span class="line"># 文章版权模块的文章链接</span><br><span class="line">copyright_url:</span><br><span class="line"># 文章版权模块的版权声明文字</span><br><span class="line">copyright_info:</span><br><span class="line"># 系列文章</span><br><span class="line">serious:</span><br><span class="line"># 播放器 加载aplayer的js和css</span><br><span class="line">aplayer:</span><br><span class="line"># 文章代码框是否展开</span><br><span class="line">highlight_shrink:</span><br><span class="line"># 显示侧边栏</span><br><span class="line">aside:</span><br><span class="line"># math显示</span><br><span class="line">mathjax:</span><br><span class="line"># katex显示</span><br><span class="line">katex:</span><br><span class="line"># 加载abcjs</span><br><span class="line">abcjs:</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
@@ -1602,6 +1550,58 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>文章测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>fiddler everywhere联动burpsuite抓取模拟器流量包</title>
+    <url>/posts/67df5e74.html</url>
+    <content><![CDATA[<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>fiddler everywhere 5.10<br>burpsuite professional v2024.3.1<br>mumu模拟器12</p>
+<h1 id="fiddler-配置"><a href="#fiddler-配置" class="headerlink" title="fiddler 配置"></a>fiddler 配置</h1><h2 id="开启https抓包"><a href="#开启https抓包" class="headerlink" title="开启https抓包"></a>开启https抓包</h2><p>进入fiddler主页的右上角设置-&gt;HTTPS-&gt;信任CA证书-&gt;勾选捕获https流量和忽略服务器证书错误<br><img src="/img/postimg/simulatorcatche/https.png"></p>
+<h2 id="fiddler-代理端口设置"><a href="#fiddler-代理端口设置" class="headerlink" title="fiddler 代理端口设置"></a>fiddler 代理端口设置</h2><p>设置监听端口8848，启用http&#x2F;2支持；若启用允许远程计算设备连接，其他外设可以通过代理到这台设备以ip+port的方式进行抓包。<br><img src="/img/postimg/simulatorcatche/fiddlerportproxy.png"></p>
+<h2 id="fiddler配置端口转发至burpsuite"><a href="#fiddler配置端口转发至burpsuite" class="headerlink" title="fiddler配置端口转发至burpsuite"></a>fiddler配置端口转发至burpsuite</h2><p>设置-&gt;gateway-&gt;设置burpsuite监听的端口和ip<br><img src="/img/postimg/simulatorcatche/gateway.png"></p>
+<h2 id="（非必须）导出证书至桌面"><a href="#（非必须）导出证书至桌面" class="headerlink" title="（非必须）导出证书至桌面"></a>（非必须）导出证书至桌面</h2><p>此步骤可忽略，若浏览器需要证书可进行该步骤并于浏览器内导入<br>高级设置-&gt;导出证书至桌面<br><img src="/img/postimg/simulatorcatche/exportfiddlerca.png"></p>
+<h1 id="模拟器配置"><a href="#模拟器配置" class="headerlink" title="模拟器配置"></a>模拟器配置</h1><h2 id="查看本机ip"><a href="#查看本机ip" class="headerlink" title="查看本机ip"></a>查看本机ip</h2><p>win+R 输入 cmd后确定，在终端输入 ipconfig<br><img src="/img/postimg/simulatorcatche/ipconfig.png"></p>
+<h2 id="模拟器配置代理-ip-port"><a href="#模拟器配置代理-ip-port" class="headerlink" title="模拟器配置代理 ip + port"></a>模拟器配置代理 ip + port</h2><p>模拟器下拉，长按网络进入网络设置，点击网络，并于右上角配置<br><img src="/img/postimg/simulatorcatche/simulatorproxy.png"></p>
+<h2 id="模拟器下载并安装证书"><a href="#模拟器下载并安装证书" class="headerlink" title="模拟器下载并安装证书"></a>模拟器下载并安装证书</h2><p>模拟器内的浏览器访问ip+port并下载证书<br><img src="/img/postimg/simulatorcatche/downloadca.png"><br>网络设置-&gt;网络偏好设置-&gt;安装证书<br><img src="/img/postimg/simulatorcatche/importca.png"></p>
+<h1 id="burpsuite配置"><a href="#burpsuite配置" class="headerlink" title="burpsuite配置"></a>burpsuite配置</h1><p>打开bp代理设置<br><img src="/img/postimg/simulatorcatche/bpproxy.png"><br>添加监听ip和port<br><img src="/img/postimg/simulatorcatche/bpaddipport.png"></p>
+<h1 id="fiddler开启代理，bp流量监听"><a href="#fiddler开启代理，bp流量监听" class="headerlink" title="fiddler开启代理，bp流量监听"></a>fiddler开启代理，bp流量监听</h1><p>开启fiddler代理，并找到live traffic<br><img src="/img/postimg/simulatorcatche/proxyenable.png"><br>关闭系统代理（system proxy）防止本地流量影响模拟器抓包<br><img src="/img/postimg/simulatorcatche/globalproxy.png"></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>Packet Capture</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器加载流程</title>
+    <url>/posts/1c025fc.html</url>
+    <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
+<h1 id="用户输入"><a href="#用户输入" class="headerlink" title="用户输入"></a>用户输入</h1><p>用户访问URL: <a href="https://example.com/index/about?query=1">https://example.com/index/about?query=1</a></p>
+<h1 id="浏览器解析"><a href="#浏览器解析" class="headerlink" title="浏览器解析"></a>浏览器解析</h1><p>提取访问URL的协议(https),域名(example.com),路径(&#x2F;index&#x2F;about)和查询参数(query)</p>
+<h1 id="检查缓存"><a href="#检查缓存" class="headerlink" title="检查缓存"></a>检查缓存</h1><p>检查本地缓存是否有该域名的ip地址,如果有则使用缓存的ip地址</p>
+<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h1><h2 id="什么是DNS缓存"><a href="#什么是DNS缓存" class="headerlink" title="什么是DNS缓存"></a>什么是DNS缓存</h2><p>在域名系统 (DNS) 中，缓存是在操作系统、浏览器、设备或网络中临时存储 DNS 记录的过程<br>DNS 记录用于将人类可读的域名(例如,example.com)转换为计算机和设备可以理解的对应 IP 地址，例如 2001:db8:3e8:2a3::b63<br>通过在本地存储 DNS 信息,DNS 缓存使域名能够更快地被转换或”解析”，同时可以减少网络流量</p>
+<h2 id="DNS缓存顺序"><a href="#DNS缓存顺序" class="headerlink" title="DNS缓存顺序"></a>DNS缓存顺序</h2><p>浏览器缓存:浏览器检查缓存是否有该域名ip地址<br>操作系统缓存:如若浏览器没有,浏览器向操作系统查询<br>本地dns服务器:操作系统缓存没有,则向配置的本地dns服务器发送查询请求<br>递归查询:本地 DNS 服务器会递归查询其他 DNS 服务器，直到找到该域名对应的 IP 地址<br>返回结果:DNS 服务器将结果返回给操作系统，再由操作系统返回给浏览器</p>
+<h1 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h1><h2 id="三次握手-TCP连接"><a href="#三次握手-TCP连接" class="headerlink" title="三次握手(TCP连接)"></a>三次握手(TCP连接)</h2><p>SYN:客户端发送至服务端请求连接<br>SYN-ACK:服务端收到回复确认表示同意连接<br>ACK:客户端确认回复并建立连接</p>
+<h2 id="TLS-SSL握手-HTTPS"><a href="#TLS-SSL握手-HTTPS" class="headerlink" title="TLS&#x2F;SSL握手(HTTPS)"></a>TLS&#x2F;SSL握手(HTTPS)</h2><p>客户端问候:客户端发送一个 ClientHello 消息,包含支持的加密算法、TLS 版本等信息<br>服务器问候:服务器回复一个 ServerHello 消息,选择加密算法和 TLS 版本,并发送服务器证书<br>证书验证:客户端验证服务器证书的有效性<br>密钥交换:客户端生成一个随机数,用服务器的公钥加密后发送给服务器，服务器用私钥解密，生成会话密钥<br>完成握手:双方使用会话密钥加密通信,握手完成</p>
+<h1 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h1><h2 id="构建请求"><a href="#构建请求" class="headerlink" title="构建请求"></a>构建请求</h2><p>浏览器构建一个 HTTP 请求，包括请求行(如 GET&#x2F;HTTP&#x2F;1.1)、请求头(如 Host: <a href="http://www.example.com)和可选的请求体/">www.example.com)和可选的请求体</a>(如 POST 请求的数据)</p>
+<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>浏览器通过建立的 TCP 连接将 HTTP 请求发送到服务器</p>
+<h1 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h1><p>接收请求：服务器接收到 HTTP 请求<br>请求解析：服务器解析请求行、请求头和请求体<br>路由处理：服务器根据请求的路径和参数，确定处理请求的逻辑<br>业务逻辑：服务器执行相应的业务逻辑，可能涉及读取文件、查询数据库、调用其他服务等<br>生成响应：服务器生成一个 HTTP 响应，包括状态行(如 HTTP&#x2F;1.1 200 OK)、响应头(如 Content-Type: text&#x2F;html)和响应体(如 HTML 内容)</p>
+<h1 id="浏览器接收响应"><a href="#浏览器接收响应" class="headerlink" title="浏览器接收响应"></a>浏览器接收响应</h1><p>接收响应<br>浏览器接收服务器响应<br>解析响应<br>浏览器解析响应头和响应体</p>
+<h1 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h1><h2 id="解析html"><a href="#解析html" class="headerlink" title="解析html"></a>解析html</h2><p>构建DOM树 解析HTML文档，构建DOM树<br>处理脚本 遇到&lt; script &gt;标签浏览器会暂停解析，执行脚本，脚本可能修改DOM树</p>
+<h2 id="解析css"><a href="#解析css" class="headerlink" title="解析css"></a>解析css</h2><p>构建CSSOM树 解析css文件和内联样式，构建css object model树</p>
+<h2 id="解析javascript"><a href="#解析javascript" class="headerlink" title="解析javascript"></a>解析javascript</h2><p>执行脚本 解析和执行JavaScript代码，可能修改dom树和cssom树</p>
+<h2 id="构建渲染树"><a href="#构建渲染树" class="headerlink" title="构建渲染树"></a>构建渲染树</h2><p>结合dom和cssom</p>
+<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>计算布局 计算每个元素的大小和位置</p>
+<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>绘制元素 浏览器绘制到屏幕上</p>
+<h1 id="处理资源请求"><a href="#处理资源请求" class="headerlink" title="处理资源请求"></a>处理资源请求</h1><p>发现资源：在解析 HTML 的过程中，浏览器会发现需要加载的资源(如图片、CSS 文件、JavaScript 文件等)<br>发送请求：浏览器会并行发送请求，加载这些资源<br>重复解析和渲染：浏览器重复上述的解析和渲染过程，直到所有资源加载完成</p>
+<h1 id="用户交互"><a href="#用户交互" class="headerlink" title="用户交互"></a>用户交互</h1><p>用户操作:页面加载完成后，用户可以与页面进行交互(如点击按钮、输入表单等)<br>事件处理:浏览器会根据用户的操作,触发相应的事件处理程序,更新页面内容</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>网络请求</tag>
       </tags>
   </entry>
   <entry>
