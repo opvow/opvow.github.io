@@ -1,0 +1,365 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>内网基础知识记录 | null</title><meta name="author" content="opvow"><meta name="copyright" content="opvow"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="内网概述内网（Intranet）是企业、机构或组织内部的私有网络，仅供授权用户使用，基于 TCP&#x2F;IP 协议构建。它主要用于内部通信、资源共享和业务系统的访问，具备高度的安全性和隐私性。内网通过防火墙或 NAT 严格控制外部访问，并可通过 VPN、堡垒机或内网穿透实现安全的外部访问。其功能包括共享资源（如文件服务器、打印机、数据库）、统一用户管理（如域控制器和单点登录）、支持业务系统（如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网基础知识记录">
+<meta property="og:url" content="https://opvow.github.io/posts/1dabe8f3.html">
+<meta property="og:site_name">
+<meta property="og:description" content="内网概述内网（Intranet）是企业、机构或组织内部的私有网络，仅供授权用户使用，基于 TCP&#x2F;IP 协议构建。它主要用于内部通信、资源共享和业务系统的访问，具备高度的安全性和隐私性。内网通过防火墙或 NAT 严格控制外部访问，并可通过 VPN、堡垒机或内网穿透实现安全的外部访问。其功能包括共享资源（如文件服务器、打印机、数据库）、统一用户管理（如域控制器和单点登录）、支持业务系统（如">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://opvow.github.io/img/post_cover/background.png">
+<meta property="article:published_time" content="2024-11-27T06:19:43.000Z">
+<meta property="article:modified_time" content="2024-11-27T08:11:04.853Z">
+<meta property="article:author" content="opvow">
+<meta property="article:tag" content="内网术语">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://opvow.github.io/img/post_cover/background.png"><link rel="shortcut icon" href="/img/icon.png"><link rel="canonical" href="https://opvow.github.io/posts/1dabe8f3.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>(()=>{
+      const saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      
+      window.btf = {
+        saveToLocal: saveToLocal,
+        getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = url
+          script.async = true
+          script.onerror = reject
+          script.onload = script.onreadystatechange = function() {
+            const loadState = this.readyState
+            if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+            script.onload = script.onreadystatechange = null
+            resolve()
+          }
+
+          Object.keys(attr).forEach(key => {
+            script.setAttribute(key, attr[key])
+          })
+
+          document.head.appendChild(script)
+        }),
+
+        getCSS: (url, id = false) => new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = url
+          if (id) link.id = id
+          link.onerror = reject
+          link.onload = link.onreadystatechange = function() {
+            const loadState = this.readyState
+            if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+            link.onload = link.onreadystatechange = null
+            resolve()
+          }
+          document.head.appendChild(link)
+        }),
+
+        addGlobalFn: (key, fn, name = false, parent = window) => {
+          const pjaxEnable = true
+          if (!pjaxEnable && key.startsWith('pjax')) return
+
+          const globalFn = parent.globalFn || {}
+          const keyObj = globalFn[key] || {}
+    
+          if (name && keyObj[name]) return
+    
+          name = name || Object.keys(keyObj).length
+          keyObj[name] = fn
+          globalFn[key] = keyObj
+          parent.globalFn = globalFn
+        }
+      }
+    
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+      
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })()</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: {"appId":"TTRDOHWPL9","apiKey":"1c1d4f212912a245a557ae95ebb32cad","indexName":"my-hexo-blog","hitsPerPage":6,"languages":{"input_placeholder":"搜索文章","hits_empty":"找不到您查询的内容：${query}","hits_stats":"找到 ${hits} 条结果，用时 ${time} 毫秒"}},
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":800,"languages":{"author":"作者: opvow","link":"链接: ","source":"来源: null","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体中文","cht_to_chs":"你已切换为简体中文","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '内网基础知识记录',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: undefined,
+  isToc: true,
+  postUpdate: '2024-11-27 16:11:04'
+}</script><link rel="stylesheet" href="../css/loading.css?1"><link rel="stylesheet" href="../css/transparency.css"><link rel="stylesheet" href="../css/social_iconfont.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img"></div><div class="loading-image-dot"></div></div></div><script></script><script async="async">const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000);
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/progress_bar.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="web_bg" style="background-image: url(/img/rwby.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/images/"><i class="fa-fw fas fa-image"></i><span> 图库</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-gamepad"></i><span> 游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: transparent;"><nav id="nav"><span id="blog-info"><a href="/"><img class="site-icon" src="/img/avatar.png" alt="Logo"/><span class="site-name"></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/images/"><i class="fa-fw fas fa-image"></i><span> 图库</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-gamepad"></i><span> 游戏</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">内网基础知识记录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-11-27T06:19:43.000Z" title="发表于 2024-11-27 14:19:43">2024-11-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-27T08:11:04.853Z" title="更新于 2024-11-27 16:11:04">2024-11-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Intranet-%E5%AE%89%E5%85%A8/">Intranet 安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>18分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="内网基础知识记录"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="内网概述"><a href="#内网概述" class="headerlink" title="内网概述"></a>内网概述</h1><p>内网（Intranet）是企业、机构或组织内部的私有网络，仅供授权用户使用，基于 TCP&#x2F;IP 协议构建。它主要用于内部通信、资源共享和业务系统的访问，具备高度的安全性和隐私性。内网通过防火墙或 NAT 严格控制外部访问，并可通过 VPN、堡垒机或内网穿透实现安全的外部访问。其功能包括共享资源（如文件服务器、打印机、数据库）、统一用户管理（如域控制器和单点登录）、支持业务系统（如 ERP、CRM、OA）和团队协作（如即时消息、内部邮箱、视频会议）。此外，内网通过权限控制和防火墙确保资源的安全性，可有效防止外部攻击。</p>
+<h1 id="工作组"><a href="#工作组" class="headerlink" title="工作组"></a>工作组</h1><p>工作组是一组互相连接的计算机组成的一个对等（Peer-to-Peer）网络，没有中心服务器。每台计算机都是独立的，没有统一的管理者，用户可以自由加入或离开工作组，适用于小型网络设计，每台计算机需单独配置安全策略。工作组只需要计算器连接到同一个网络并加入同一个工作组即可实现资源共享，无需专用服务器或域控制器，但随着计算机的增加，管理账户将变得困难，且无集中式认证和管理，安全性较低。</p>
+<h1 id="工作组和域的关系"><a href="#工作组和域的关系" class="headerlink" title="工作组和域的关系"></a>工作组和域的关系</h1><p>在计算机网络中，工作组（Workgroup） 和 域（Domain） 是两种不同的管理架构。它们的区别主要体现在身份验证和资源管理方式上。</p>
+<h1 id="域"><a href="#域" class="headerlink" title="域"></a>域</h1><p>域是在企业或组织内部网络中，用于管理和控制计算机、用户以及其他资源的逻辑分组和命名系统。它是由域控制器（DC）管理的一个网络实体，所有计算机和用户的账户信息都会在域控制器中进行集中管理，提供单点登录（SSO）功能，用户只需一次认证即可访问所有授权的资源，域通过统一的安全策略（如密码策略、权限控制等）来增强网络的安全性，只有域内的授权用户才能访问指定的资源。域通常使用DNS来命名和解析网络中的计算机和服务，确保设备能够通过域名访问资源，而不需要记住IP地址。内网域为组织提供了一种高效、安全和集中管理计算机、用户和网络资源的方法，确保内网的安全性和易管理性。</p>
+<h1 id="单域"><a href="#单域" class="headerlink" title="单域"></a>单域</h1><p>单域（Single Domain）是指在一个组织内部网络中，所有计算机、用户和资源都属于同一个域，集中在同一个域控制器（DC）下进行管理的网络结构。在单域架构中，域控制器负责管理用户账户、计算机、资源和安全策略等，所有的认证、权限管理和访问控制都由该域控制器统一处理，一般在一个域内要建立至少两个域服务器，一个作为DC，一个是备份DC。单域结构适用于规模较小或管理简单的组织，通常只需要一个域控制器来管理所有内部资源。由于结构简单，配置和维护相对较容易，适合中小型企业或部门级网络。</p>
+<h1 id="父域"><a href="#父域" class="headerlink" title="父域"></a>父域</h1><p>父域是指域树或域森林中的顶级域，它是域的层次结构中的上级部分。父域管理着一组子域，并为它们提供共享的安全策略和资源访问控制。在域结构中，父域的角色通常是对网络资源和身份进行集中管理和安全控制。父域控制整个网络的身份验证机制，确保只有授权的用户可以访问网络资源，为子域提供安全策略（如密码策略、登录策略等），子域可以继承这些策略，确保组织内的一致性和统一性，父域通常负责命名解析，它管理着包括子域在内的域名系统（DNS）。在大型公司中，父域可以用于管理多个部门的子域，简化跨部门的用户和计算机管理，对于跨地域的组织，父域可以代表总公司或总部，而子域可以对应不同的地理位置或分支机构。</p>
+<h1 id="子域"><a href="#子域" class="headerlink" title="子域"></a>子域</h1><p>子域是从父域派生出来的子级域，通常用于表示组织结构中的不同部门、区域或功能单元。子域依赖于父域，但可以有自己独立的域控制器、资源、用户和安全策略。子域的创建通常是为了分隔不同的组织单位或管理区域，从而实现更加灵活和分散的管理。子域将组织内的资源和用户按照功能或部门划分，使得每个子域能够独立管理自己的计算机、用户和权限，子域可以继承父域的安全策略（如密码策略、账户锁定策略等），从而确保组织内统一的安全性。虽然子域继承父域的许多设置，但它仍然可以拥有自己的管理权限。子域可以独立管理用户、计算机、组策略等，并且有时可以自定义部分策略设置。</p>
+<h1 id="域树"><a href="#域树" class="headerlink" title="域树"></a>域树</h1><p>建立信任关系的域集合，两个域相互之间可以访问，域树是由多个父域和子域组成的层次结构，通过它可以对组织内的计算机、用户和资源进行高效的管理。域树提供了分层次的管理和灵活的安全策略配置，同时确保跨域的资源访问与身份验证。它是大型组织和跨地域公司进行网络管理和资源分配的重要工具。</p>
+<h1 id="域森林"><a href="#域森林" class="headerlink" title="域森林"></a>域森林</h1><p>域森林是多个域树的集合，它是 Active Directory 中的最高层次的组织结构。在域森林中，所有的域都共享一个统一的目录服务架构和全局目录，但它们可以有不同的命名空间和安全边界。域森林提供了一个多域环境，在其中可以有多个父域和子域树，并且每个树可以有自己的命名空间。</p>
+<h1 id="域内计算机分类"><a href="#域内计算机分类" class="headerlink" title="域内计算机分类"></a>域内计算机分类</h1><p>域内的计算机可以根据其功能和用途进行不同的分类。域控制器是管理域中资源和用户的关键计算机，而成员计算机和服务器则提供不同类型的服务，如文件共享、应用托管、打印和网络基础设施服务等。通过这种分类，企业可以高效管理计算机、权限和资源，确保域内网络的安全性和高效性。<br>域控制器<br>成员计算机<br>文件服务器<br>应用服务器<br>打印服务器<br>工作组<br>远程访问服务器<br>数据库服务器<br>web服务器<br>…</p>
+<h1 id="DNS域名服务器"><a href="#DNS域名服务器" class="headerlink" title="DNS域名服务器"></a>DNS域名服务器</h1><p>在内网中，域名后缀通常使用内部域名（如 company.local 或 company.internal）来避免与公网域名冲突。在许多企业中，内网DNS与 Active Directory（AD） 紧密结合。域控制器（DC）通常是DNS服务器的关键组成部分。AD域内的所有资源（如计算机、用户、服务等）都由DNS进行名称解析。在AD环境中，DNS是一个重要的服务，支持域名注册和服务发现（例如，用户登录验证、文件共享等），员工可以使用便捷的域名访问公司内网资源，如共享文件夹、打印机、数据库等，而无需记住复杂的IP地址。当用户通过VPN或其他远程访问方式连接到内网时，内网DNS服务器帮助他们解析并访问内网资源，就像他们在局域网内一样。</p>
+<h1 id="域控制器"><a href="#域控制器" class="headerlink" title="域控制器"></a>域控制器</h1><p>域控制器（Domain Controller，简称 DC）是一个负责管理网络域（Domain）的服务器，特别是在基于 Microsoft Active Directory（AD）的网络环境中。域控制器运行 Active Directory（AD） 服务，它提供一个目录服务来存储和管理网络资源的信息，它是组织内集中式管理用户、计算机、组和其他资源的核心组件，并提供身份验证和授权服务。域控制器允许管理员设置并管理访问权限、角色和策略。管理员可以通过 组策略（Group Policy）集中管理计算机和用户的配置，例如强制密码复杂性要求、安装软件、限制访问权限等，域控制器确保网络中的计算机和用户可以进行认证、访问权限控制和其他安全功能。</p>
+<h1 id="活动目录"><a href="#活动目录" class="headerlink" title="活动目录"></a>活动目录</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Active Directory（简称 AD）是由 Microsoft 提供的一个强大且灵活的目录服务，它用于管理企业内部网络中所有的计算机、用户、组和其他资源。Active Directory 主要应用于 Windows Server 操作系统环境中，是企业网络中最常见的集中式身份管理和资源访问控制解决方案。</p>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>集中式管理：<br>Active Directory 提供一个中央位置，用于管理网络中的所有对象（如用户、计算机、打印机、文件夹、应用程序等），简化了网络资源的配置和维护。<br>身份验证和授权：<br>Active Directory 使用 Kerberos 或 NTLM 协议进行身份验证，确保只有授权用户才能访问网络资源。它还可以通过设置权限和组策略来控制用户访问不同资源的权限。<br>目录服务：<br>Active Directory 以树状结构（树形目录）存储和管理组织内的资源数据，包括用户、组、计算机、打印机等对象。它支持快速的查询操作，帮助管理员方便地查找和管理资源。<br>单点登录（SSO）：<br>使用 Active Directory，用户只需要一次登录，便可以访问同一域内的所有授权资源，而无需再次输入凭据。这提高了用户体验并简化了身份验证流程。<br>组织单位（OU）和组策略（GPO）：<br>Active Directory 允许将用户、计算机和其他资源按组织单位（OU）分类和分组。管理员可以根据组织的需求，定义具体的组策略（GPO）来集中管理计算机的设置（如密码策略、桌面环境设置等）。<br>跨域管理：<br>在大型企业中，Active Directory 支持跨多个域的管理。用户和资源可以在不同域之间共享，并且可以跨域进行身份验证。<br>全球目录（Global Catalog）：<br>Active Directory 支持一个全局目录服务器，它存储了跨整个域的所有对象的部分信息，支持快速查找和身份验证。</p>
+<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><p>域控制器（Domain Controllers，DC）：<br>域控制器是运行 Active Directory 的服务器，它负责身份验证、资源访问控制和复制 AD 数据。域控制器存储和管理 Active Directory 数据库中的信息，并通过复制确保多个 DC 上的数据一致性。<br>Active Directory 域（Domain）：<br>域是 Active Directory 中的基本管理单元，用于组织和管理用户、计算机等对象。每个域都有自己的数据库，存储关于该域的所有对象和设置。<br>组织单位（Organizational Units，OU）：<br>组织单位是 AD 中用于对对象进行逻辑分组的容器。它允许根据组织结构、部门或职能对对象进行分类，并且可以将组策略应用于 OU 中的所有对象。<br>目录服务协议（LDAP）：<br>LDAP（轻量级目录访问协议）是 Active Directory 用来进行查询和管理目录信息的协议。它允许客户端程序访问和管理 AD 中的对象。<br>全局编录服务器（Global Catalog）：<br>全局编录服务器存储所有域中的对象的部分属性，帮助加速跨域查询和身份验证。全局编录也可以作为一个域控制器角色来提供跨域的用户认证和资源查找服务。<br>组策略对象（GPO）：<br>组策略是 Active Directory 中的重要功能，允许管理员为域内的计算机和用户设置特定的安全策略、配置文件和其他操作系统设置。GPO 可以在整个域或组织单位（OU）上应用。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>域：<br>每个 AD 环境中的域是一个独立的命名空间，它包含用户、计算机和其他网络对象。在域内，所有的计算机和资源共享一套账户数据库。<br>域树（Domain Tree）：<br>域树由多个域组成，其中的每个域都有一个父域，并且在命名上是层级结构。例如，company.com 可以是父域，而 hr.company.com、it.company.com 则是子域。<br>域森林（Domain Forest）：<br>一个 域森林 是 Active Directory 中最顶层的结构，它包含一个或多个域树，并且域之间共享全局目录。域森林内的所有域都有共同的信任关系和统一的目录架构。</p>
+<h1 id="域本地组"><a href="#域本地组" class="headerlink" title="域本地组"></a>域本地组</h1><h2 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h2><p>域本地组（Domain Local Groups，DLG）是 Active Directory（AD）中一种特殊的安全组类型，用于管理域内计算机和资源的访问权限。它是针对特定域内资源而创建的，旨在为该域内的资源提供精确的权限控制。不同于全局组（Global Groups），它通常被用来将组成员分配给 特定域的本地资源，例如文件夹、打印机、数据库等。域本地组只能授予访问该组所在域内的资源的权限，而不能跨域使用。它的权限是局限于域内的。域本地组的成员可以来自 任何域，不仅限于所在域中的用户、组或计算机。可以将来自不同域的用户、全局组、域本地组等添加到域本地组中。</p>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>Administrators（管理员组） ————最重要的权限<br>Remote Desktop Users（远程登录组）<br>Print Operators（打印机操作员组）<br>Account Operators（帐号操作员组）<br>Server Operaters（服务器操作员组）<br>Backup Operators（备份操作员组） 全局组、通用组的权限<br>Domain Admins（域管理员组）————最最最重要的权限，一般来说域渗透是看重这个<br>Enterprise Admins（企业系统管理员组）————最重要的权限，其次是去看重这个权限<br>Schema Admins（架构管理员组）————最重要的权限<br>Domain Users（域用户组）</p>
+<h1 id="全局组"><a href="#全局组" class="headerlink" title="全局组"></a>全局组</h1><p>全局组（Global Group）是 Active Directory（AD）中的一种组类型，主要用于组织内用户、计算机和其他组的管理。全局组的作用通常是为了 管理和控制访问权限，并将组成员限制在特定的组织范围内。与 域本地组（Domain Local Group）不同，全局组的主要目标是对跨越多个域的用户和计算机进行分组。全局组的作用范围是 整个域内，它用于集中管理属于同一域的用户或计算机账户。这意味着全局组只能包含属于同一域的用户、计算机或其他组。全局组成员通常是按照职能或部门来分类的，例如财务组、技术组、市场组等。全局组的成员可以 跨域访问资源。例如，在一个跨多个域的环境中，虽然全局组的成员仅限于某个特定域，但它仍然可以被添加到其他域的域本地组中，从而获得访问这些域内资源的权限。</p>
+<h1 id="通用组"><a href="#通用组" class="headerlink" title="通用组"></a>通用组</h1><p>通用组（Universal Group）是 Active Directory（AD）中的另一种组类型，它与 全局组 和 域本地组 有所不同。通用组的主要作用是跨多个域提供灵活的访问控制，并能够集中管理跨越多个域的用户和资源权限。通用组的作用范围是整个 域森林，它可以包含来自 任何域 的用户、计算机、组（包括全局组和域本地组）。这使得它能够跨越多个域来管理权限，因此适用于需要跨域访问资源的场景。通用组的设计旨在服务于跨越多个域的环境，尤其适合大型企业中，涉及多个域和部门需要共享资源的情况。</p>
+<h1 id="AGDLP"><a href="#AGDLP" class="headerlink" title="AGDLP"></a>AGDLP</h1><p>AGDLP 是一种用于在 Active Directory 环境中进行访问控制和权限分配的安全模型，它由 A（Accounts）、G（Groups）、D（Domains）、L（Local Groups）和 P（Permissions）五个元素组成。该模型用于设计和实施有效的访问控制策略，确保资源的安全管理，并简化权限的管理。</p>
+<h2 id="元素"><a href="#元素" class="headerlink" title="元素"></a>元素</h2><p>A (Accounts) - 用户账户：<br>用户账户是指企业网络中的个体用户。每个用户账户都被分配了一个唯一的标识符，通常是用户名和密码。用户账户属于一个特定的域，并可与其他组进行关联。<br>G (Groups) - 组：<br>组是 Active Directory 中的一种对象类型，它允许将多个用户账户归为一组，从而简化对权限的管理。组可分为两类：<br>安全组（Security Groups）：用于赋予权限和访问控制。<br>分发组（Distribution Groups）：用于电子邮件列表等，但不能赋予访问权限。<br>D (Domains) - 域：<br>域是 Active Directory 中的基本管理单元，它是网络资源（如用户、计算机等）的容器。每个域拥有自己的目录数据和安全策略。<br>L (Local Groups) - 本地组：<br>本地组是指域内计算机（工作站或服务器）上的本地组，用于控制对本地资源的访问。与域组不同，本地组只在计算机本地有效，不跨越域。<br>P (Permissions) - 权限：<br>权限是用户或组对计算机资源（如文件、文件夹、打印机、应用程序等）所拥有的访问权限。这些权限可以细分为读取、写入、执行等操作权限</p>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>A 到 G（账户到组）：<br>用户账户应该属于域中的组，而这些组用于分配访问权限。每个用户账户都应被添加到一个或多个适当的安全组，这些安全组会决定该用户可以访问哪些资源。<br>G 到 D（组到域）：<br>将组应用于域级别的资源和权限控制。例如，用户组可以拥有对某个特定域中资源的访问权限。域管理员可以通过设置组策略，控制哪些组能访问域内的资源。<br>G 到 L（组到本地组）：<br>可以将域组添加到计算机的本地组中，从而使得域组的成员能够访问该计算机上的本地资源。例如，可以创建一个本地管理员组，将域管理员组添加进去，这样域管理员组的成员就能访问本地计算机的所有资源。<br>L 到 P（本地组到权限）：<br>本地组的成员拥有对本地计算机资源的访问权限。这些权限由计算机的管理员设置，允许用户执行特定的操作，如访问文件、打印机等。</p>
+<h1 id="Kerberos协议"><a href="#Kerberos协议" class="headerlink" title="Kerberos协议"></a>Kerberos协议</h1><h2 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h2><p>Kerberos协议是一个计算机网络认证协议，设计用来通过不安全的网络进行强身份验证。它使用了对称密钥加密和“票证”机制，主要用于确保通信双方的身份，并防止中间人攻击等安全问题。Kerberos协议广泛应用于各种分布式系统中，特别是在Windows环境中的Active Directory（AD）域环境中。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>Kerberos协议通过一个称为“票证”的机制来实现身份验证。其基本流程包括以下几个步骤：<br>初始化认证<br>用户通过客户端向认证服务器（AS，Authentication Server）请求身份验证。<br>客户端会发送一个带有用户名的请求，要求认证服务器为其颁发票证。<br>认证服务器会检查用户的身份，如果身份验证通过，AS会生成一个票证授权票证（TGT，Ticket Granting Ticket）。这个TGT被加密，只有TGT的服务器（通常是票证授权服务器，TGS）才能解密。<br>获取服务票证<br>一旦用户获得了TGT，用户就可以向票证授权服务器（TGS，Ticket Granting Server）请求访问某个特定服务的权限。<br>客户端使用TGT向TGS发送请求，并附带自己希望访问的服务名称。<br>如果TGT有效，TGS会生成一个新的服务票证，并将其返回给客户端。<br>访问目标服务<br>客户端使用服务票证与目标服务进行通信。服务票证包含了客户端的身份信息、加密密钥和会话密钥等数据。<br>目标服务验证票证的有效性后，允许客户端访问其资源。<br>会话密钥<br>每次服务的访问都会生成一个会话密钥，该密钥用于保护与目标服务的通信。只有客户端和目标服务能解密和加密会话中的数据。</p>
+<h2 id="组件-1"><a href="#组件-1" class="headerlink" title="组件"></a>组件</h2><p>认证服务器（AS）： 负责验证用户的身份，并为其生成TGT。AS一般会从数据库中获取用户的密码或密钥。<br>票证授权服务器（TGS）： 在用户获得TGT后，TGS负责根据TGT生成并颁发服务票证。TGS是Kerberos协议中的重要部分，确保了不同服务的安全通信。<br>客户端： 发起身份验证请求，并使用获取到的票证与目标服务进行安全通信。<br>服务端： 各种提供资源的服务，通过验证客户端提交的服务票证来确认客户端的身份。</p>
+<h2 id="票据"><a href="#票据" class="headerlink" title="票据"></a>票据</h2><p>票证是Kerberos协议的核心，它由以下几个部分组成：<br>TGT：票证授权票证，用户用来请求服务票证。TGT包含用户的身份信息和加密数据，由AS颁发。<br>服务票证：客户端用来访问特定服务的凭证。服务票证是由TGS生成并包含了目标服务的信息。<br>票证内容通常包括：<br>客户端标识。<br>服务标识。<br>票证有效期。<br>会话密钥（用于加密通信）。</p>
+<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><h2 id="主机平台"><a href="#主机平台" class="headerlink" title="主机平台"></a>主机平台</h2><p>WCE（Windows凭据管理器）<br>minikatz（从内存中获取明文密码）<br>Responder（嗅探网络中所有的LLMNR包，获取主机的信息）<br>BeEF（一款针对浏览器的渗透测试工具）<br>DSHashes（从NTDSXtract中提取用户易于理解的散列值）<br>PowerSploit（一款基于PowerShell的后渗透测试框架）<br>Nishang（一款针对Powershell的渗透测试工具）<br>Empire（一款内网渗透测试利器）<br>ps_encoder.py（使用Base64编码封装的Powershell命令包）<br>smbexec（一个使用samba工具的快速psExec工具）<br>后门制造工厂（对PE、ELF等二进制注入Shellcode）<br>Veil（用于生成绕过常见杀软的Metasploit有效载荷）<br>Metasploit（计算机安全漏洞项目框架）<br>Cobalt Strike（一款优秀的后渗透测试平台）</p>
+<h2 id="windows渗透"><a href="#windows渗透" class="headerlink" title="windows渗透"></a>windows渗透</h2><p>Nmap（一款免费的网络发现和安全审计工具）<br>Wireshark（一款免费且开源的网络协议和数据包解析器）<br>PuTTY（一款免费且开源的SSH和Telnet客户端）<br>SQLMap（一款免费且开源的SQL注入工具）<br>BurpSuite（一款针对Web应用程序进行安全测试的代理工具）<br>Hydra（一个网络登录暴力破解工具）<br>Getif（一款收集SNMP设备信息的工具）<br>Cain&amp;Abel（一个密码恢复工具，集成嗅探等多种功能）<br>PowerSploit（一款基于PowerShell的后渗透测试框架）<br>Nishang（一款针对Powershell的渗透测试工具）</p>
+<h2 id="powershell命令"><a href="#powershell命令" class="headerlink" title="powershell命令"></a>powershell命令</h2><h3 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h3><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Get-Host</span></span><br><span class="line"><span class="variable">$PSVersionTable</span>.PSVERSION</span><br></pre></td></tr></table></figure>
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">New-Item</span> hack <span class="literal">-ItemType</span> Directory <span class="comment">#新建目录</span></span><br><span class="line"><span class="built_in">New-Item</span> ailx0000.txt <span class="literal">-ItemType</span> File <span class="comment">#新建文件</span></span><br><span class="line"><span class="built_in">Set-Content</span> .\ailx0000.txt <span class="literal">-Value</span> <span class="string">&quot;hi hacker ailx10...&quot;</span> <span class="comment">#写文件</span></span><br><span class="line"><span class="built_in">Add-Content</span> .\ailx0000.txt <span class="literal">-Value</span> <span class="string">&quot;ooops~&quot;</span> <span class="comment">#追加内容</span></span><br><span class="line"><span class="built_in">Get-Content</span> .\ailx0000.txt <span class="comment">#显示内容</span></span><br><span class="line"><span class="built_in">Clear-Content</span> .\ailx0000.txt <span class="comment">#清楚内容</span></span><br><span class="line"><span class="built_in">Remove-Item</span> .\ailx0000.txt <span class="comment">#删除文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h3><p>1、绕过本地权限并执行<br>2、从网站服务器中下载脚本，绕过本地权限并偷偷执行<br>3、使用Base64对PowerShell命令进行编码</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://opvow.github.io">opvow</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://opvow.github.io/posts/1dabe8f3.html">https://opvow.github.io/posts/1dabe8f3.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://opvow.github.io" target="_blank">null</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%86%85%E7%BD%91%E6%9C%AF%E8%AF%AD/">内网术语</a></div><div class="post-share"><div class="social-share" data-image="/img/post_cover/background.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="prev-post pull-left" href="/posts/77f95bb5.html" title="红日靶场2记录"><img class="cover" src="/img/post_cover/background.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">红日靶场2记录</div></div></a><a class="next-post pull-right" href="/posts/ad3631c.html" title="leichi"><img class="cover" src="/img/post_cover/background.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">leichi</div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">opvow</div><div class="author-info-description">opvow's notebook</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><div class="card-info-social-icons"><a class="social-icon" href="https://space.bilibili.com/628543718?spm_id_from=333.1007.0.0" target="_blank" title=""><i class="iconfont icon-bilibili"></i></a><a class="social-icon" href="https://github.com/opvow" target="_blank" title=""><i class="iconfont icon-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">内网概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E7%BB%84"><span class="toc-number">2.</span> <span class="toc-text">工作组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E7%BB%84%E5%92%8C%E5%9F%9F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">3.</span> <span class="toc-text">工作组和域的关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F"><span class="toc-number">4.</span> <span class="toc-text">域</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%95%E5%9F%9F"><span class="toc-number">5.</span> <span class="toc-text">单域</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%B6%E5%9F%9F"><span class="toc-number">6.</span> <span class="toc-text">父域</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%90%E5%9F%9F"><span class="toc-number">7.</span> <span class="toc-text">子域</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F%E6%A0%91"><span class="toc-number">8.</span> <span class="toc-text">域树</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F%E6%A3%AE%E6%9E%97"><span class="toc-number">9.</span> <span class="toc-text">域森林</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F%E5%86%85%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%88%86%E7%B1%BB"><span class="toc-number">10.</span> <span class="toc-text">域内计算机分类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DNS%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">11.</span> <span class="toc-text">DNS域名服务器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-number">12.</span> <span class="toc-text">域控制器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B4%BB%E5%8A%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">13.</span> <span class="toc-text">活动目录</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">13.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD"><span class="toc-number">13.2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6"><span class="toc-number">13.3.</span> <span class="toc-text">组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84"><span class="toc-number">13.4.</span> <span class="toc-text">结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%9F%E6%9C%AC%E5%9C%B0%E7%BB%84"><span class="toc-number">14.</span> <span class="toc-text">域本地组</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="toc-number">14.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%83%E9%99%90"><span class="toc-number">14.2.</span> <span class="toc-text">权限</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E7%BB%84"><span class="toc-number">15.</span> <span class="toc-text">全局组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E7%BB%84"><span class="toc-number">16.</span> <span class="toc-text">通用组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AGDLP"><span class="toc-number">17.</span> <span class="toc-text">AGDLP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%83%E7%B4%A0"><span class="toc-number">17.1.</span> <span class="toc-text">元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B"><span class="toc-number">17.2.</span> <span class="toc-text">模型</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Kerberos%E5%8D%8F%E8%AE%AE"><span class="toc-number">18.</span> <span class="toc-text">Kerberos协议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="toc-number">18.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">18.2.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6-1"><span class="toc-number">18.3.</span> <span class="toc-text">组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A5%A8%E6%8D%AE"><span class="toc-number">18.4.</span> <span class="toc-text">票据</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7"><span class="toc-number">19.</span> <span class="toc-text">工具</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E5%B9%B3%E5%8F%B0"><span class="toc-number">19.1.</span> <span class="toc-text">主机平台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#windows%E6%B8%97%E9%80%8F"><span class="toc-number">19.2.</span> <span class="toc-text">windows渗透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#powershell%E5%91%BD%E4%BB%A4"><span class="toc-number">19.3.</span> <span class="toc-text">powershell命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%89%88%E6%9C%AC"><span class="toc-number">19.3.1.</span> <span class="toc-text">查看版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">19.3.2.</span> <span class="toc-text">常用命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E9%80%94"><span class="toc-number">19.3.3.</span> <span class="toc-text">用途</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/e5da2ca1.html" title="sqlmap"><img src="/img/post_cover/background.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="sqlmap"/></a><div class="content"><a class="title" href="/posts/e5da2ca1.html" title="sqlmap">sqlmap</a><time datetime="2024-12-03T07:36:53.000Z" title="发表于 2024-12-03 15:36:53">2024-12-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/fe1704c8.html" title="内网穿透工具FRP"><img src="/img/post_cover/background.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="内网穿透工具FRP"/></a><div class="content"><a class="title" href="/posts/fe1704c8.html" title="内网穿透工具FRP">内网穿透工具FRP</a><time datetime="2024-11-29T06:06:13.000Z" title="发表于 2024-11-29 14:06:13">2024-11-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/ad3631c.html" title="leichi"><img src="/img/post_cover/background.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="leichi"/></a><div class="content"><a class="title" href="/posts/ad3631c.html" title="leichi">leichi</a><time datetime="2024-11-28T12:27:22.000Z" title="发表于 2024-11-28 20:27:22">2024-11-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/1dabe8f3.html" title="内网基础知识记录"><img src="/img/post_cover/background.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="内网基础知识记录"/></a><div class="content"><a class="title" href="/posts/1dabe8f3.html" title="内网基础知识记录">内网基础知识记录</a><time datetime="2024-11-27T06:19:43.000Z" title="发表于 2024-11-27 14:19:43">2024-11-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/77f95bb5.html" title="红日靶场2记录"><img src="/img/post_cover/background.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="红日靶场2记录"/></a><div class="content"><a class="title" href="/posts/77f95bb5.html" title="红日靶场2记录">红日靶场2记录</a><time datetime="2024-11-27T06:18:14.000Z" title="发表于 2024-11-27 14:18:14">2024-11-27</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 By opvow</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">welcome to my <a href = "https://opvow.github.io/">blog</a>!!!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>(() => {
+  const panguFn = () => {
+    if (typeof pangu === 'object') pangu.autoSpacingPage()
+    else {
+      btf.getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+        .then(() => {
+          pangu.autoSpacingPage()
+        })
+    }
+  }
+
+  const panguInit = () => {
+    if (false){
+      GLOBAL_CONFIG_SITE.isPost && panguFn()
+    } else {
+      panguFn()
+    }
+  }
+
+  btf.addGlobalFn('pjaxComplete', panguInit, 'pangu')
+  document.addEventListener('DOMContentLoaded', panguInit)
+})()</script><div class="js-pjax"><script>(() => {
+  const runMermaid = (ele) => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from(ele).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({svg}) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+    
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaidFn)
+  }
+  
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const abcjsInit = () => {
+    const abcjsFn = () => {
+      document.querySelectorAll(".abc-music-sheet").forEach(ele => {
+        if (ele.children.length > 0) return
+        ABCJS.renderAbc(ele, ele.innerHTML, {responsive: 'resize'})
+      })
+    }
+    
+    typeof ABCJS === 'object' ? abcjsFn()
+      : btf.getScript('https://cdn.jsdelivr.net/npm/abcjs/dist/abcjs-basic-min.min.js').then(abcjsFn)
+  }
+
+  window.pjax ? abcjsInit() : window.addEventListener('load', abcjsInit)
+  btf.addGlobalFn('encrypt', abcjsInit, 'abcjs')
+})()</script></div><script async src="/js/title_change.js"></script><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+const triggerPjaxFn = (val) => {
+  if (!val) return
+  Object.values(val).forEach(fn => { fn() })
+}
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjaxSendOnce')
+  btf.removeGlobalFnEvent('themeChange')
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  triggerPjaxFn(window.globalFn.pjaxSend)
+})
+
+document.addEventListener('pjax:complete', () => {
+  btf.removeGlobalFnEvent('pjaxCompleteOnce')
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  triggerPjaxFn(window.globalFn.pjaxComplete)
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="algolia-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="search-wrap"><div id="algolia-search-input"></div><hr/><div id="algolia-search-results"><div id="algolia-hits"></div><div id="algolia-pagination"></div><div id="algolia-info"><div class="algolia-stats"></div><div class="algolia-poweredBy"></div></div></div></div></div><div id="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instantsearch.js/dist/instantsearch.production.min.js"></script><script src="/js/search/algolia.js"></script></div></div></body></html>
