@@ -82,11 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    const copy = ctx => {
-      if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
-        document.execCommand('copy')
+    const copy = async (text, ctx) => {
+      try {
+        await navigator.clipboard.writeText(text)
         alertInfo(ctx, GLOBAL_CONFIG.copy.success)
-      } else {
+      } catch (err) {
+        console.error('Failed to copy: ', err)
         alertInfo(ctx, GLOBAL_CONFIG.copy.noSupport)
       }
     }
@@ -95,14 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const highlightCopyFn = (ele, clickEle) => {
       const $buttonParent = ele.parentNode
       $buttonParent.classList.add('copy-true')
-      const selection = window.getSelection()
-      const range = document.createRange()
       const preCodeSelector = isPrismjs ? 'pre code' : 'table .code pre'
-      range.selectNodeContents($buttonParent.querySelector(`${preCodeSelector}`))
-      selection.removeAllRanges()
-      selection.addRange(range)
-      copy(clickEle.previousElementSibling)
-      selection.removeAllRanges()
+      const codeElement = $buttonParent.querySelector(preCodeSelector)
+      if (!codeElement) return
+      copy(codeElement.innerText, clickEle.previousElementSibling)
       $buttonParent.classList.remove('copy-true')
     }
 
@@ -209,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const altValue = item.title || item.alt
       if (!altValue) return
       const ele = document.createElement('div')
-      ele.className = 'img-alt is-center'
+      ele.className = 'img-alt text-center'
       ele.textContent = altValue
       item.insertAdjacentElement('afterend', ele)
     })
@@ -238,8 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
       gap: 5,
       isConstantSize: true,
       sizeRange: [150, 600],
-      useResizeObserver: true,
-      observeChildren: true,
+      // useResizeObserver: true,
+      // observeChildren: true,
       useTransform: true
       // useRecycle: false
     })
@@ -344,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const addJustifiedGallery = async (ele, tabs = false) => {
+    if (!ele.length) return
     const init = async () => {
       for (const item of ele) {
         if (btf.isHidden(item) || item.classList.contains('loaded')) continue
@@ -361,8 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-
-    if (!ele.length) return
 
     if (typeof InfiniteGrid === 'function') {
       init()
@@ -587,19 +583,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const rightSideFn = {
     readmode: () => { // read mode
       const $body = document.body
-      $body.classList.add('read-mode')
       const newEle = document.createElement('button')
-      newEle.type = 'button'
-      newEle.className = 'fas fa-sign-out-alt exit-readmode'
-      $body.appendChild(newEle)
 
-      const clickFn = () => {
+      const exitReadMode = () => {
         $body.classList.remove('read-mode')
         newEle.remove()
-        newEle.removeEventListener('click', clickFn)
+        newEle.removeEventListener('click', exitReadMode)
       }
 
-      newEle.addEventListener('click', clickFn)
+      $body.classList.add('read-mode')
+      newEle.type = 'button'
+      newEle.className = 'fas fa-sign-out-alt exit-readmode'
+      newEle.addEventListener('click', exitReadMode)
+      $body.appendChild(newEle)
     },
     darkmode: () => { // switch between light and dark mode
       const willChangeMode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
@@ -810,34 +806,15 @@ document.addEventListener('DOMContentLoaded', () => {
     btf.addEventListenerPjax(cardCategory, 'click', handleToggleBtn, true)
   }
 
-  const switchComments = () => {
-    const switchBtn = document.getElementById('switch-btn')
-    if (!switchBtn) return
-
-    let switchDone = false
-    const handleSwitchBtn = () => {
-      document.getElementById('post-comment').classList.toggle('move')
-      if (!switchDone && typeof loadOtherComment === 'function') {
-        switchDone = true
-        loadOtherComment()
-      }
-    }
-    btf.addEventListenerPjax(switchBtn, 'click', handleSwitchBtn)
-  }
-
   const addPostOutdateNotice = () => {
-    const { limitDay, messagePrev, messageNext, position } = GLOBAL_CONFIG.noticeOutdate
-    const diffDay = btf.diffDate(GLOBAL_CONFIG_SITE.postUpdate)
+    const ele = document.getElementById('post-outdate-notice')
+    if (!ele) return
+
+    const { limitDay, messagePrev, messageNext, postUpdate } = JSON.parse(ele.getAttribute('data'))
+    const diffDay = btf.diffDate(postUpdate)
     if (diffDay >= limitDay) {
-      const ele = document.createElement('div')
-      ele.className = 'post-outdate-notice'
       ele.textContent = `${messagePrev} ${diffDay} ${messageNext}`
-      const $targetEle = document.getElementById('article-container')
-      if (position === 'top') {
-        $targetEle.insertBefore(ele, $targetEle.firstChild)
-      } else {
-        $targetEle.appendChild(ele)
-      }
+      ele.hidden = false
     }
   }
 
@@ -914,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
     justifiedIndexPostUI()
 
     if (GLOBAL_CONFIG_SITE.isPost) {
-      GLOBAL_CONFIG.noticeOutdate !== undefined && addPostOutdateNotice()
+      addPostOutdateNotice()
       GLOBAL_CONFIG.relativeDate.post && relativeDate(document.querySelectorAll('#post-meta time'))
     } else {
       GLOBAL_CONFIG.relativeDate.homepage && relativeDate(document.querySelectorAll('#recent-posts time'))
@@ -927,7 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollFn()
 
     forPostFn()
-    switchComments()
+    !GLOBAL_CONFIG_SITE.isShuoshuo && btf.switchComments(document)
     openMobileMenu()
   }
 

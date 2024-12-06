@@ -13,6 +13,22 @@
       </tags>
   </entry>
   <entry>
+    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
+    <url>/posts/432259a6.html</url>
+    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
+<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
+<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
+<p>修改完成后可访问成功</p>
+]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>docker报错</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>anaconda使用</title>
     <url>/posts/a5f86784.html</url>
     <content><![CDATA[<h1 id="创建新的环境"><a href="#创建新的环境" class="headerlink" title="创建新的环境"></a>创建新的环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create --name myenv</span><br></pre></td></tr></table></figure>
@@ -35,35 +51,6 @@
       </categories>
       <tags>
         <tag>anaconda</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>容器服务启动失败</title>
-    <url>/posts/5746187b.html</url>
-    <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
-<p>for mongodb无法为服务mongodb创建容器：冲突。容器名称“&#x2F;mongodb”已被容器“193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”使用。您必须删除（或重命名）该容器才能重用该名称。<br>错误：启动项目时遇到错误。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">显示所有容器</span><br><span class="line">docker rm -f 193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d</span><br><span class="line">删除占用容器 id</span><br><span class="line">docker-compose up -d</span><br><span class="line">重新启动容器</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>docker报错</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
-    <url>/posts/432259a6.html</url>
-    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
-<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
-<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
-<p>修改完成后可访问成功</p>
-]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>docker报错</tag>
       </tags>
   </entry>
   <entry>
@@ -98,7 +85,7 @@
 <p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
 <h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
 <h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#x6f;&#103;&#98;&#x61;&#x30;&#48;&#x36;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#x70;&#x6f;&#103;&#98;&#x61;&#x30;&#48;&#x36;&#64;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#x70;&#111;&#103;&#x62;&#x61;&#x30;&#x30;&#54;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x63;&#x6f;&#x6d;">&#x70;&#111;&#103;&#x62;&#x61;&#x30;&#x30;&#54;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x63;&#x6f;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
 <p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
 <h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
 <h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
@@ -137,6 +124,19 @@
       </categories>
       <tags>
         <tag>API安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>容器服务启动失败</title>
+    <url>/posts/5746187b.html</url>
+    <content><![CDATA[<p>ERROR: for mongodb  Cannot create container for service mongodb: Conflict. The container name “&#x2F;mongodb” is already in use by container “193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”. You have to remove (or rename) that container to be able to reuse that name.<br>ERROR: Encountered errors while bringing up the project.</p>
+<p>for mongodb无法为服务mongodb创建容器：冲突。容器名称“&#x2F;mongodb”已被容器“193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d”使用。您必须删除（或重命名）该容器才能重用该名称。<br>错误：启动项目时遇到错误。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">显示所有容器</span><br><span class="line">docker rm -f 193a1f7f78319eeb43040d2a7b314be04a5b2a915add2df4d8cf6b07f6c1252d</span><br><span class="line">删除占用容器 id</span><br><span class="line">docker-compose up -d</span><br><span class="line">重新启动容器</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>docker报错</tag>
       </tags>
   </entry>
   <entry>
@@ -210,50 +210,6 @@
       </tags>
   </entry>
   <entry>
-    <title>红日靶场2记录</title>
-    <url>/posts/77f95bb5.html</url>
-    <content><![CDATA[<h1 id="网络拓扑"><a href="#网络拓扑" class="headerlink" title="网络拓扑"></a>网络拓扑</h1><h1 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h1><p>为了模拟内网外网两个环境，虚拟网络编辑器配置两张网卡，nat网卡模拟内外网交互，仅主机网卡模拟内网环境。<br>NAT网卡<br>192.168.80.0&#x2F;24<br>仅主机网卡<br>10.10.10.0&#x2F;24</p>
-<h1 id="主机配置"><a href="#主机配置" class="headerlink" title="主机配置"></a>主机配置</h1><p>用户: de1ay administrator DE1AY\Administrator DE1AY\mssql<br>密码: 1qaz@WSX</p>
-<table>
-<thead>
-<tr>
-<th>主机</th>
-<th>内网</th>
-<th>外网</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>PC.de1ay.com</td>
-<td>10.10.10.201</td>
-<td>192.168.111.201</td>
-</tr>
-<tr>
-<td>WEB.de1ay.com</td>
-<td>10.10.10.80</td>
-<td>192.168.111.80</td>
-</tr>
-<tr>
-<td>DC.de1ay.com</td>
-<td>10.10.10.10</td>
-<td></td>
-</tr>
-<tr>
-<td>localhost</td>
-<td></td>
-<td>26.218.206.35</td>
-</tr>
-<tr>
-<td>kali</td>
-<td></td>
-<td>192.168.111.128</td>
-</tr>
-</tbody></table>
-<p>进入middleware需要administrator权限，登录，密码1qaz@WSX<br>管理员身份运行setDomainENV、startManageWeblogic、startWeblogic</p>
-<p>cobalt strike</p>
-<p>netstat -anlpt<br>lsof -i :29002</p>
-]]></content>
-  </entry>
-  <entry>
     <title>内网穿透工具FRP</title>
     <url>/posts/fe1704c8.html</url>
     <content><![CDATA[]]></content>
@@ -309,6 +265,50 @@
       </tags>
   </entry>
   <entry>
+    <title>红日靶场2记录</title>
+    <url>/posts/77f95bb5.html</url>
+    <content><![CDATA[<h1 id="网络拓扑"><a href="#网络拓扑" class="headerlink" title="网络拓扑"></a>网络拓扑</h1><h1 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h1><p>为了模拟内网外网两个环境，虚拟网络编辑器配置两张网卡，nat网卡模拟内外网交互，仅主机网卡模拟内网环境。<br>NAT网卡<br>192.168.80.0&#x2F;24<br>仅主机网卡<br>10.10.10.0&#x2F;24</p>
+<h1 id="主机配置"><a href="#主机配置" class="headerlink" title="主机配置"></a>主机配置</h1><p>用户: de1ay administrator DE1AY\Administrator DE1AY\mssql<br>密码: 1qaz@WSX</p>
+<table>
+<thead>
+<tr>
+<th>主机</th>
+<th>内网</th>
+<th>外网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PC.de1ay.com</td>
+<td>10.10.10.201</td>
+<td>192.168.111.201</td>
+</tr>
+<tr>
+<td>WEB.de1ay.com</td>
+<td>10.10.10.80</td>
+<td>192.168.111.80</td>
+</tr>
+<tr>
+<td>DC.de1ay.com</td>
+<td>10.10.10.10</td>
+<td></td>
+</tr>
+<tr>
+<td>localhost</td>
+<td></td>
+<td>26.218.206.35</td>
+</tr>
+<tr>
+<td>kali</td>
+<td></td>
+<td>192.168.111.128</td>
+</tr>
+</tbody></table>
+<p>进入middleware需要administrator权限，登录，密码1qaz@WSX<br>管理员身份运行setDomainENV、startManageWeblogic、startWeblogic</p>
+<p>cobalt strike</p>
+<p>netstat -anlpt<br>lsof -i :29002</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Portswigger-JWT-LAB-3</title>
     <url>/posts/d0e26b4a.html</url>
     <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
@@ -339,54 +339,6 @@
       <tags>
         <tag>JWT Vulnerabilitiy</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>内网基础知识记录</title>
-    <url>/posts/1dabe8f3.html</url>
-    <content><![CDATA[<h1 id="内网概述"><a href="#内网概述" class="headerlink" title="内网概述"></a>内网概述</h1><p>内网（Intranet）是企业、机构或组织内部的私有网络，仅供授权用户使用，基于 TCP&#x2F;IP 协议构建。它主要用于内部通信、资源共享和业务系统的访问，具备高度的安全性和隐私性。内网通过防火墙或 NAT 严格控制外部访问，并可通过 VPN、堡垒机或内网穿透实现安全的外部访问。其功能包括共享资源（如文件服务器、打印机、数据库）、统一用户管理（如域控制器和单点登录）、支持业务系统（如 ERP、CRM、OA）和团队协作（如即时消息、内部邮箱、视频会议）。此外，内网通过权限控制和防火墙确保资源的安全性，可有效防止外部攻击。</p>
-<h1 id="工作组"><a href="#工作组" class="headerlink" title="工作组"></a>工作组</h1><p>工作组是一组互相连接的计算机组成的一个对等（Peer-to-Peer）网络，没有中心服务器。每台计算机都是独立的，没有统一的管理者，用户可以自由加入或离开工作组，适用于小型网络设计，每台计算机需单独配置安全策略。工作组只需要计算器连接到同一个网络并加入同一个工作组即可实现资源共享，无需专用服务器或域控制器，但随着计算机的增加，管理账户将变得困难，且无集中式认证和管理，安全性较低。</p>
-<h1 id="工作组和域的关系"><a href="#工作组和域的关系" class="headerlink" title="工作组和域的关系"></a>工作组和域的关系</h1><p>在计算机网络中，工作组（Workgroup） 和 域（Domain） 是两种不同的管理架构。它们的区别主要体现在身份验证和资源管理方式上。</p>
-<h1 id="域"><a href="#域" class="headerlink" title="域"></a>域</h1><p>域是在企业或组织内部网络中，用于管理和控制计算机、用户以及其他资源的逻辑分组和命名系统。它是由域控制器（DC）管理的一个网络实体，所有计算机和用户的账户信息都会在域控制器中进行集中管理，提供单点登录（SSO）功能，用户只需一次认证即可访问所有授权的资源，域通过统一的安全策略（如密码策略、权限控制等）来增强网络的安全性，只有域内的授权用户才能访问指定的资源。域通常使用DNS来命名和解析网络中的计算机和服务，确保设备能够通过域名访问资源，而不需要记住IP地址。内网域为组织提供了一种高效、安全和集中管理计算机、用户和网络资源的方法，确保内网的安全性和易管理性。</p>
-<h1 id="单域"><a href="#单域" class="headerlink" title="单域"></a>单域</h1><p>单域（Single Domain）是指在一个组织内部网络中，所有计算机、用户和资源都属于同一个域，集中在同一个域控制器（DC）下进行管理的网络结构。在单域架构中，域控制器负责管理用户账户、计算机、资源和安全策略等，所有的认证、权限管理和访问控制都由该域控制器统一处理，一般在一个域内要建立至少两个域服务器，一个作为DC，一个是备份DC。单域结构适用于规模较小或管理简单的组织，通常只需要一个域控制器来管理所有内部资源。由于结构简单，配置和维护相对较容易，适合中小型企业或部门级网络。</p>
-<h1 id="父域"><a href="#父域" class="headerlink" title="父域"></a>父域</h1><p>父域是指域树或域森林中的顶级域，它是域的层次结构中的上级部分。父域管理着一组子域，并为它们提供共享的安全策略和资源访问控制。在域结构中，父域的角色通常是对网络资源和身份进行集中管理和安全控制。父域控制整个网络的身份验证机制，确保只有授权的用户可以访问网络资源，为子域提供安全策略（如密码策略、登录策略等），子域可以继承这些策略，确保组织内的一致性和统一性，父域通常负责命名解析，它管理着包括子域在内的域名系统（DNS）。在大型公司中，父域可以用于管理多个部门的子域，简化跨部门的用户和计算机管理，对于跨地域的组织，父域可以代表总公司或总部，而子域可以对应不同的地理位置或分支机构。</p>
-<h1 id="子域"><a href="#子域" class="headerlink" title="子域"></a>子域</h1><p>子域是从父域派生出来的子级域，通常用于表示组织结构中的不同部门、区域或功能单元。子域依赖于父域，但可以有自己独立的域控制器、资源、用户和安全策略。子域的创建通常是为了分隔不同的组织单位或管理区域，从而实现更加灵活和分散的管理。子域将组织内的资源和用户按照功能或部门划分，使得每个子域能够独立管理自己的计算机、用户和权限，子域可以继承父域的安全策略（如密码策略、账户锁定策略等），从而确保组织内统一的安全性。虽然子域继承父域的许多设置，但它仍然可以拥有自己的管理权限。子域可以独立管理用户、计算机、组策略等，并且有时可以自定义部分策略设置。</p>
-<h1 id="域树"><a href="#域树" class="headerlink" title="域树"></a>域树</h1><p>建立信任关系的域集合，两个域相互之间可以访问，域树是由多个父域和子域组成的层次结构，通过它可以对组织内的计算机、用户和资源进行高效的管理。域树提供了分层次的管理和灵活的安全策略配置，同时确保跨域的资源访问与身份验证。它是大型组织和跨地域公司进行网络管理和资源分配的重要工具。</p>
-<h1 id="域森林"><a href="#域森林" class="headerlink" title="域森林"></a>域森林</h1><p>域森林是多个域树的集合，它是 Active Directory 中的最高层次的组织结构。在域森林中，所有的域都共享一个统一的目录服务架构和全局目录，但它们可以有不同的命名空间和安全边界。域森林提供了一个多域环境，在其中可以有多个父域和子域树，并且每个树可以有自己的命名空间。</p>
-<h1 id="域内计算机分类"><a href="#域内计算机分类" class="headerlink" title="域内计算机分类"></a>域内计算机分类</h1><p>域内的计算机可以根据其功能和用途进行不同的分类。域控制器是管理域中资源和用户的关键计算机，而成员计算机和服务器则提供不同类型的服务，如文件共享、应用托管、打印和网络基础设施服务等。通过这种分类，企业可以高效管理计算机、权限和资源，确保域内网络的安全性和高效性。<br>域控制器<br>成员计算机<br>文件服务器<br>应用服务器<br>打印服务器<br>工作组<br>远程访问服务器<br>数据库服务器<br>web服务器<br>…</p>
-<h1 id="DNS域名服务器"><a href="#DNS域名服务器" class="headerlink" title="DNS域名服务器"></a>DNS域名服务器</h1><p>在内网中，域名后缀通常使用内部域名（如 company.local 或 company.internal）来避免与公网域名冲突。在许多企业中，内网DNS与 Active Directory（AD） 紧密结合。域控制器（DC）通常是DNS服务器的关键组成部分。AD域内的所有资源（如计算机、用户、服务等）都由DNS进行名称解析。在AD环境中，DNS是一个重要的服务，支持域名注册和服务发现（例如，用户登录验证、文件共享等），员工可以使用便捷的域名访问公司内网资源，如共享文件夹、打印机、数据库等，而无需记住复杂的IP地址。当用户通过VPN或其他远程访问方式连接到内网时，内网DNS服务器帮助他们解析并访问内网资源，就像他们在局域网内一样。</p>
-<h1 id="域控制器"><a href="#域控制器" class="headerlink" title="域控制器"></a>域控制器</h1><p>域控制器（Domain Controller，简称 DC）是一个负责管理网络域（Domain）的服务器，特别是在基于 Microsoft Active Directory（AD）的网络环境中。域控制器运行 Active Directory（AD） 服务，它提供一个目录服务来存储和管理网络资源的信息，它是组织内集中式管理用户、计算机、组和其他资源的核心组件，并提供身份验证和授权服务。域控制器允许管理员设置并管理访问权限、角色和策略。管理员可以通过 组策略（Group Policy）集中管理计算机和用户的配置，例如强制密码复杂性要求、安装软件、限制访问权限等，域控制器确保网络中的计算机和用户可以进行认证、访问权限控制和其他安全功能。</p>
-<h1 id="活动目录"><a href="#活动目录" class="headerlink" title="活动目录"></a>活动目录</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Active Directory（简称 AD）是由 Microsoft 提供的一个强大且灵活的目录服务，它用于管理企业内部网络中所有的计算机、用户、组和其他资源。Active Directory 主要应用于 Windows Server 操作系统环境中，是企业网络中最常见的集中式身份管理和资源访问控制解决方案。</p>
-<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>集中式管理：<br>Active Directory 提供一个中央位置，用于管理网络中的所有对象（如用户、计算机、打印机、文件夹、应用程序等），简化了网络资源的配置和维护。<br>身份验证和授权：<br>Active Directory 使用 Kerberos 或 NTLM 协议进行身份验证，确保只有授权用户才能访问网络资源。它还可以通过设置权限和组策略来控制用户访问不同资源的权限。<br>目录服务：<br>Active Directory 以树状结构（树形目录）存储和管理组织内的资源数据，包括用户、组、计算机、打印机等对象。它支持快速的查询操作，帮助管理员方便地查找和管理资源。<br>单点登录（SSO）：<br>使用 Active Directory，用户只需要一次登录，便可以访问同一域内的所有授权资源，而无需再次输入凭据。这提高了用户体验并简化了身份验证流程。<br>组织单位（OU）和组策略（GPO）：<br>Active Directory 允许将用户、计算机和其他资源按组织单位（OU）分类和分组。管理员可以根据组织的需求，定义具体的组策略（GPO）来集中管理计算机的设置（如密码策略、桌面环境设置等）。<br>跨域管理：<br>在大型企业中，Active Directory 支持跨多个域的管理。用户和资源可以在不同域之间共享，并且可以跨域进行身份验证。<br>全球目录（Global Catalog）：<br>Active Directory 支持一个全局目录服务器，它存储了跨整个域的所有对象的部分信息，支持快速查找和身份验证。</p>
-<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><p>域控制器（Domain Controllers，DC）：<br>域控制器是运行 Active Directory 的服务器，它负责身份验证、资源访问控制和复制 AD 数据。域控制器存储和管理 Active Directory 数据库中的信息，并通过复制确保多个 DC 上的数据一致性。<br>Active Directory 域（Domain）：<br>域是 Active Directory 中的基本管理单元，用于组织和管理用户、计算机等对象。每个域都有自己的数据库，存储关于该域的所有对象和设置。<br>组织单位（Organizational Units，OU）：<br>组织单位是 AD 中用于对对象进行逻辑分组的容器。它允许根据组织结构、部门或职能对对象进行分类，并且可以将组策略应用于 OU 中的所有对象。<br>目录服务协议（LDAP）：<br>LDAP（轻量级目录访问协议）是 Active Directory 用来进行查询和管理目录信息的协议。它允许客户端程序访问和管理 AD 中的对象。<br>全局编录服务器（Global Catalog）：<br>全局编录服务器存储所有域中的对象的部分属性，帮助加速跨域查询和身份验证。全局编录也可以作为一个域控制器角色来提供跨域的用户认证和资源查找服务。<br>组策略对象（GPO）：<br>组策略是 Active Directory 中的重要功能，允许管理员为域内的计算机和用户设置特定的安全策略、配置文件和其他操作系统设置。GPO 可以在整个域或组织单位（OU）上应用。</p>
-<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>域：<br>每个 AD 环境中的域是一个独立的命名空间，它包含用户、计算机和其他网络对象。在域内，所有的计算机和资源共享一套账户数据库。<br>域树（Domain Tree）：<br>域树由多个域组成，其中的每个域都有一个父域，并且在命名上是层级结构。例如，company.com 可以是父域，而 hr.company.com、it.company.com 则是子域。<br>域森林（Domain Forest）：<br>一个 域森林 是 Active Directory 中最顶层的结构，它包含一个或多个域树，并且域之间共享全局目录。域森林内的所有域都有共同的信任关系和统一的目录架构。</p>
-<h1 id="域本地组"><a href="#域本地组" class="headerlink" title="域本地组"></a>域本地组</h1><h2 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h2><p>域本地组（Domain Local Groups，DLG）是 Active Directory（AD）中一种特殊的安全组类型，用于管理域内计算机和资源的访问权限。它是针对特定域内资源而创建的，旨在为该域内的资源提供精确的权限控制。不同于全局组（Global Groups），它通常被用来将组成员分配给 特定域的本地资源，例如文件夹、打印机、数据库等。域本地组只能授予访问该组所在域内的资源的权限，而不能跨域使用。它的权限是局限于域内的。域本地组的成员可以来自 任何域，不仅限于所在域中的用户、组或计算机。可以将来自不同域的用户、全局组、域本地组等添加到域本地组中。</p>
-<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>Administrators（管理员组） ————最重要的权限<br>Remote Desktop Users（远程登录组）<br>Print Operators（打印机操作员组）<br>Account Operators（帐号操作员组）<br>Server Operaters（服务器操作员组）<br>Backup Operators（备份操作员组） 全局组、通用组的权限<br>Domain Admins（域管理员组）————最最最重要的权限，一般来说域渗透是看重这个<br>Enterprise Admins（企业系统管理员组）————最重要的权限，其次是去看重这个权限<br>Schema Admins（架构管理员组）————最重要的权限<br>Domain Users（域用户组）</p>
-<h1 id="全局组"><a href="#全局组" class="headerlink" title="全局组"></a>全局组</h1><p>全局组（Global Group）是 Active Directory（AD）中的一种组类型，主要用于组织内用户、计算机和其他组的管理。全局组的作用通常是为了 管理和控制访问权限，并将组成员限制在特定的组织范围内。与 域本地组（Domain Local Group）不同，全局组的主要目标是对跨越多个域的用户和计算机进行分组。全局组的作用范围是 整个域内，它用于集中管理属于同一域的用户或计算机账户。这意味着全局组只能包含属于同一域的用户、计算机或其他组。全局组成员通常是按照职能或部门来分类的，例如财务组、技术组、市场组等。全局组的成员可以 跨域访问资源。例如，在一个跨多个域的环境中，虽然全局组的成员仅限于某个特定域，但它仍然可以被添加到其他域的域本地组中，从而获得访问这些域内资源的权限。</p>
-<h1 id="通用组"><a href="#通用组" class="headerlink" title="通用组"></a>通用组</h1><p>通用组（Universal Group）是 Active Directory（AD）中的另一种组类型，它与 全局组 和 域本地组 有所不同。通用组的主要作用是跨多个域提供灵活的访问控制，并能够集中管理跨越多个域的用户和资源权限。通用组的作用范围是整个 域森林，它可以包含来自 任何域 的用户、计算机、组（包括全局组和域本地组）。这使得它能够跨越多个域来管理权限，因此适用于需要跨域访问资源的场景。通用组的设计旨在服务于跨越多个域的环境，尤其适合大型企业中，涉及多个域和部门需要共享资源的情况。</p>
-<h1 id="AGDLP"><a href="#AGDLP" class="headerlink" title="AGDLP"></a>AGDLP</h1><p>AGDLP 是一种用于在 Active Directory 环境中进行访问控制和权限分配的安全模型，它由 A（Accounts）、G（Groups）、D（Domains）、L（Local Groups）和 P（Permissions）五个元素组成。该模型用于设计和实施有效的访问控制策略，确保资源的安全管理，并简化权限的管理。</p>
-<h2 id="元素"><a href="#元素" class="headerlink" title="元素"></a>元素</h2><p>A (Accounts) - 用户账户：<br>用户账户是指企业网络中的个体用户。每个用户账户都被分配了一个唯一的标识符，通常是用户名和密码。用户账户属于一个特定的域，并可与其他组进行关联。<br>G (Groups) - 组：<br>组是 Active Directory 中的一种对象类型，它允许将多个用户账户归为一组，从而简化对权限的管理。组可分为两类：<br>安全组（Security Groups）：用于赋予权限和访问控制。<br>分发组（Distribution Groups）：用于电子邮件列表等，但不能赋予访问权限。<br>D (Domains) - 域：<br>域是 Active Directory 中的基本管理单元，它是网络资源（如用户、计算机等）的容器。每个域拥有自己的目录数据和安全策略。<br>L (Local Groups) - 本地组：<br>本地组是指域内计算机（工作站或服务器）上的本地组，用于控制对本地资源的访问。与域组不同，本地组只在计算机本地有效，不跨越域。<br>P (Permissions) - 权限：<br>权限是用户或组对计算机资源（如文件、文件夹、打印机、应用程序等）所拥有的访问权限。这些权限可以细分为读取、写入、执行等操作权限</p>
-<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>A 到 G（账户到组）：<br>用户账户应该属于域中的组，而这些组用于分配访问权限。每个用户账户都应被添加到一个或多个适当的安全组，这些安全组会决定该用户可以访问哪些资源。<br>G 到 D（组到域）：<br>将组应用于域级别的资源和权限控制。例如，用户组可以拥有对某个特定域中资源的访问权限。域管理员可以通过设置组策略，控制哪些组能访问域内的资源。<br>G 到 L（组到本地组）：<br>可以将域组添加到计算机的本地组中，从而使得域组的成员能够访问该计算机上的本地资源。例如，可以创建一个本地管理员组，将域管理员组添加进去，这样域管理员组的成员就能访问本地计算机的所有资源。<br>L 到 P（本地组到权限）：<br>本地组的成员拥有对本地计算机资源的访问权限。这些权限由计算机的管理员设置，允许用户执行特定的操作，如访问文件、打印机等。</p>
-<h1 id="Kerberos协议"><a href="#Kerberos协议" class="headerlink" title="Kerberos协议"></a>Kerberos协议</h1><h2 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h2><p>Kerberos协议是一个计算机网络认证协议，设计用来通过不安全的网络进行强身份验证。它使用了对称密钥加密和“票证”机制，主要用于确保通信双方的身份，并防止中间人攻击等安全问题。Kerberos协议广泛应用于各种分布式系统中，特别是在Windows环境中的Active Directory（AD）域环境中。</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>Kerberos协议通过一个称为“票证”的机制来实现身份验证。其基本流程包括以下几个步骤：<br>初始化认证<br>用户通过客户端向认证服务器（AS，Authentication Server）请求身份验证。<br>客户端会发送一个带有用户名的请求，要求认证服务器为其颁发票证。<br>认证服务器会检查用户的身份，如果身份验证通过，AS会生成一个票证授权票证（TGT，Ticket Granting Ticket）。这个TGT被加密，只有TGT的服务器（通常是票证授权服务器，TGS）才能解密。<br>获取服务票证<br>一旦用户获得了TGT，用户就可以向票证授权服务器（TGS，Ticket Granting Server）请求访问某个特定服务的权限。<br>客户端使用TGT向TGS发送请求，并附带自己希望访问的服务名称。<br>如果TGT有效，TGS会生成一个新的服务票证，并将其返回给客户端。<br>访问目标服务<br>客户端使用服务票证与目标服务进行通信。服务票证包含了客户端的身份信息、加密密钥和会话密钥等数据。<br>目标服务验证票证的有效性后，允许客户端访问其资源。<br>会话密钥<br>每次服务的访问都会生成一个会话密钥，该密钥用于保护与目标服务的通信。只有客户端和目标服务能解密和加密会话中的数据。</p>
-<h2 id="组件-1"><a href="#组件-1" class="headerlink" title="组件"></a>组件</h2><p>认证服务器（AS）： 负责验证用户的身份，并为其生成TGT。AS一般会从数据库中获取用户的密码或密钥。<br>票证授权服务器（TGS）： 在用户获得TGT后，TGS负责根据TGT生成并颁发服务票证。TGS是Kerberos协议中的重要部分，确保了不同服务的安全通信。<br>客户端： 发起身份验证请求，并使用获取到的票证与目标服务进行安全通信。<br>服务端： 各种提供资源的服务，通过验证客户端提交的服务票证来确认客户端的身份。</p>
-<h2 id="票据"><a href="#票据" class="headerlink" title="票据"></a>票据</h2><p>票证是Kerberos协议的核心，它由以下几个部分组成：<br>TGT：票证授权票证，用户用来请求服务票证。TGT包含用户的身份信息和加密数据，由AS颁发。<br>服务票证：客户端用来访问特定服务的凭证。服务票证是由TGS生成并包含了目标服务的信息。<br>票证内容通常包括：<br>客户端标识。<br>服务标识。<br>票证有效期。<br>会话密钥（用于加密通信）。</p>
-<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><h2 id="主机平台"><a href="#主机平台" class="headerlink" title="主机平台"></a>主机平台</h2><p>WCE（Windows凭据管理器）<br>minikatz（从内存中获取明文密码）<br>Responder（嗅探网络中所有的LLMNR包，获取主机的信息）<br>BeEF（一款针对浏览器的渗透测试工具）<br>DSHashes（从NTDSXtract中提取用户易于理解的散列值）<br>PowerSploit（一款基于PowerShell的后渗透测试框架）<br>Nishang（一款针对Powershell的渗透测试工具）<br>Empire（一款内网渗透测试利器）<br>ps_encoder.py（使用Base64编码封装的Powershell命令包）<br>smbexec（一个使用samba工具的快速psExec工具）<br>后门制造工厂（对PE、ELF等二进制注入Shellcode）<br>Veil（用于生成绕过常见杀软的Metasploit有效载荷）<br>Metasploit（计算机安全漏洞项目框架）<br>Cobalt Strike（一款优秀的后渗透测试平台）</p>
-<h2 id="windows渗透"><a href="#windows渗透" class="headerlink" title="windows渗透"></a>windows渗透</h2><p>Nmap（一款免费的网络发现和安全审计工具）<br>Wireshark（一款免费且开源的网络协议和数据包解析器）<br>PuTTY（一款免费且开源的SSH和Telnet客户端）<br>SQLMap（一款免费且开源的SQL注入工具）<br>BurpSuite（一款针对Web应用程序进行安全测试的代理工具）<br>Hydra（一个网络登录暴力破解工具）<br>Getif（一款收集SNMP设备信息的工具）<br>Cain&amp;Abel（一个密码恢复工具，集成嗅探等多种功能）<br>PowerSploit（一款基于PowerShell的后渗透测试框架）<br>Nishang（一款针对Powershell的渗透测试工具）</p>
-<h2 id="powershell命令"><a href="#powershell命令" class="headerlink" title="powershell命令"></a>powershell命令</h2><h3 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Get-Host</span></span><br><span class="line"><span class="variable">$PSVersionTable</span>.PSVERSION</span><br></pre></td></tr></table></figure>
-<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">New-Item</span> hack <span class="literal">-ItemType</span> Directory <span class="comment">#新建目录</span></span><br><span class="line"><span class="built_in">New-Item</span> ailx0000.txt <span class="literal">-ItemType</span> File <span class="comment">#新建文件</span></span><br><span class="line"><span class="built_in">Set-Content</span> .\ailx0000.txt <span class="literal">-Value</span> <span class="string">&quot;hi hacker ailx10...&quot;</span> <span class="comment">#写文件</span></span><br><span class="line"><span class="built_in">Add-Content</span> .\ailx0000.txt <span class="literal">-Value</span> <span class="string">&quot;ooops~&quot;</span> <span class="comment">#追加内容</span></span><br><span class="line"><span class="built_in">Get-Content</span> .\ailx0000.txt <span class="comment">#显示内容</span></span><br><span class="line"><span class="built_in">Clear-Content</span> .\ailx0000.txt <span class="comment">#清楚内容</span></span><br><span class="line"><span class="built_in">Remove-Item</span> .\ailx0000.txt <span class="comment">#删除文件</span></span><br></pre></td></tr></table></figure>
-<h3 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h3><p>1、绕过本地权限并执行<br>2、从网站服务器中下载脚本，绕过本地权限并偷偷执行<br>3、使用Base64对PowerShell命令进行编码</p>
-]]></content>
-      <categories>
-        <category>Intranet 安全</category>
-      </categories>
-      <tags>
-        <tag>内网术语</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>leichi</title>
-    <url>/posts/ad3631c.html</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>mongodb-nosql注入</title>
@@ -559,6 +511,49 @@
       </tags>
   </entry>
   <entry>
+    <title>内网基础知识记录</title>
+    <url>/posts/1dabe8f3.html</url>
+    <content><![CDATA[<h1 id="内网概述"><a href="#内网概述" class="headerlink" title="内网概述"></a>内网概述</h1><p>内网（Intranet）是企业、机构或组织内部的私有网络，仅供授权用户使用，基于 TCP&#x2F;IP 协议构建。它主要用于内部通信、资源共享和业务系统的访问，具备高度的安全性和隐私性。内网通过防火墙或 NAT 严格控制外部访问，并可通过 VPN、堡垒机或内网穿透实现安全的外部访问。其功能包括共享资源（如文件服务器、打印机、数据库）、统一用户管理（如域控制器和单点登录）、支持业务系统（如 ERP、CRM、OA）和团队协作（如即时消息、内部邮箱、视频会议）。此外，内网通过权限控制和防火墙确保资源的安全性，可有效防止外部攻击。</p>
+<h1 id="工作组"><a href="#工作组" class="headerlink" title="工作组"></a>工作组</h1><p>工作组是一组互相连接的计算机组成的一个对等（Peer-to-Peer）网络，没有中心服务器。每台计算机都是独立的，没有统一的管理者，用户可以自由加入或离开工作组，适用于小型网络设计，每台计算机需单独配置安全策略。工作组只需要计算器连接到同一个网络并加入同一个工作组即可实现资源共享，无需专用服务器或域控制器，但随着计算机的增加，管理账户将变得困难，且无集中式认证和管理，安全性较低。</p>
+<h1 id="工作组和域的关系"><a href="#工作组和域的关系" class="headerlink" title="工作组和域的关系"></a>工作组和域的关系</h1><p>在计算机网络中，工作组（Workgroup） 和 域（Domain） 是两种不同的管理架构。它们的区别主要体现在身份验证和资源管理方式上。</p>
+<h1 id="域"><a href="#域" class="headerlink" title="域"></a>域</h1><p>域是在企业或组织内部网络中，用于管理和控制计算机、用户以及其他资源的逻辑分组和命名系统。它是由域控制器（DC）管理的一个网络实体，所有计算机和用户的账户信息都会在域控制器中进行集中管理，提供单点登录（SSO）功能，用户只需一次认证即可访问所有授权的资源，域通过统一的安全策略（如密码策略、权限控制等）来增强网络的安全性，只有域内的授权用户才能访问指定的资源。域通常使用DNS来命名和解析网络中的计算机和服务，确保设备能够通过域名访问资源，而不需要记住IP地址。内网域为组织提供了一种高效、安全和集中管理计算机、用户和网络资源的方法，确保内网的安全性和易管理性。</p>
+<h1 id="单域"><a href="#单域" class="headerlink" title="单域"></a>单域</h1><p>单域（Single Domain）是指在一个组织内部网络中，所有计算机、用户和资源都属于同一个域，集中在同一个域控制器（DC）下进行管理的网络结构。在单域架构中，域控制器负责管理用户账户、计算机、资源和安全策略等，所有的认证、权限管理和访问控制都由该域控制器统一处理，一般在一个域内要建立至少两个域服务器，一个作为DC，一个是备份DC。单域结构适用于规模较小或管理简单的组织，通常只需要一个域控制器来管理所有内部资源。由于结构简单，配置和维护相对较容易，适合中小型企业或部门级网络。</p>
+<h1 id="父域"><a href="#父域" class="headerlink" title="父域"></a>父域</h1><p>父域是指域树或域森林中的顶级域，它是域的层次结构中的上级部分。父域管理着一组子域，并为它们提供共享的安全策略和资源访问控制。在域结构中，父域的角色通常是对网络资源和身份进行集中管理和安全控制。父域控制整个网络的身份验证机制，确保只有授权的用户可以访问网络资源，为子域提供安全策略（如密码策略、登录策略等），子域可以继承这些策略，确保组织内的一致性和统一性，父域通常负责命名解析，它管理着包括子域在内的域名系统（DNS）。在大型公司中，父域可以用于管理多个部门的子域，简化跨部门的用户和计算机管理，对于跨地域的组织，父域可以代表总公司或总部，而子域可以对应不同的地理位置或分支机构。</p>
+<h1 id="子域"><a href="#子域" class="headerlink" title="子域"></a>子域</h1><p>子域是从父域派生出来的子级域，通常用于表示组织结构中的不同部门、区域或功能单元。子域依赖于父域，但可以有自己独立的域控制器、资源、用户和安全策略。子域的创建通常是为了分隔不同的组织单位或管理区域，从而实现更加灵活和分散的管理。子域将组织内的资源和用户按照功能或部门划分，使得每个子域能够独立管理自己的计算机、用户和权限，子域可以继承父域的安全策略（如密码策略、账户锁定策略等），从而确保组织内统一的安全性。虽然子域继承父域的许多设置，但它仍然可以拥有自己的管理权限。子域可以独立管理用户、计算机、组策略等，并且有时可以自定义部分策略设置。</p>
+<h1 id="域树"><a href="#域树" class="headerlink" title="域树"></a>域树</h1><p>建立信任关系的域集合，两个域相互之间可以访问，域树是由多个父域和子域组成的层次结构，通过它可以对组织内的计算机、用户和资源进行高效的管理。域树提供了分层次的管理和灵活的安全策略配置，同时确保跨域的资源访问与身份验证。它是大型组织和跨地域公司进行网络管理和资源分配的重要工具。</p>
+<h1 id="域森林"><a href="#域森林" class="headerlink" title="域森林"></a>域森林</h1><p>域森林是多个域树的集合，它是 Active Directory 中的最高层次的组织结构。在域森林中，所有的域都共享一个统一的目录服务架构和全局目录，但它们可以有不同的命名空间和安全边界。域森林提供了一个多域环境，在其中可以有多个父域和子域树，并且每个树可以有自己的命名空间。</p>
+<h1 id="域内计算机分类"><a href="#域内计算机分类" class="headerlink" title="域内计算机分类"></a>域内计算机分类</h1><p>域内的计算机可以根据其功能和用途进行不同的分类。域控制器是管理域中资源和用户的关键计算机，而成员计算机和服务器则提供不同类型的服务，如文件共享、应用托管、打印和网络基础设施服务等。通过这种分类，企业可以高效管理计算机、权限和资源，确保域内网络的安全性和高效性。<br>域控制器<br>成员计算机<br>文件服务器<br>应用服务器<br>打印服务器<br>工作组<br>远程访问服务器<br>数据库服务器<br>web服务器<br>…</p>
+<h1 id="DNS域名服务器"><a href="#DNS域名服务器" class="headerlink" title="DNS域名服务器"></a>DNS域名服务器</h1><p>在内网中，域名后缀通常使用内部域名（如 company.local 或 company.internal）来避免与公网域名冲突。在许多企业中，内网DNS与 Active Directory（AD） 紧密结合。域控制器（DC）通常是DNS服务器的关键组成部分。AD域内的所有资源（如计算机、用户、服务等）都由DNS进行名称解析。在AD环境中，DNS是一个重要的服务，支持域名注册和服务发现（例如，用户登录验证、文件共享等），员工可以使用便捷的域名访问公司内网资源，如共享文件夹、打印机、数据库等，而无需记住复杂的IP地址。当用户通过VPN或其他远程访问方式连接到内网时，内网DNS服务器帮助他们解析并访问内网资源，就像他们在局域网内一样。</p>
+<h1 id="域控制器"><a href="#域控制器" class="headerlink" title="域控制器"></a>域控制器</h1><p>域控制器（Domain Controller，简称 DC）是一个负责管理网络域（Domain）的服务器，特别是在基于 Microsoft Active Directory（AD）的网络环境中。域控制器运行 Active Directory（AD） 服务，它提供一个目录服务来存储和管理网络资源的信息，它是组织内集中式管理用户、计算机、组和其他资源的核心组件，并提供身份验证和授权服务。域控制器允许管理员设置并管理访问权限、角色和策略。管理员可以通过 组策略（Group Policy）集中管理计算机和用户的配置，例如强制密码复杂性要求、安装软件、限制访问权限等，域控制器确保网络中的计算机和用户可以进行认证、访问权限控制和其他安全功能。</p>
+<h1 id="活动目录"><a href="#活动目录" class="headerlink" title="活动目录"></a>活动目录</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Active Directory（简称 AD）是由 Microsoft 提供的一个强大且灵活的目录服务，它用于管理企业内部网络中所有的计算机、用户、组和其他资源。Active Directory 主要应用于 Windows Server 操作系统环境中，是企业网络中最常见的集中式身份管理和资源访问控制解决方案。</p>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>集中式管理：<br>Active Directory 提供一个中央位置，用于管理网络中的所有对象（如用户、计算机、打印机、文件夹、应用程序等），简化了网络资源的配置和维护。<br>身份验证和授权：<br>Active Directory 使用 Kerberos 或 NTLM 协议进行身份验证，确保只有授权用户才能访问网络资源。它还可以通过设置权限和组策略来控制用户访问不同资源的权限。<br>目录服务：<br>Active Directory 以树状结构（树形目录）存储和管理组织内的资源数据，包括用户、组、计算机、打印机等对象。它支持快速的查询操作，帮助管理员方便地查找和管理资源。<br>单点登录（SSO）：<br>使用 Active Directory，用户只需要一次登录，便可以访问同一域内的所有授权资源，而无需再次输入凭据。这提高了用户体验并简化了身份验证流程。<br>组织单位（OU）和组策略（GPO）：<br>Active Directory 允许将用户、计算机和其他资源按组织单位（OU）分类和分组。管理员可以根据组织的需求，定义具体的组策略（GPO）来集中管理计算机的设置（如密码策略、桌面环境设置等）。<br>跨域管理：<br>在大型企业中，Active Directory 支持跨多个域的管理。用户和资源可以在不同域之间共享，并且可以跨域进行身份验证。<br>全球目录（Global Catalog）：<br>Active Directory 支持一个全局目录服务器，它存储了跨整个域的所有对象的部分信息，支持快速查找和身份验证。</p>
+<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><p>域控制器（Domain Controllers，DC）：<br>域控制器是运行 Active Directory 的服务器，它负责身份验证、资源访问控制和复制 AD 数据。域控制器存储和管理 Active Directory 数据库中的信息，并通过复制确保多个 DC 上的数据一致性。<br>Active Directory 域（Domain）：<br>域是 Active Directory 中的基本管理单元，用于组织和管理用户、计算机等对象。每个域都有自己的数据库，存储关于该域的所有对象和设置。<br>组织单位（Organizational Units，OU）：<br>组织单位是 AD 中用于对对象进行逻辑分组的容器。它允许根据组织结构、部门或职能对对象进行分类，并且可以将组策略应用于 OU 中的所有对象。<br>目录服务协议（LDAP）：<br>LDAP（轻量级目录访问协议）是 Active Directory 用来进行查询和管理目录信息的协议。它允许客户端程序访问和管理 AD 中的对象。<br>全局编录服务器（Global Catalog）：<br>全局编录服务器存储所有域中的对象的部分属性，帮助加速跨域查询和身份验证。全局编录也可以作为一个域控制器角色来提供跨域的用户认证和资源查找服务。<br>组策略对象（GPO）：<br>组策略是 Active Directory 中的重要功能，允许管理员为域内的计算机和用户设置特定的安全策略、配置文件和其他操作系统设置。GPO 可以在整个域或组织单位（OU）上应用。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>域：<br>每个 AD 环境中的域是一个独立的命名空间，它包含用户、计算机和其他网络对象。在域内，所有的计算机和资源共享一套账户数据库。<br>域树（Domain Tree）：<br>域树由多个域组成，其中的每个域都有一个父域，并且在命名上是层级结构。例如，company.com 可以是父域，而 hr.company.com、it.company.com 则是子域。<br>域森林（Domain Forest）：<br>一个 域森林 是 Active Directory 中最顶层的结构，它包含一个或多个域树，并且域之间共享全局目录。域森林内的所有域都有共同的信任关系和统一的目录架构。</p>
+<h1 id="域本地组"><a href="#域本地组" class="headerlink" title="域本地组"></a>域本地组</h1><h2 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h2><p>域本地组（Domain Local Groups，DLG）是 Active Directory（AD）中一种特殊的安全组类型，用于管理域内计算机和资源的访问权限。它是针对特定域内资源而创建的，旨在为该域内的资源提供精确的权限控制。不同于全局组（Global Groups），它通常被用来将组成员分配给 特定域的本地资源，例如文件夹、打印机、数据库等。域本地组只能授予访问该组所在域内的资源的权限，而不能跨域使用。它的权限是局限于域内的。域本地组的成员可以来自 任何域，不仅限于所在域中的用户、组或计算机。可以将来自不同域的用户、全局组、域本地组等添加到域本地组中。</p>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>Administrators（管理员组） ————最重要的权限<br>Remote Desktop Users（远程登录组）<br>Print Operators（打印机操作员组）<br>Account Operators（帐号操作员组）<br>Server Operaters（服务器操作员组）<br>Backup Operators（备份操作员组） 全局组、通用组的权限<br>Domain Admins（域管理员组）————最最最重要的权限，一般来说域渗透是看重这个<br>Enterprise Admins（企业系统管理员组）————最重要的权限，其次是去看重这个权限<br>Schema Admins（架构管理员组）————最重要的权限<br>Domain Users（域用户组）</p>
+<h1 id="全局组"><a href="#全局组" class="headerlink" title="全局组"></a>全局组</h1><p>全局组（Global Group）是 Active Directory（AD）中的一种组类型，主要用于组织内用户、计算机和其他组的管理。全局组的作用通常是为了 管理和控制访问权限，并将组成员限制在特定的组织范围内。与 域本地组（Domain Local Group）不同，全局组的主要目标是对跨越多个域的用户和计算机进行分组。全局组的作用范围是 整个域内，它用于集中管理属于同一域的用户或计算机账户。这意味着全局组只能包含属于同一域的用户、计算机或其他组。全局组成员通常是按照职能或部门来分类的，例如财务组、技术组、市场组等。全局组的成员可以 跨域访问资源。例如，在一个跨多个域的环境中，虽然全局组的成员仅限于某个特定域，但它仍然可以被添加到其他域的域本地组中，从而获得访问这些域内资源的权限。</p>
+<h1 id="通用组"><a href="#通用组" class="headerlink" title="通用组"></a>通用组</h1><p>通用组（Universal Group）是 Active Directory（AD）中的另一种组类型，它与 全局组 和 域本地组 有所不同。通用组的主要作用是跨多个域提供灵活的访问控制，并能够集中管理跨越多个域的用户和资源权限。通用组的作用范围是整个 域森林，它可以包含来自 任何域 的用户、计算机、组（包括全局组和域本地组）。这使得它能够跨越多个域来管理权限，因此适用于需要跨域访问资源的场景。通用组的设计旨在服务于跨越多个域的环境，尤其适合大型企业中，涉及多个域和部门需要共享资源的情况。</p>
+<h1 id="AGDLP"><a href="#AGDLP" class="headerlink" title="AGDLP"></a>AGDLP</h1><p>AGDLP 是一种用于在 Active Directory 环境中进行访问控制和权限分配的安全模型，它由 A（Accounts）、G（Groups）、D（Domains）、L（Local Groups）和 P（Permissions）五个元素组成。该模型用于设计和实施有效的访问控制策略，确保资源的安全管理，并简化权限的管理。</p>
+<h2 id="元素"><a href="#元素" class="headerlink" title="元素"></a>元素</h2><p>A (Accounts) - 用户账户：<br>用户账户是指企业网络中的个体用户。每个用户账户都被分配了一个唯一的标识符，通常是用户名和密码。用户账户属于一个特定的域，并可与其他组进行关联。<br>G (Groups) - 组：<br>组是 Active Directory 中的一种对象类型，它允许将多个用户账户归为一组，从而简化对权限的管理。组可分为两类：<br>安全组（Security Groups）：用于赋予权限和访问控制。<br>分发组（Distribution Groups）：用于电子邮件列表等，但不能赋予访问权限。<br>D (Domains) - 域：<br>域是 Active Directory 中的基本管理单元，它是网络资源（如用户、计算机等）的容器。每个域拥有自己的目录数据和安全策略。<br>L (Local Groups) - 本地组：<br>本地组是指域内计算机（工作站或服务器）上的本地组，用于控制对本地资源的访问。与域组不同，本地组只在计算机本地有效，不跨越域。<br>P (Permissions) - 权限：<br>权限是用户或组对计算机资源（如文件、文件夹、打印机、应用程序等）所拥有的访问权限。这些权限可以细分为读取、写入、执行等操作权限</p>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>A 到 G（账户到组）：<br>用户账户应该属于域中的组，而这些组用于分配访问权限。每个用户账户都应被添加到一个或多个适当的安全组，这些安全组会决定该用户可以访问哪些资源。<br>G 到 D（组到域）：<br>将组应用于域级别的资源和权限控制。例如，用户组可以拥有对某个特定域中资源的访问权限。域管理员可以通过设置组策略，控制哪些组能访问域内的资源。<br>G 到 L（组到本地组）：<br>可以将域组添加到计算机的本地组中，从而使得域组的成员能够访问该计算机上的本地资源。例如，可以创建一个本地管理员组，将域管理员组添加进去，这样域管理员组的成员就能访问本地计算机的所有资源。<br>L 到 P（本地组到权限）：<br>本地组的成员拥有对本地计算机资源的访问权限。这些权限由计算机的管理员设置，允许用户执行特定的操作，如访问文件、打印机等。</p>
+<h1 id="Kerberos协议"><a href="#Kerberos协议" class="headerlink" title="Kerberos协议"></a>Kerberos协议</h1><h2 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h2><p>Kerberos协议是一个计算机网络认证协议，设计用来通过不安全的网络进行强身份验证。它使用了对称密钥加密和“票证”机制，主要用于确保通信双方的身份，并防止中间人攻击等安全问题。Kerberos协议广泛应用于各种分布式系统中，特别是在Windows环境中的Active Directory（AD）域环境中。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>Kerberos协议通过一个称为“票证”的机制来实现身份验证。其基本流程包括以下几个步骤：<br>初始化认证<br>用户通过客户端向认证服务器（AS，Authentication Server）请求身份验证。<br>客户端会发送一个带有用户名的请求，要求认证服务器为其颁发票证。<br>认证服务器会检查用户的身份，如果身份验证通过，AS会生成一个票证授权票证（TGT，Ticket Granting Ticket）。这个TGT被加密，只有TGT的服务器（通常是票证授权服务器，TGS）才能解密。<br>获取服务票证<br>一旦用户获得了TGT，用户就可以向票证授权服务器（TGS，Ticket Granting Server）请求访问某个特定服务的权限。<br>客户端使用TGT向TGS发送请求，并附带自己希望访问的服务名称。<br>如果TGT有效，TGS会生成一个新的服务票证，并将其返回给客户端。<br>访问目标服务<br>客户端使用服务票证与目标服务进行通信。服务票证包含了客户端的身份信息、加密密钥和会话密钥等数据。<br>目标服务验证票证的有效性后，允许客户端访问其资源。<br>会话密钥<br>每次服务的访问都会生成一个会话密钥，该密钥用于保护与目标服务的通信。只有客户端和目标服务能解密和加密会话中的数据。</p>
+<h2 id="组件-1"><a href="#组件-1" class="headerlink" title="组件"></a>组件</h2><p>认证服务器（AS）： 负责验证用户的身份，并为其生成TGT。AS一般会从数据库中获取用户的密码或密钥。<br>票证授权服务器（TGS）： 在用户获得TGT后，TGS负责根据TGT生成并颁发服务票证。TGS是Kerberos协议中的重要部分，确保了不同服务的安全通信。<br>客户端： 发起身份验证请求，并使用获取到的票证与目标服务进行安全通信。<br>服务端： 各种提供资源的服务，通过验证客户端提交的服务票证来确认客户端的身份。</p>
+<h2 id="票据"><a href="#票据" class="headerlink" title="票据"></a>票据</h2><p>票证是Kerberos协议的核心，它由以下几个部分组成：<br>TGT：票证授权票证，用户用来请求服务票证。TGT包含用户的身份信息和加密数据，由AS颁发。<br>服务票证：客户端用来访问特定服务的凭证。服务票证是由TGS生成并包含了目标服务的信息。<br>票证内容通常包括：<br>客户端标识。<br>服务标识。<br>票证有效期。<br>会话密钥（用于加密通信）。</p>
+<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><h2 id="主机平台"><a href="#主机平台" class="headerlink" title="主机平台"></a>主机平台</h2><p>WCE（Windows凭据管理器）<br>minikatz（从内存中获取明文密码）<br>Responder（嗅探网络中所有的LLMNR包，获取主机的信息）<br>BeEF（一款针对浏览器的渗透测试工具）<br>DSHashes（从NTDSXtract中提取用户易于理解的散列值）<br>PowerSploit（一款基于PowerShell的后渗透测试框架）<br>Nishang（一款针对Powershell的渗透测试工具）<br>Empire（一款内网渗透测试利器）<br>ps_encoder.py（使用Base64编码封装的Powershell命令包）<br>smbexec（一个使用samba工具的快速psExec工具）<br>后门制造工厂（对PE、ELF等二进制注入Shellcode）<br>Veil（用于生成绕过常见杀软的Metasploit有效载荷）<br>Metasploit（计算机安全漏洞项目框架）<br>Cobalt Strike（一款优秀的后渗透测试平台）</p>
+<h2 id="windows渗透"><a href="#windows渗透" class="headerlink" title="windows渗透"></a>windows渗透</h2><p>Nmap（一款免费的网络发现和安全审计工具）<br>Wireshark（一款免费且开源的网络协议和数据包解析器）<br>PuTTY（一款免费且开源的SSH和Telnet客户端）<br>SQLMap（一款免费且开源的SQL注入工具）<br>BurpSuite（一款针对Web应用程序进行安全测试的代理工具）<br>Hydra（一个网络登录暴力破解工具）<br>Getif（一款收集SNMP设备信息的工具）<br>Cain&amp;Abel（一个密码恢复工具，集成嗅探等多种功能）<br>PowerSploit（一款基于PowerShell的后渗透测试框架）<br>Nishang（一款针对Powershell的渗透测试工具）</p>
+<h2 id="powershell命令"><a href="#powershell命令" class="headerlink" title="powershell命令"></a>powershell命令</h2><h3 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Get-Host</span></span><br><span class="line"><span class="variable">$PSVersionTable</span>.PSVERSION</span><br></pre></td></tr></table></figure>
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">New-Item</span> hack <span class="literal">-ItemType</span> Directory <span class="comment">#新建目录</span></span><br><span class="line"><span class="built_in">New-Item</span> ailx0000.txt <span class="literal">-ItemType</span> File <span class="comment">#新建文件</span></span><br><span class="line"><span class="built_in">Set-Content</span> .\ailx0000.txt <span class="literal">-Value</span> <span class="string">&quot;hi hacker ailx10...&quot;</span> <span class="comment">#写文件</span></span><br><span class="line"><span class="built_in">Add-Content</span> .\ailx0000.txt <span class="literal">-Value</span> <span class="string">&quot;ooops~&quot;</span> <span class="comment">#追加内容</span></span><br><span class="line"><span class="built_in">Get-Content</span> .\ailx0000.txt <span class="comment">#显示内容</span></span><br><span class="line"><span class="built_in">Clear-Content</span> .\ailx0000.txt <span class="comment">#清楚内容</span></span><br><span class="line"><span class="built_in">Remove-Item</span> .\ailx0000.txt <span class="comment">#删除文件</span></span><br></pre></td></tr></table></figure>
+<h3 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h3><p>1、绕过本地权限并执行<br>2、从网站服务器中下载脚本，绕过本地权限并偷偷执行<br>3、使用Base64对PowerShell命令进行编码</p>
+]]></content>
+      <categories>
+        <category>Intranet 安全</category>
+      </categories>
+      <tags>
+        <tag>内网术语</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>npm更新报错</title>
     <url>/posts/63beea23.html</url>
     <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
@@ -570,6 +565,23 @@
       </categories>
       <tags>
         <tag>npm报错</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>QEMU镜像格式转换工具</title>
+    <url>/posts/41bf34a5.html</url>
+    <content><![CDATA[<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><p>qemu-img工具支持RAW、QCOW2、QCOW1、VMDK、VDI、VHD、VHDX或QED格式的镜像相互转换。<br>qemu-img工具不支持直接将ISO镜像转换为RAW、VHD和QCOW2格式。<br>将VHD格式转换为其他格式或者将其他文件格式转换为VHD格式时，需使用vpc参数代替VHD格式，否则可能造成qemu-img工具无法识别VHD镜像格式导致转换失败</p>
+<h1 id="windows系统"><a href="#windows系统" class="headerlink" title="windows系统"></a>windows系统</h1><h1 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h1><p><a href="https://qemu.weilnetz.de/w64/">https://qemu.weilnetz.de/w64/</a><br>qemu-w64-setup-20240903.exe </p>
+<h2 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h2><p>系统变量Path添加qemu安装路径</p>
+<h2 id="测试环境变量是否配置成功"><a href="#测试环境变量是否配置成功" class="headerlink" title="测试环境变量是否配置成功"></a>测试环境变量是否配置成功</h2><p>cmd输入</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img --help</span><br></pre></td></tr></table></figure>
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">QCOW2转换为RAW格式</button><button type="button" class="tab">VHD转换为RAW格式</button><button type="button" class="tab">RAW转换为VMDK格式</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f qcow2 -O raw centos.qcow2 centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f vpc -O raw centos.vhd centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f raw -O vmdk centos.raw centos.vmdk</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+]]></content>
+      <categories>
+        <category>格式转换工具</category>
+      </categories>
+      <tags>
+        <tag>镜像转换</tag>
       </tags>
   </entry>
   <entry>
@@ -604,23 +616,6 @@
       </categories>
       <tags>
         <tag>pyenv</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>QEMU镜像格式转换工具</title>
-    <url>/posts/41bf34a5.html</url>
-    <content><![CDATA[<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><p>qemu-img工具支持RAW、QCOW2、QCOW1、VMDK、VDI、VHD、VHDX或QED格式的镜像相互转换。<br>qemu-img工具不支持直接将ISO镜像转换为RAW、VHD和QCOW2格式。<br>将VHD格式转换为其他格式或者将其他文件格式转换为VHD格式时，需使用vpc参数代替VHD格式，否则可能造成qemu-img工具无法识别VHD镜像格式导致转换失败</p>
-<h1 id="windows系统"><a href="#windows系统" class="headerlink" title="windows系统"></a>windows系统</h1><h1 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h1><p><a href="https://qemu.weilnetz.de/w64/">https://qemu.weilnetz.de/w64/</a><br>qemu-w64-setup-20240903.exe </p>
-<h2 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h2><p>系统变量Path添加qemu安装路径</p>
-<h2 id="测试环境变量是否配置成功"><a href="#测试环境变量是否配置成功" class="headerlink" title="测试环境变量是否配置成功"></a>测试环境变量是否配置成功</h2><p>cmd输入</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img --help</span><br></pre></td></tr></table></figure>
-<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">QCOW2转换为RAW格式</button><button type="button" class="tab">VHD转换为RAW格式</button><button type="button" class="tab">RAW转换为VMDK格式</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f qcow2 -O raw centos.qcow2 centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f vpc -O raw centos.vhd centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f raw -O vmdk centos.raw centos.vmdk</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
-]]></content>
-      <categories>
-        <category>格式转换工具</category>
-      </categories>
-      <tags>
-        <tag>镜像转换</tag>
       </tags>
   </entry>
   <entry>
@@ -788,18 +783,6 @@
       </categories>
       <tags>
         <tag>shiro反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>sqli-labs靶场练习</title>
-    <url>/posts/d642dfa0.html</url>
-    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>sql-inject</tag>
       </tags>
   </entry>
   <entry>
@@ -1804,6 +1787,18 @@
 ]]></content>
   </entry>
   <entry>
+    <title>sqli-labs靶场练习</title>
+    <url>/posts/d642dfa0.html</url>
+    <content><![CDATA[<p>虽然之前通关过一次但已历史久远，未来如果有机会再来一次的话我一定截图</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>sql-inject</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>sql注入知识记录</title>
     <url>/posts/ccd55f3a.html</url>
     <content><![CDATA[<h1 id="sql注入漏洞基本原理"><a href="#sql注入漏洞基本原理" class="headerlink" title="sql注入漏洞基本原理"></a>sql注入漏洞基本原理</h1><p>Web应用程序对用户输入的数据校验处理不严或者根本没有校验，致使用户可以拼接执行SQL命令。<br>可能导致数据泄露或数据破坏，缺乏可审计性，甚至导致完全接管主机。</p>
@@ -2555,35 +2550,20 @@
 <h4 id="demo-4-自定义"><a href="#demo-4-自定义" class="headerlink" title="demo 4 自定义"></a>demo 4 自定义</h4><div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">第一个Tab</button><button type="button" class="tab"><i class="fab fa-apple-pay"></i></button><button type="button" class="tab"><i class="fas fa-bomb"></i>炸弹</button></div><div class="tab-contents"><div class="tab-item-content active"><p><strong>tab名字为第一个Tab</strong></p></div><div class="tab-item-content"><p><strong>只有图标 没有Tab名字</strong></p></div><div class="tab-item-content"><p><strong>名字+icon</strong></p></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
 
 <h3 id="button"><a href="#button" class="headerlink" title="button"></a>button</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% btn [url],[text],[icon],[color] [style] [layout] [position] [size] %&#125;</span><br><span class="line"></span><br><span class="line">[url]         : 链接</span><br><span class="line">[text]        : 按钮文字</span><br><span class="line">[icon]        : [可选] 图标</span><br><span class="line">[color]       : [可选] 按钮背景顔色(默认style时）</span><br><span class="line">                      按钮字体和边框顔色(outline时)</span><br><span class="line">                      default/blue/pink/red/purple/orange/green</span><br><span class="line">[style]       : [可选] 按钮样式 默认实心</span><br><span class="line">                      outline/留空</span><br><span class="line">[layout]      : [可选] 按钮佈局 默认为line</span><br><span class="line">                      block/留空</span><br><span class="line">[position]    : [可选] 按钮位置 前提是设置了layout为block 默认为左边</span><br><span class="line">                      center/right/留空</span><br><span class="line">[size]        : [可选] 按钮大小</span><br><span class="line">                      larger/留空</span><br></pre></td></tr></table></figure>
-<p>demo<br>This is my website, click the button <a class="btn-beautify " href="https://butterfly.js.org/" 
-  title="Butterfly"><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify " href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify outline" href="https://butterfly.js.org/" 
-  title="Butterfly"><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify outline" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a></p>
+<p>demo<br>This is my website, click the button <a class="btn-beautify " href="https://butterfly.js.org/" title="Butterfly"><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify " href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify outline" href="https://butterfly.js.org/" title="Butterfly"><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify outline" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a><br>This is my website, click the button <a class="btn-beautify larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a></p>
 <p>对角线</p>
-<a class="btn-beautify block" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify block center larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify block right outline larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify block" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify block center larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify block right outline larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
 
 <p>一行多个button</p>
-<a class="btn-beautify larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify blue larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify pink larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify red larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify purple larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify orange larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
-<a class="btn-beautify green larger" href="https://butterfly.js.org/" 
-  title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify blue larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify pink larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify red larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify purple larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify orange larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
+<a class="btn-beautify green larger" href="https://butterfly.js.org/" title="Butterfly"><i class="far fa-hand-point-right"></i><span>Butterfly</span></a>
 
 <h3 id="inlineimg"><a href="#inlineimg" class="headerlink" title="inlineimg"></a>inlineimg</h3><p>主题中的图片默认块级元素显示，若要用内联元素显示可使用inlineimg标签外挂</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% inlineImg [src] [height] %&#125;</span><br><span class="line"></span><br><span class="line">[src]      :    图片链接</span><br><span class="line">[height]   ：   图片高度限制【可选】</span><br></pre></td></tr></table></figure>
@@ -2595,7 +2575,7 @@
 <p>demo</p>
 <p>臣亮言：<mark class="hl-label default">先帝</mark>创业未半，而<mark class="hl-label blue">中道崩殂</mark>。今天下三分，<mark class="hl-label pink">益州疲敝</mark>，此诚<mark class="hl-label red">危急存亡之秋</mark>也！然侍衞之臣，不懈于内；<mark class="hl-label purple">忠志之士</mark>，忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气；不宜妄自菲薄，引喻失义，以塞忠谏之路也。<br>宫中、府中，俱为一体；陟罚臧否，不宜异同。若有<mark class="hl-label orange">作奸</mark>、<mark class="hl-label green">犯科</mark>，及为忠善者，宜付有司，论其刑赏，以昭陛下平明之治；不宜偏私，使内外异法也。</p>
 <h3 id="timeline"><a href="#timeline" class="headerlink" title="timeline"></a>timeline</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">title	标题/时间线</span><br><span class="line">color	timeline 颜色</span><br><span class="line">default(留空) / blue / pink / red / purple / orange / green</span><br><span class="line"></span><br><span class="line">&#123;% timeline title,color %&#125;</span><br><span class="line">&lt;!-- timeline title --&gt;</span><br><span class="line">xxxxx</span><br><span class="line">&lt;!-- endtimeline --&gt;</span><br><span class="line">&lt;!-- timeline title --&gt;</span><br><span class="line">xxxxx</span><br><span class="line">&lt;!-- endtimeline --&gt;</span><br><span class="line">&#123;% endtimeline %&#125;</span><br></pre></td></tr></table></figure>
-<div class="timeline undefined"><div class='timeline-item headline'><div class='timeline-item-title'><div class='item-circle'><p>2022</p>
+<div class="timeline "><div class='timeline-item headline'><div class='timeline-item-title'><div class='item-circle'><p>2022</p>
 </div></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>01-02</p>
 </div></div><div class='timeline-item-content'><p>这是测试页面</p>
 </div></div></div>
@@ -2604,52 +2584,52 @@
 <p>内容格式与友情链接界面一样，支持 yml 格式</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% flink %&#125;</span><br><span class="line">xxxxxx</span><br><span class="line">&#123;% endflink %&#125;</span><br></pre></td></tr></table></figure>
 <p>demo</p>
-<div class="flink"><div class="flink-name">友情链接</div><div class="flink-desc">那些人，那些事</div> <div class="flink-list">
-          <div class="flink-list-item">
-            <a href="https://jerryc.me/" title="JerryC" target="_blank">
-              <div class="flink-item-icon">
-                <img class="no-lightbox" src="https://jerryc.me/img/avatar.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="JerryC" />
-              </div>
-              <div class="flink-item-name">JerryC</div> 
-              <div class="flink-item-desc" title="今日事,今日毕">今日事,今日毕</div>
-            </a>
+<div class="flink"><div class="flink-name">友情链接</div><div class="flink-desc">那些人，那些事</div><div class="flink-list">
+      <div class="flink-list-item">
+        <a href="https://jerryc.me/" title="JerryC" target="_blank">
+          <div class="flink-item-icon">
+            <img class="no-lightbox" src="https://jerryc.me/img/avatar.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="JerryC" />
           </div>
-          <div class="flink-list-item">
-            <a href="https://hexo.io/zh-tw/" title="Hexo" target="_blank">
-              <div class="flink-item-icon">
-                <img class="no-lightbox" src="https://d33wubrfki0l68.cloudfront.net/6657ba50e702d84afb32fe846bed54fba1a77add/827ae/logo.svg" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Hexo" />
-              </div>
-              <div class="flink-item-name">Hexo</div> 
-              <div class="flink-item-desc" title="快速、简单且强大的网志框架">快速、简单且强大的网志框架</div>
-            </a>
-          </div></div><div class="flink-name">网站</div><div class="flink-desc">值得推荐的网站</div> <div class="flink-list">
-          <div class="flink-list-item">
-            <a href="https://www.youtube.com/" title="Youtube" target="_blank">
-              <div class="flink-item-icon">
-                <img class="no-lightbox" src="https://i.loli.net/2020/05/14/9ZkGg8v3azHJfM1.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Youtube" />
-              </div>
-              <div class="flink-item-name">Youtube</div> 
-              <div class="flink-item-desc" title="视频网站">视频网站</div>
-            </a>
+          <div class="flink-item-name">JerryC</div>
+          <div class="flink-item-desc" title="今日事,今日毕">今日事,今日毕</div>
+        </a>
+      </div>
+      <div class="flink-list-item">
+        <a href="https://hexo.io/zh-tw/" title="Hexo" target="_blank">
+          <div class="flink-item-icon">
+            <img class="no-lightbox" src="https://d33wubrfki0l68.cloudfront.net/6657ba50e702d84afb32fe846bed54fba1a77add/827ae/logo.svg" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Hexo" />
           </div>
-          <div class="flink-list-item">
-            <a href="https://www.weibo.com/" title="Weibo" target="_blank">
-              <div class="flink-item-icon">
-                <img class="no-lightbox" src="https://i.loli.net/2020/05/14/TLJBum386vcnI1P.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Weibo" />
-              </div>
-              <div class="flink-item-name">Weibo</div> 
-              <div class="flink-item-desc" title="中国最大社交分享平台">中国最大社交分享平台</div>
-            </a>
+          <div class="flink-item-name">Hexo</div>
+          <div class="flink-item-desc" title="快速、简单且强大的网志框架">快速、简单且强大的网志框架</div>
+        </a>
+      </div></div><div class="flink-name">网站</div><div class="flink-desc">值得推荐的网站</div><div class="flink-list">
+      <div class="flink-list-item">
+        <a href="https://www.youtube.com/" title="Youtube" target="_blank">
+          <div class="flink-item-icon">
+            <img class="no-lightbox" src="https://i.loli.net/2020/05/14/9ZkGg8v3azHJfM1.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Youtube" />
           </div>
-          <div class="flink-list-item">
-            <a href="https://twitter.com/" title="Twitter" target="_blank">
-              <div class="flink-item-icon">
-                <img class="no-lightbox" src="https://i.loli.net/2020/05/14/5VyHPQqR6LWF39a.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Twitter" />
-              </div>
-              <div class="flink-item-name">Twitter</div> 
-              <div class="flink-item-desc" title="社交分享平台">社交分享平台</div>
-            </a>
-          </div></div></div>
+          <div class="flink-item-name">Youtube</div>
+          <div class="flink-item-desc" title="视频网站">视频网站</div>
+        </a>
+      </div>
+      <div class="flink-list-item">
+        <a href="https://www.weibo.com/" title="Weibo" target="_blank">
+          <div class="flink-item-icon">
+            <img class="no-lightbox" src="https://i.loli.net/2020/05/14/TLJBum386vcnI1P.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Weibo" />
+          </div>
+          <div class="flink-item-name">Weibo</div>
+          <div class="flink-item-desc" title="中国最大社交分享平台">中国最大社交分享平台</div>
+        </a>
+      </div>
+      <div class="flink-list-item">
+        <a href="https://twitter.com/" title="Twitter" target="_blank">
+          <div class="flink-item-icon">
+            <img class="no-lightbox" src="https://i.loli.net/2020/05/14/5VyHPQqR6LWF39a.png" onerror='this.onerror=null;this.src="/img/friend_404.gif"' alt="Twitter" />
+          </div>
+          <div class="flink-item-name">Twitter</div>
+          <div class="flink-item-desc" title="社交分享平台">社交分享平台</div>
+        </a>
+      </div></div></div>
 
 <h3 id="abcjs-乐谱"><a href="#abcjs-乐谱" class="headerlink" title="abcjs 乐谱"></a>abcjs 乐谱</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% score %&#125;</span><br><span class="line">乐谱代码</span><br><span class="line">&#123;% endscore %&#125;</span><br></pre></td></tr></table></figure>
 
@@ -2669,7 +2649,7 @@ GAB2 !style=harmonic![gb]4|GAB2 [K: style=harmonic]gbgb|
 C/A,/ C/C/E C/zz2|
 w:Rock-y did-nt like that</div>
 
-<h3 id="series-系列文章"><a href="#series-系列文章" class="headerlink" title="series 系列文章"></a>series 系列文章</h3><ol class="series-items"><li><a href="/posts/4a17b156.html" title="Hello World">Hello World</a></li><li><a href="/posts/ab21860c.html" title="本站hexo魔改">本站hexo魔改</a></li></ol>
+<h3 id="series-系列文章"><a href="#series-系列文章" class="headerlink" title="series 系列文章"></a>series 系列文章</h3>
 
 
 <h1 id="code-test"><a href="#code-test" class="headerlink" title="code test"></a>code test</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">$(<span class="variable language_">document</span>).<span class="title function_">ready</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    $(<span class="string">&#x27;#calendar&#x27;</span>).<span class="title function_">aCalendar</span>(<span class="string">&#x27;zh-CN&#x27;</span>);<span class="comment">//&#x27;zh-CN&#x27;请根据自己博客的语言选择</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
@@ -2678,6 +2658,80 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>文章测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浏览器加载流程</title>
+    <url>/posts/1c025fc.html</url>
+    <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
+<h1 id="用户输入"><a href="#用户输入" class="headerlink" title="用户输入"></a>用户输入</h1><p>用户访问URL: <a href="https://example.com/index/about?query=1">https://example.com/index/about?query=1</a></p>
+<h1 id="浏览器解析"><a href="#浏览器解析" class="headerlink" title="浏览器解析"></a>浏览器解析</h1><p>提取访问URL的协议(https),域名(example.com),路径(&#x2F;index&#x2F;about)和查询参数(query)</p>
+<h1 id="检查缓存"><a href="#检查缓存" class="headerlink" title="检查缓存"></a>检查缓存</h1><p>检查本地缓存是否有该域名的ip地址,如果有则使用缓存的ip地址</p>
+<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h1><h2 id="什么是DNS缓存"><a href="#什么是DNS缓存" class="headerlink" title="什么是DNS缓存"></a>什么是DNS缓存</h2><p>在域名系统 (DNS) 中，缓存是在操作系统、浏览器、设备或网络中临时存储 DNS 记录的过程<br>DNS 记录用于将人类可读的域名(例如,example.com)转换为计算机和设备可以理解的对应 IP 地址，例如 2001:db8:3e8:2a3::b63<br>通过在本地存储 DNS 信息,DNS 缓存使域名能够更快地被转换或”解析”，同时可以减少网络流量</p>
+<h2 id="DNS缓存顺序"><a href="#DNS缓存顺序" class="headerlink" title="DNS缓存顺序"></a>DNS缓存顺序</h2><p>浏览器缓存:浏览器检查缓存是否有该域名ip地址<br>操作系统缓存:如若浏览器没有,浏览器向操作系统查询<br>本地dns服务器:操作系统缓存没有,则向配置的本地dns服务器发送查询请求<br>递归查询:本地 DNS 服务器会递归查询其他 DNS 服务器，直到找到该域名对应的 IP 地址<br>返回结果:DNS 服务器将结果返回给操作系统，再由操作系统返回给浏览器</p>
+<h1 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h1><h2 id="三次握手-TCP连接"><a href="#三次握手-TCP连接" class="headerlink" title="三次握手(TCP连接)"></a>三次握手(TCP连接)</h2><p>SYN:客户端发送至服务端请求连接<br>SYN-ACK:服务端收到回复确认表示同意连接<br>ACK:客户端确认回复并建立连接</p>
+<h2 id="TLS-SSL握手-HTTPS"><a href="#TLS-SSL握手-HTTPS" class="headerlink" title="TLS&#x2F;SSL握手(HTTPS)"></a>TLS&#x2F;SSL握手(HTTPS)</h2><p>客户端问候:客户端发送一个 ClientHello 消息,包含支持的加密算法、TLS 版本等信息<br>服务器问候:服务器回复一个 ServerHello 消息,选择加密算法和 TLS 版本,并发送服务器证书<br>证书验证:客户端验证服务器证书的有效性<br>密钥交换:客户端生成一个随机数,用服务器的公钥加密后发送给服务器，服务器用私钥解密，生成会话密钥<br>完成握手:双方使用会话密钥加密通信,握手完成</p>
+<h1 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h1><h2 id="构建请求"><a href="#构建请求" class="headerlink" title="构建请求"></a>构建请求</h2><p>浏览器构建一个 HTTP 请求，包括请求行(如 GET&#x2F;HTTP&#x2F;1.1)、请求头(如 Host: <a href="http://www.example.com)和可选的请求体/">www.example.com)和可选的请求体</a>(如 POST 请求的数据)</p>
+<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>浏览器通过建立的 TCP 连接将 HTTP 请求发送到服务器</p>
+<h1 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h1><p>接收请求：服务器接收到 HTTP 请求<br>请求解析：服务器解析请求行、请求头和请求体<br>路由处理：服务器根据请求的路径和参数，确定处理请求的逻辑<br>业务逻辑：服务器执行相应的业务逻辑，可能涉及读取文件、查询数据库、调用其他服务等<br>生成响应：服务器生成一个 HTTP 响应，包括状态行(如 HTTP&#x2F;1.1 200 OK)、响应头(如 Content-Type: text&#x2F;html)和响应体(如 HTML 内容)</p>
+<h1 id="浏览器接收响应"><a href="#浏览器接收响应" class="headerlink" title="浏览器接收响应"></a>浏览器接收响应</h1><p>接收响应<br>浏览器接收服务器响应<br>解析响应<br>浏览器解析响应头和响应体</p>
+<h1 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h1><h2 id="解析html"><a href="#解析html" class="headerlink" title="解析html"></a>解析html</h2><p>构建DOM树 解析HTML文档，构建DOM树<br>处理脚本 遇到&lt; script &gt;标签浏览器会暂停解析，执行脚本，脚本可能修改DOM树</p>
+<h2 id="解析css"><a href="#解析css" class="headerlink" title="解析css"></a>解析css</h2><p>构建CSSOM树 解析css文件和内联样式，构建css object model树</p>
+<h2 id="解析javascript"><a href="#解析javascript" class="headerlink" title="解析javascript"></a>解析javascript</h2><p>执行脚本 解析和执行JavaScript代码，可能修改dom树和cssom树</p>
+<h2 id="构建渲染树"><a href="#构建渲染树" class="headerlink" title="构建渲染树"></a>构建渲染树</h2><p>结合dom和cssom</p>
+<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>计算布局 计算每个元素的大小和位置</p>
+<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>绘制元素 浏览器绘制到屏幕上</p>
+<h1 id="处理资源请求"><a href="#处理资源请求" class="headerlink" title="处理资源请求"></a>处理资源请求</h1><p>发现资源：在解析 HTML 的过程中，浏览器会发现需要加载的资源(如图片、CSS 文件、JavaScript 文件等)<br>发送请求：浏览器会并行发送请求，加载这些资源<br>重复解析和渲染：浏览器重复上述的解析和渲染过程，直到所有资源加载完成</p>
+<h1 id="用户交互"><a href="#用户交互" class="headerlink" title="用户交互"></a>用户交互</h1><p>用户操作:页面加载完成后，用户可以与页面进行交互(如点击按钮、输入表单等)<br>事件处理:浏览器会根据用户的操作,触发相应的事件处理程序,更新页面内容</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>网络请求</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解析漏洞知识记录</title>
+    <url>/posts/64ae55e3.html</url>
+    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
+<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
+<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
+<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
+<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
+<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
+<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
+<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
+<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
+<p>将所有名字里含shell的文件识别为php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>让.jpg后缀名文件以php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>解析漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>溯源小技巧</title>
+    <url>/posts/7dea39be.html</url>
+    <content><![CDATA[<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><h2 id="溯源反制思路"><a href="#溯源反制思路" class="headerlink" title="溯源反制思路"></a>溯源反制思路</h2><p>反向渗透攻击IP、反向信息收集攻击IP、利用部署的蜜罐获取攻击者信息、溯源钓鱼邮件</p>
+<h2 id="攻击源捕获"><a href="#攻击源捕获" class="headerlink" title="攻击源捕获"></a>攻击源捕获</h2><p>安全设备报警，如扫描IP、威胁阻断、病毒木马、入侵事件等。<br>日志与流量分析，异常的通讯流量、攻击源与攻击目标等。<br>服务器资源异常，异常的文件、账号、进程、端口，启动项、计划任务和服务等。<br>邮件钓鱼，获取恶意文件样本、钓鱼网站URL等。<br>蜜罐系统，获取攻击者行为、意图的相关信息。</p>
+<h1 id="溯源反制"><a href="#溯源反制" class="headerlink" title="溯源反制"></a>溯源反制</h1><h2 id="反制手段"><a href="#反制手段" class="headerlink" title="反制手段"></a>反制手段</h2><p>IP定位技术：根据IP定位物理地址—代理IP。<br>ID追踪术：搜索引擎、社交平台、技术论坛、社工库匹配。<br>网站URL：域名WHOIS查询注册人姓名、地址、电话和邮箱。<br>恶意样本：提取样本特征、用户名、ID、邮箱、C2服务器等信息—同源分析。<br>社交账号：基于JSONP跨域，获取攻击者的主机信息、浏览器信息、真实 IP及社交信息等。</p>
+<h2 id="攻击者画像"><a href="#攻击者画像" class="headerlink" title="攻击者画像"></a>攻击者画像</h2><p>攻击路径；<br>攻击目的：拿到权限、窃取数据、获取利益、DDOS等；<br>网络代理：代理IP、跳板机、C2服务器等；<br>攻击手法：鱼叉式邮件钓鱼、Web渗透、水坑攻击、近源渗透、社会工程等。<br>攻击者身份画像：虚拟身份：ID、昵称、网名；真实身份：姓名、物理位置；<br>联系方式：手机号、QQ&#x2F;微信、邮箱；<br>组织情况：单位名称、职位信息。</p>
+<h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><h2 id="威胁情报厂商"><a href="#威胁情报厂商" class="headerlink" title="威胁情报厂商"></a>威胁情报厂商</h2><p>微步在线：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>启明Venuseye：<a href="https://www.venuseye.com.cn/">https://www.venuseye.com.cn/</a><br>绿盟NTI:<a href="https://nti.nsfocus.com/">https://nti.nsfocus.com/</a><br>奇安信：<a href="https://ti.qianxin.com/">https://ti.qianxin.com/</a><br>安恒：<a href="https://ti.dbappsecurity.com.cn/">https://ti.dbappsecurity.com.cn/</a><br>360：<a href="https://ti.360.cn/#/homepage">https://ti.360.cn/#/homepage</a></p>
+<h2 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h2><p>中国万网域名WHOIS信息查询地址：<a href="https://whois.aliyun.com/">https://whois.aliyun.com/</a><br>纳网域名WHOIS信息查询地址：<a href="http://whois.nawang.cn/">http://whois.nawang.cn/</a><br>中资源域名WHOIS信息查询地址：<a href="https://www.zzy.cn/domain/whois.html">https://www.zzy.cn/domain/whois.html</a><br>三五互联域名WHOIS信息查询地址：<a href="https://cp.35.com/chinese/whois.php">https://cp.35.com/chinese/whois.php</a><br>新网互联域名WHOIS信息查询地址：<a href="http://www.dns.com.cn/show/domain/whois/index.do">http://www.dns.com.cn/show/domain/whois/index.do</a><br>美橙互联域名WHOIS信息查询地址：<a href="https://whois.cndns.com/">https://whois.cndns.com/</a><br>爱名网域名WHOIS信息查询地址：<a href="https://www.22.cn/domain/">https://www.22.cn/domain/</a><br>易名网域名WHOIS信息查询地址：<a href="https://whois.ename.net/">https://whois.ename.net/</a><br>站长工具类第三方查询地址(部分网站注册人信息会隐藏或提示联系域名注册商获取，可以去who.is查询看看)<br>Kali的查询：whois -h 注册服务器地址  域名<br>站长工具-站长之家域名WHOIS信息查询地址：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a><br>爱站网域名WHOIS信息查询地址：<a href="https://whois.aizhan.com/">https://whois.aizhan.com/</a><br>腾讯云域名WHOIS信息查询地址：<a href="https://whois.cloud.tencent.com/">https://whois.cloud.tencent.com/</a><br>国外的who.is：<a href="https://who.is/">https://who.is/</a><br>微步：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>Virus Total:<a href="https://www.virustotal.com/">https://www.virustotal.com</a><br>还有Kali中自带的whois查询、一些集成工具等。<br>SSL证书查询网站整理如下：<br>主要网站如下：<br>（1）<a href="https://crt.sh/">https://crt.sh/</a><br>（2）<a href="https://censys.io/">https://censys.io/</a><br>（3）<a href="https://developers.facebook.com/tools/ct/">https://developers.facebook.com/tools/ct/</a><br>（4）<a href="https://google.com/transparencyreport/https/ct/">https://google.com/transparencyreport/https/ct/</a></p>
+<h2 id="IP反查"><a href="#IP反查" class="headerlink" title="IP反查"></a>IP反查</h2><p>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a><br>爱站： <a href="https://www.aizhan.com/">https://www.aizhan.com/</a><br>站长之家：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a></p>
+<h2 id="IP定位"><a href="#IP定位" class="headerlink" title="IP定位"></a>IP定位</h2><p>公众号：埃文科技、云警助手等<br>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a> <a href="https://chaipip.com/aiwen.html">https://chaipip.com/aiwen.html</a></p>
+<h1 id="确认个人信息"><a href="#确认个人信息" class="headerlink" title="确认个人信息"></a>确认个人信息</h1><h2 id="已知手机或邮箱"><a href="#已知手机或邮箱" class="headerlink" title="已知手机或邮箱"></a>已知手机或邮箱</h2><p>查支付宝转账，验证姓名。<br>QQ &#x2F;微信添加好友搜索<br>reg007进行相同手机号注册平台搜索<br>社交平台查找(头条、抖音、微博等)</p>
+<h2 id="已知ID或姓名"><a href="#已知ID或姓名" class="headerlink" title="已知ID或姓名"></a>已知ID或姓名</h2><p>直接谷歌、百度、bing关键次搜索<br>各大平台SRC、各大白帽子交流群、交流论坛等<br>社交平台查找(贴吧、头条、抖音、微博等)</p>
+<h2 id="捕获恶意文件"><a href="#捕获恶意文件" class="headerlink" title="捕获恶意文件"></a>捕获恶意文件</h2><p>解密、逆行脱壳等直接获取一些个人账号ID、CS服务器地址、一些域名信息、邮件发送服务器地址等</p>
+<h2 id="社工库"><a href="#社工库" class="headerlink" title="社工库"></a>社工库</h2><p>tg社工库查询</p>
+]]></content>
+      <categories>
+        <category>应急响应</category>
+      </categories>
+      <tags>
+        <tag>溯源</tag>
       </tags>
   </entry>
   <entry>
@@ -2731,57 +2785,6 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>JWT Vulnerabilitiy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浏览器加载流程</title>
-    <url>/posts/1c025fc.html</url>
-    <content><![CDATA[<p>摘: <a href="https://www.cnblogs.com/ryanzheng/p/18284643">https://www.cnblogs.com/ryanzheng/p/18284643</a></p>
-<h1 id="用户输入"><a href="#用户输入" class="headerlink" title="用户输入"></a>用户输入</h1><p>用户访问URL: <a href="https://example.com/index/about?query=1">https://example.com/index/about?query=1</a></p>
-<h1 id="浏览器解析"><a href="#浏览器解析" class="headerlink" title="浏览器解析"></a>浏览器解析</h1><p>提取访问URL的协议(https),域名(example.com),路径(&#x2F;index&#x2F;about)和查询参数(query)</p>
-<h1 id="检查缓存"><a href="#检查缓存" class="headerlink" title="检查缓存"></a>检查缓存</h1><p>检查本地缓存是否有该域名的ip地址,如果有则使用缓存的ip地址</p>
-<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h1><h2 id="什么是DNS缓存"><a href="#什么是DNS缓存" class="headerlink" title="什么是DNS缓存"></a>什么是DNS缓存</h2><p>在域名系统 (DNS) 中，缓存是在操作系统、浏览器、设备或网络中临时存储 DNS 记录的过程<br>DNS 记录用于将人类可读的域名(例如,example.com)转换为计算机和设备可以理解的对应 IP 地址，例如 2001:db8:3e8:2a3::b63<br>通过在本地存储 DNS 信息,DNS 缓存使域名能够更快地被转换或”解析”，同时可以减少网络流量</p>
-<h2 id="DNS缓存顺序"><a href="#DNS缓存顺序" class="headerlink" title="DNS缓存顺序"></a>DNS缓存顺序</h2><p>浏览器缓存:浏览器检查缓存是否有该域名ip地址<br>操作系统缓存:如若浏览器没有,浏览器向操作系统查询<br>本地dns服务器:操作系统缓存没有,则向配置的本地dns服务器发送查询请求<br>递归查询:本地 DNS 服务器会递归查询其他 DNS 服务器，直到找到该域名对应的 IP 地址<br>返回结果:DNS 服务器将结果返回给操作系统，再由操作系统返回给浏览器</p>
-<h1 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h1><h2 id="三次握手-TCP连接"><a href="#三次握手-TCP连接" class="headerlink" title="三次握手(TCP连接)"></a>三次握手(TCP连接)</h2><p>SYN:客户端发送至服务端请求连接<br>SYN-ACK:服务端收到回复确认表示同意连接<br>ACK:客户端确认回复并建立连接</p>
-<h2 id="TLS-SSL握手-HTTPS"><a href="#TLS-SSL握手-HTTPS" class="headerlink" title="TLS&#x2F;SSL握手(HTTPS)"></a>TLS&#x2F;SSL握手(HTTPS)</h2><p>客户端问候:客户端发送一个 ClientHello 消息,包含支持的加密算法、TLS 版本等信息<br>服务器问候:服务器回复一个 ServerHello 消息,选择加密算法和 TLS 版本,并发送服务器证书<br>证书验证:客户端验证服务器证书的有效性<br>密钥交换:客户端生成一个随机数,用服务器的公钥加密后发送给服务器，服务器用私钥解密，生成会话密钥<br>完成握手:双方使用会话密钥加密通信,握手完成</p>
-<h1 id="发送HTTP请求"><a href="#发送HTTP请求" class="headerlink" title="发送HTTP请求"></a>发送HTTP请求</h1><h2 id="构建请求"><a href="#构建请求" class="headerlink" title="构建请求"></a>构建请求</h2><p>浏览器构建一个 HTTP 请求，包括请求行(如 GET&#x2F;HTTP&#x2F;1.1)、请求头(如 Host: <a href="http://www.example.com)和可选的请求体/">www.example.com)和可选的请求体</a>(如 POST 请求的数据)</p>
-<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>浏览器通过建立的 TCP 连接将 HTTP 请求发送到服务器</p>
-<h1 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h1><p>接收请求：服务器接收到 HTTP 请求<br>请求解析：服务器解析请求行、请求头和请求体<br>路由处理：服务器根据请求的路径和参数，确定处理请求的逻辑<br>业务逻辑：服务器执行相应的业务逻辑，可能涉及读取文件、查询数据库、调用其他服务等<br>生成响应：服务器生成一个 HTTP 响应，包括状态行(如 HTTP&#x2F;1.1 200 OK)、响应头(如 Content-Type: text&#x2F;html)和响应体(如 HTML 内容)</p>
-<h1 id="浏览器接收响应"><a href="#浏览器接收响应" class="headerlink" title="浏览器接收响应"></a>浏览器接收响应</h1><p>接收响应<br>浏览器接收服务器响应<br>解析响应<br>浏览器解析响应头和响应体</p>
-<h1 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h1><h2 id="解析html"><a href="#解析html" class="headerlink" title="解析html"></a>解析html</h2><p>构建DOM树 解析HTML文档，构建DOM树<br>处理脚本 遇到&lt; script &gt;标签浏览器会暂停解析，执行脚本，脚本可能修改DOM树</p>
-<h2 id="解析css"><a href="#解析css" class="headerlink" title="解析css"></a>解析css</h2><p>构建CSSOM树 解析css文件和内联样式，构建css object model树</p>
-<h2 id="解析javascript"><a href="#解析javascript" class="headerlink" title="解析javascript"></a>解析javascript</h2><p>执行脚本 解析和执行JavaScript代码，可能修改dom树和cssom树</p>
-<h2 id="构建渲染树"><a href="#构建渲染树" class="headerlink" title="构建渲染树"></a>构建渲染树</h2><p>结合dom和cssom</p>
-<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>计算布局 计算每个元素的大小和位置</p>
-<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>绘制元素 浏览器绘制到屏幕上</p>
-<h1 id="处理资源请求"><a href="#处理资源请求" class="headerlink" title="处理资源请求"></a>处理资源请求</h1><p>发现资源：在解析 HTML 的过程中，浏览器会发现需要加载的资源(如图片、CSS 文件、JavaScript 文件等)<br>发送请求：浏览器会并行发送请求，加载这些资源<br>重复解析和渲染：浏览器重复上述的解析和渲染过程，直到所有资源加载完成</p>
-<h1 id="用户交互"><a href="#用户交互" class="headerlink" title="用户交互"></a>用户交互</h1><p>用户操作:页面加载完成后，用户可以与页面进行交互(如点击按钮、输入表单等)<br>事件处理:浏览器会根据用户的操作,触发相应的事件处理程序,更新页面内容</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>网络请求</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解析漏洞知识记录</title>
-    <url>/posts/64ae55e3.html</url>
-    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
-<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
-<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
-<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
-<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
-<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
-<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
-<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
-<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
-<p>将所有名字里含shell的文件识别为php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
-<p>让.jpg后缀名文件以php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>解析漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -2949,29 +2952,6 @@ w:Rock-y did-nt like that</div>
       </categories>
       <tags>
         <tag>Google hacking</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>溯源小技巧</title>
-    <url>/posts/7dea39be.html</url>
-    <content><![CDATA[<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><h2 id="溯源反制思路"><a href="#溯源反制思路" class="headerlink" title="溯源反制思路"></a>溯源反制思路</h2><p>反向渗透攻击IP、反向信息收集攻击IP、利用部署的蜜罐获取攻击者信息、溯源钓鱼邮件</p>
-<h2 id="攻击源捕获"><a href="#攻击源捕获" class="headerlink" title="攻击源捕获"></a>攻击源捕获</h2><p>安全设备报警，如扫描IP、威胁阻断、病毒木马、入侵事件等。<br>日志与流量分析，异常的通讯流量、攻击源与攻击目标等。<br>服务器资源异常，异常的文件、账号、进程、端口，启动项、计划任务和服务等。<br>邮件钓鱼，获取恶意文件样本、钓鱼网站URL等。<br>蜜罐系统，获取攻击者行为、意图的相关信息。</p>
-<h1 id="溯源反制"><a href="#溯源反制" class="headerlink" title="溯源反制"></a>溯源反制</h1><h2 id="反制手段"><a href="#反制手段" class="headerlink" title="反制手段"></a>反制手段</h2><p>IP定位技术：根据IP定位物理地址—代理IP。<br>ID追踪术：搜索引擎、社交平台、技术论坛、社工库匹配。<br>网站URL：域名WHOIS查询注册人姓名、地址、电话和邮箱。<br>恶意样本：提取样本特征、用户名、ID、邮箱、C2服务器等信息—同源分析。<br>社交账号：基于JSONP跨域，获取攻击者的主机信息、浏览器信息、真实 IP及社交信息等。</p>
-<h2 id="攻击者画像"><a href="#攻击者画像" class="headerlink" title="攻击者画像"></a>攻击者画像</h2><p>攻击路径；<br>攻击目的：拿到权限、窃取数据、获取利益、DDOS等；<br>网络代理：代理IP、跳板机、C2服务器等；<br>攻击手法：鱼叉式邮件钓鱼、Web渗透、水坑攻击、近源渗透、社会工程等。<br>攻击者身份画像：虚拟身份：ID、昵称、网名；真实身份：姓名、物理位置；<br>联系方式：手机号、QQ&#x2F;微信、邮箱；<br>组织情况：单位名称、职位信息。</p>
-<h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><h2 id="威胁情报厂商"><a href="#威胁情报厂商" class="headerlink" title="威胁情报厂商"></a>威胁情报厂商</h2><p>微步在线：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>启明Venuseye：<a href="https://www.venuseye.com.cn/">https://www.venuseye.com.cn/</a><br>绿盟NTI:<a href="https://nti.nsfocus.com/">https://nti.nsfocus.com/</a><br>奇安信：<a href="https://ti.qianxin.com/">https://ti.qianxin.com/</a><br>安恒：<a href="https://ti.dbappsecurity.com.cn/">https://ti.dbappsecurity.com.cn/</a><br>360：<a href="https://ti.360.cn/#/homepage">https://ti.360.cn/#/homepage</a></p>
-<h2 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h2><p>中国万网域名WHOIS信息查询地址：<a href="https://whois.aliyun.com/">https://whois.aliyun.com/</a><br>纳网域名WHOIS信息查询地址：<a href="http://whois.nawang.cn/">http://whois.nawang.cn/</a><br>中资源域名WHOIS信息查询地址：<a href="https://www.zzy.cn/domain/whois.html">https://www.zzy.cn/domain/whois.html</a><br>三五互联域名WHOIS信息查询地址：<a href="https://cp.35.com/chinese/whois.php">https://cp.35.com/chinese/whois.php</a><br>新网互联域名WHOIS信息查询地址：<a href="http://www.dns.com.cn/show/domain/whois/index.do">http://www.dns.com.cn/show/domain/whois/index.do</a><br>美橙互联域名WHOIS信息查询地址：<a href="https://whois.cndns.com/">https://whois.cndns.com/</a><br>爱名网域名WHOIS信息查询地址：<a href="https://www.22.cn/domain/">https://www.22.cn/domain/</a><br>易名网域名WHOIS信息查询地址：<a href="https://whois.ename.net/">https://whois.ename.net/</a><br>站长工具类第三方查询地址(部分网站注册人信息会隐藏或提示联系域名注册商获取，可以去who.is查询看看)<br>Kali的查询：whois -h 注册服务器地址  域名<br>站长工具-站长之家域名WHOIS信息查询地址：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a><br>爱站网域名WHOIS信息查询地址：<a href="https://whois.aizhan.com/">https://whois.aizhan.com/</a><br>腾讯云域名WHOIS信息查询地址：<a href="https://whois.cloud.tencent.com/">https://whois.cloud.tencent.com/</a><br>国外的who.is：<a href="https://who.is/">https://who.is/</a><br>微步：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>Virus Total:<a href="https://www.virustotal.com/">https://www.virustotal.com</a><br>还有Kali中自带的whois查询、一些集成工具等。<br>SSL证书查询网站整理如下：<br>主要网站如下：<br>（1）<a href="https://crt.sh/">https://crt.sh/</a><br>（2）<a href="https://censys.io/">https://censys.io/</a><br>（3）<a href="https://developers.facebook.com/tools/ct/">https://developers.facebook.com/tools/ct/</a><br>（4）<a href="https://google.com/transparencyreport/https/ct/">https://google.com/transparencyreport/https/ct/</a></p>
-<h2 id="IP反查"><a href="#IP反查" class="headerlink" title="IP反查"></a>IP反查</h2><p>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a><br>爱站： <a href="https://www.aizhan.com/">https://www.aizhan.com/</a><br>站长之家：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a></p>
-<h2 id="IP定位"><a href="#IP定位" class="headerlink" title="IP定位"></a>IP定位</h2><p>公众号：埃文科技、云警助手等<br>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a> <a href="https://chaipip.com/aiwen.html">https://chaipip.com/aiwen.html</a></p>
-<h1 id="确认个人信息"><a href="#确认个人信息" class="headerlink" title="确认个人信息"></a>确认个人信息</h1><h2 id="已知手机或邮箱"><a href="#已知手机或邮箱" class="headerlink" title="已知手机或邮箱"></a>已知手机或邮箱</h2><p>查支付宝转账，验证姓名。<br>QQ &#x2F;微信添加好友搜索<br>reg007进行相同手机号注册平台搜索<br>社交平台查找(头条、抖音、微博等)</p>
-<h2 id="已知ID或姓名"><a href="#已知ID或姓名" class="headerlink" title="已知ID或姓名"></a>已知ID或姓名</h2><p>直接谷歌、百度、bing关键次搜索<br>各大平台SRC、各大白帽子交流群、交流论坛等<br>社交平台查找(贴吧、头条、抖音、微博等)</p>
-<h2 id="捕获恶意文件"><a href="#捕获恶意文件" class="headerlink" title="捕获恶意文件"></a>捕获恶意文件</h2><p>解密、逆行脱壳等直接获取一些个人账号ID、CS服务器地址、一些域名信息、邮件发送服务器地址等</p>
-<h2 id="社工库"><a href="#社工库" class="headerlink" title="社工库"></a>社工库</h2><p>tg社工库查询</p>
-]]></content>
-      <categories>
-        <category>应急响应</category>
-      </categories>
-      <tags>
-        <tag>溯源</tag>
       </tags>
   </entry>
   <entry>
